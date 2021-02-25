@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstByte">
-        <activity android:name=".MainActivity">
+        <activity android:name="dam95.android.uk.firstbyte.gui.launchapp.LaunchAppActivity" />
+        <activity android:name="dam95.android.uk.firstbyte.gui.launchapp.FirstTimeSetup" />
+        <activity android:name="dam95.android.uk.firstbyte.gui.mainactivity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="quartered_standard_margins">5dp</dimen>
+    <dimen name="halved_standard_margins">10dp</dimen>
+    <dimen name="standard_margins">20dp</dimen>
+    <dimen name="double_standard_margins">40dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="nav_text_size">16sp</dimen>
+</resources>
