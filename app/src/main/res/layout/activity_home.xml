@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".gui.mainactivity.HomeActivity"
-    android:id="@+id/ActMain_Drawer"
+    android:id="@+id/actMain_Drawer"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/fb_app_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/primaryColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +40,7 @@
             android:elevation="2dp">
 
             <LinearLayout
+                android:id="@+id/top_navigation_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -52,7 +53,7 @@
                     android:layout_marginHorizontal="@dimen/standard_margins"
                     android:text="@string/homeBtn"
                     android:background="@color/primaryColor"
-                    android:textColor="@color/btn_unselected"
+                    android:textColor="@color/btn_text_unselected"
                     android:textSize="@dimen/nav_text_size"
                     style="?android:attr/borderlessButtonStyle"/>
 
@@ -63,18 +64,18 @@
                     android:layout_marginHorizontal="@dimen/standard_margins"
                     android:text="@string/pcBuildBtn"
                     android:background="@color/primaryColor"
-                    android:textColor="@color/btn_unselected"
+                    android:textColor="@color/btn_text_unselected"
                     android:textSize="@dimen/nav_text_size"
                     style="?android:attr/borderlessButtonStyle"/>
 
                 <Button
-                    android:id="@+id/compareBtn"
+                    android:id="@+id/selectCompareBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/standard_margins"
                     android:text="@string/compareBtn"
                     android:background="@color/primaryColor"
-                    android:textColor="@color/btn_unselected"
+                    android:textColor="@color/btn_text_unselected"
                     android:textSize="@dimen/nav_text_size"
                     style="?android:attr/borderlessButtonStyle"/>
 
@@ -87,13 +88,11 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:defaultNavHost="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintTop_toBottomOf="@id/top_navigation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:navGraph="@navigation/navigation_graph"/>
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

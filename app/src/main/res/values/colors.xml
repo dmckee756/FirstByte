@@ -2,12 +2,21 @@
 <resources>
     <!-- Global Colors -->
     <color name="text_color">#121212</color>
-    <color name="btn_unselected">#636363</color>
+    <color name="text_shadow">#323232</color>
     <color name="text_color_light">#F0F7F9</color>
+    <color name="btn_text_unselected">#636363</color>
+
     <color name="primaryColor">#FFFFFF</color>
     <color name="primaryColorDark">#6F6F6F</color>
     <color name="secondaryColor">#F4F4F4</color>
-    <color name="gradientColor">#ECECEC</color>
+    <color name="gradientColor">#E6E6E6</color>
+
+    <!-- Category Search Colors -->
+    <color name="allSearchOnline">#4B8BC6</color>
+    <color name="allSearchOnlineGradient">#4E7DF6</color>
+    <color name="allSearchSaved">#45CB4B</color>
+    <color name="allSearchSavedGradient">#29AC36</color>
+    <color name="categoryNormal">#D6D6D6</color>
 
     <!-- Graph Colors -->
     <color name="graph_color">#80B8EC</color>

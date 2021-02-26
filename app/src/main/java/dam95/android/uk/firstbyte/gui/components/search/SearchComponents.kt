@@ -5,30 +5,55 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
+import dam95.android.uk.firstbyte.gui.components.hardware.HardwareList
+import dam95.android.uk.firstbyte.gui.mainactivity.HomeActivity
 
-class SearchComponents : Fragment() {
+/**
+ *
+ */
+class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    private lateinit var recyclerListBinding: RecyclerListBinding
+
+    /**
+     *
+     */
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_components, container, false)
+        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
+        //
+        setupSearchSelection()
+        return recyclerListBinding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SearchComponents.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                SearchComponents().apply {
+    /**
+     *
+     */
+    private fun setupSearchSelection() {
+        //
+        val categories = listOf("all", "gpu", "cpu", "ram", "psu", "motherboard")
+        val displayCategories = recyclerListBinding.recyclerList
+        //
+        displayCategories.layoutManager = LinearLayoutManager(this.context)
+        displayCategories.adapter = SearchCategoryRecyclerList(context, this, categories)
 
-                }
+    }
+
+    /**
+     *
+     */
+    override fun onButtonClick(chosenCategory: String) {
+        //
+        when (chosenCategory) {
+            "all" -> (activity as HomeActivity).changeFragment(HardwareList(),false)
+            "gpu" -> (activity as HomeActivity).changeFragment(HardwareList(),false)
+        }
     }
 }
