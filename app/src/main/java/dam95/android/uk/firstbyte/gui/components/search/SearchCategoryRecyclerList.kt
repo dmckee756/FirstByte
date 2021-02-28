@@ -1,7 +1,6 @@
 package dam95.android.uk.firstbyte.gui.components.search
 
 import android.content.Context
-import android.view.Display
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import dam95.android.uk.firstbyte.databinding.DisplaySearchBinding
 class SearchCategoryRecyclerList(
     private val context: Context?,
     private val listener: OnItemClickListener,
-    private val categories: List<String>
+    private val categories: ArrayList<Pair<String, String>>
 ) : RecyclerView.Adapter<SearchCategoryRecyclerList.ViewHolder>() {
 
     private lateinit var displaySearchBinding: DisplaySearchBinding
@@ -25,7 +24,7 @@ class SearchCategoryRecyclerList(
     /**
      *
      */
-    inner class ViewHolder(itemView: View, parent: ViewGroup) : RecyclerView.ViewHolder(itemView),
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
         val categoryBtn: Button = displaySearchBinding.categoryBtn
@@ -45,7 +44,7 @@ class SearchCategoryRecyclerList(
 
             if (adapterPosition != RecyclerView.NO_POSITION){
                 when (category?.id) {
-                    categoryBtn.id -> listener.onButtonClick("all")
+                    categoryBtn.id -> listener.onButtonClick(categories[adapterPosition].second)
                 }
             }
 
@@ -74,7 +73,6 @@ class SearchCategoryRecyclerList(
 
         return ViewHolder(
             displaySearchBinding.categoryCard,
-            parent
         )
     }
 
@@ -82,7 +80,7 @@ class SearchCategoryRecyclerList(
      *
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        displaySearchBinding.categorySearchTxt.text = categories[position]
+        displaySearchBinding.categorySearchTxt.text = categories[position].first
         //implement image
     }
 }

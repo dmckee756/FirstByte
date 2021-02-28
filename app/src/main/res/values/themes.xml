@@ -8,4 +8,13 @@
         <item name="android:textColor">@color/text_color</item>
         <item name="graph">@color/graph_color</item>
     </style>
+
+    <style name="Theme.FirstByte.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.FirstByte.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.FirstByte.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

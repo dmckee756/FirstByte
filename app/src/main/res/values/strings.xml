@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">FirstByte</string>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
     <!-- Toggle Drawer -->
     <string name="openDrawer">Open Drawer Navigation</string>
     <string name="closeDrawer">Close Drawer Navigation</string>
@@ -17,8 +19,29 @@
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
+    <string-array name="categoriesDisplayText">
+        <item>Search All Components</item>
+        <item>Graphics Cards</item>
+        <item>Processors</item>
+        <item>Ram Sticks</item>
+        <item>Power Supply Units</item>
+        <item>Motherboards</item>
+        <item>PC Storage</item>
+        <item>Computer Cases</item>
+        <item>CPU Heatsinks</item>
+        <item>Fans</item>
+    </string-array>
+    <string-array name="categoryConnector">
+        <item>all</item>
+        <item>gpu</item>
+        <item>cpu</item>
+        <item>ram</item>
+        <item>psu</item>
+        <item>motherboard</item>
+        <item>storage</item>
+        <item>cases</item>
+        <item>heatsink</item>
+        <item>fan</item>
+    </string-array>
 
-
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

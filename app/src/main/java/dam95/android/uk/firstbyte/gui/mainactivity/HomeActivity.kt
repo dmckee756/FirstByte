@@ -2,6 +2,7 @@ package dam95.android.uk.firstbyte.gui.mainactivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,8 +12,9 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
-import dam95.android.uk.firstbyte.gui.components.builds.PCBuilds
+import dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList
 import dam95.android.uk.firstbyte.gui.components.compare.SelectCompare
+import dam95.android.uk.firstbyte.gui.components.hardware.HardwareList
 import dam95.android.uk.firstbyte.gui.components.search.SearchComponents
 
 /**
@@ -85,7 +87,7 @@ class HomeActivity : AppCompatActivity() {
         }
         val pcBuildBtn = homeActivityBinding.pcBuildBtn
         pcBuildBtn.setOnClickListener {
-            changeFragment(PCBuilds(), initialStart = false)
+            changeFragment(FragmentPCBuildList(), initialStart = false)
         }
         val selectCompareBtn = homeActivityBinding.selectCompareBtn
         selectCompareBtn.setOnClickListener {
@@ -102,6 +104,28 @@ class HomeActivity : AppCompatActivity() {
             if (!initialStart) addToBackStack(null)
             commit()
         }
+    }
+
+    /**
+     *
+     */
+    fun changeFragmentWithArgs(fragmentID: String, bundle: Bundle){
+
+        Log.i("FRAGMENT_W_ARGS", fragmentID)
+        supportFragmentManager.beginTransaction().apply {
+            //
+            when (fragmentID){
+                "HARDWARELIST" -> replace(R.id.nav_fragment, HardwareList.newInstance(bundle))
+            }
+            addToBackStack(null).commit()
+        }
+    }
+
+    /**
+     *
+     */
+    fun changeActivity(){
+
     }
 
 }

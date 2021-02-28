@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dam95.android.uk.firstbyte">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,9 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstByte">
-        <activity android:name="dam95.android.uk.firstbyte.gui.launchapp.LaunchAppActivity" />
-        <activity android:name="dam95.android.uk.firstbyte.gui.launchapp.FirstTimeSetup" />
-        <activity android:name="dam95.android.uk.firstbyte.gui.mainactivity.HomeActivity">
+        <activity android:name=".gui.launchapp.LaunchAppActivity" />
+        <activity android:name=".gui.launchapp.FirstTimeSetup" />
+        <activity android:name=".gui.mainactivity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
