@@ -11,10 +11,15 @@ import retrofit2.http.Path
  */
 interface InterfaceAPI {
 
-
+    /**
+     *
+     */
     @GET("category={type}")
     fun getCategory(@Path("type") type: String?): Call<List<SearchedHardwareItem>>
 
-    @GET("hardware=")
-    suspend fun getHardware(): Call<List<Component>>
+    /**
+     *
+     */
+    @GET("hardware={name}")
+    fun getHardware(@Path("name") name: String?): Call<List<String>>
 }

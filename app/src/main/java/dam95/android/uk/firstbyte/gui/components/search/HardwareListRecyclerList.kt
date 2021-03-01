@@ -1,4 +1,4 @@
-package dam95.android.uk.firstbyte.gui.components.hardware
+package dam95.android.uk.firstbyte.gui.components.search
 
 import android.content.Context
 import android.util.Log
@@ -45,8 +45,13 @@ class HardwareListRecyclerList(
         /**
          *
          */
-        override fun onClick(view: View?) {
-          Log.i("CLICK", "Click")
+        override fun onClick(view: View?)
+        {
+            if (adapterPosition != RecyclerView.NO_POSITION){
+                when (view?.id) {
+                    hardwareBtn.id -> listener.onHardwareClick(hardwareListFull[adapterPosition].name, hardwareListFull[adapterPosition].category)
+                }
+            }
         }
 
 
@@ -56,7 +61,7 @@ class HardwareListRecyclerList(
      *
      */
     interface OnItemClickListener {
-        fun onButtonClick()
+        fun onHardwareClick(componentName: String, componentType: String)
     }
 
     /**
@@ -70,7 +75,7 @@ class HardwareListRecyclerList(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): HardwareListRecyclerList.ViewHolder {
+    ): ViewHolder {
         hardwareListBinding = DisplayHardwarelistBinding.inflate(LayoutInflater.from(context), parent, false)
 
         return ViewHolder(
@@ -81,7 +86,7 @@ class HardwareListRecyclerList(
     /**
      *
      */
-    override fun onBindViewHolder(holder: HardwareListRecyclerList.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         Log.i("LIST_HARDWARE_NAME", hardwareListFull[position].name)
         Log.i("LIST_HARDWARE_LINK", hardwareListFull[position].image_link)

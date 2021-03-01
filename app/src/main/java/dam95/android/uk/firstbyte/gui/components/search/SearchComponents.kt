@@ -54,8 +54,6 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
 
     }
 
-
-
     /**
      *
      */

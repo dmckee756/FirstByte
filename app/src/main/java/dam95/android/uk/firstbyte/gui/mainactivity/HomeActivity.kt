@@ -14,7 +14,8 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
 import dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList
 import dam95.android.uk.firstbyte.gui.components.compare.SelectCompare
-import dam95.android.uk.firstbyte.gui.components.hardware.HardwareList
+import dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails
+import dam95.android.uk.firstbyte.gui.components.search.HardwareList
 import dam95.android.uk.firstbyte.gui.components.search.SearchComponents
 
 /**
@@ -23,6 +24,7 @@ import dam95.android.uk.firstbyte.gui.components.search.SearchComponents
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var homeActivityBinding: ActivityHomeBinding
+    private lateinit var drawerToggle: ActionBarDrawerToggle
 
     /**
      *
@@ -37,14 +39,13 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(topAppBar)
 
         val drawer: DrawerLayout = homeActivityBinding.actMainDrawer
-        val drawerToggle = ActionBarDrawerToggle(
+        drawerToggle = ActionBarDrawerToggle(
             this,
             drawer,
             topAppBar,
             R.string.openDrawer,
             R.string.closeDrawer
         )
-
         drawer.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
@@ -98,7 +99,8 @@ class HomeActivity : AppCompatActivity() {
     /**
      *
      */
-    fun changeFragment(fragmentID: Fragment, initialStart: Boolean) { //, package: SOMETHING) if package, then...
+    fun changeFragment(fragmentID: Fragment, initialStart: Boolean) {
+        bringBackNavBar()
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.nav_fragment, fragmentID)
             if (!initialStart) addToBackStack(null)
@@ -109,13 +111,20 @@ class HomeActivity : AppCompatActivity() {
     /**
      *
      */
-    fun changeFragmentWithArgs(fragmentID: String, bundle: Bundle){
-
+    fun changeFragmentWithArgs(fragmentID: String, bundle: Bundle) {
+        bringBackNavBar()
         Log.i("FRAGMENT_W_ARGS", fragmentID)
         supportFragmentManager.beginTransaction().apply {
             //
-            when (fragmentID){
-                "HARDWARELIST" -> replace(R.id.nav_fragment, HardwareList.newInstance(bundle))
+            when (fragmentID) {
+                "HARDWARELIST" -> {
+                    homeActivityBinding.topNavigation.visibility = View.GONE
+                    replace(R.id.nav_fragment, HardwareList.newInstance(bundle))
+                }
+                "HARDWARE_DETAILS" -> {
+                    homeActivityBinding.topNavigation.visibility = View.GONE
+                    replace(R.id.nav_fragment, HardwareDetails.newInstance(bundle))
+                }
             }
             addToBackStack(null).commit()
         }
@@ -124,7 +133,23 @@ class HomeActivity : AppCompatActivity() {
     /**
      *
      */
-    fun changeActivity(){
+    override fun onBackPressed() {
+        bringBackNavBar()
+        super.onBackPressed()
+    }
+
+    /**
+     *
+     */
+    private fun bringBackNavBar() {
+        if (homeActivityBinding.topNavigation.visibility == View.GONE) homeActivityBinding.topNavigation.visibility =
+            View.VISIBLE
+    }
+
+    /**
+     *
+     */
+    fun changeActivity() {
 
     }
 

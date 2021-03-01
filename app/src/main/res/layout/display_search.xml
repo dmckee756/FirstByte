@@ -42,6 +42,7 @@
             android:layout_marginHorizontal="@dimen/standard_margins"
             android:background="@drawable/img_search_all"
             android:elevation="@dimen/halved_standard_margins"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

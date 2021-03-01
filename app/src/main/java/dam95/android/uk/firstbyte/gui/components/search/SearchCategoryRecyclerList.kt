@@ -1,13 +1,16 @@
 package dam95.android.uk.firstbyte.gui.components.search
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplaySearchBinding
+import dam95.android.uk.firstbyte.model.components.*
 
 /**
  *
@@ -80,7 +83,27 @@ class SearchCategoryRecyclerList(
      *
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        displaySearchBinding.categoryImage.background = loadCorrectImage(categories[position].second)
         displaySearchBinding.categorySearchTxt.text = categories[position].first
         //implement image
+    }
+
+    /**
+     *
+     */
+    private fun loadCorrectImage(category: String): Drawable? {
+        val drawableID: Int = when(category){
+            "gpu" -> R.drawable.img_gpu_search
+            "cpu" -> R.drawable.img_cpu_search
+            "ram" -> R.drawable.img_ram_search
+            "psu" -> R.drawable.img_psu_search
+            "storage" -> R.drawable.img_storage_search
+            "motherboard" -> R.drawable.img_motherboard_search
+            "cases" -> R.drawable.img_case_search
+            "heatsink" -> R.drawable.img_heatsink_search
+            "fan" -> R.drawable.img_fan_search
+            else -> R.drawable.img_search_all
+        }
+        return context?.let { AppCompatResources.getDrawable(it, drawableID) }
     }
 }
