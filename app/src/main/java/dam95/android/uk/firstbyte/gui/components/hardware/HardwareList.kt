@@ -6,13 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
-import dam95.android.uk.firstbyte.R
-import dam95.android.uk.firstbyte.api.ConvertImageURL
 import dam95.android.uk.firstbyte.api.RetrofitBuild
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,9 +21,11 @@ import retrofit2.Response
  *
  */
 private const val CATEGORY_KEY = "CATEGORY"
+
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
+    private var coroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
      *
@@ -40,7 +42,8 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener {
         }
 
         //
-        val retrofitGet = RetrofitBuild.apiIntegrator.getCategory()
+        val retrofitGet = RetrofitBuild.apiIntegrator.getCategory(searchCategory)
+
         //
         retrofitGet.enqueue(object : Callback<List<SearchedHardwareItem>?> {
             //
@@ -52,11 +55,11 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener {
 
                 setUpHardwareList(responseBody)
             }
+
             override fun onFailure(call: Call<List<SearchedHardwareItem>?>, t: Throwable) {
-            Log.i("FETCH_FAIL", "Error: ${t.message}")
+                Log.i("FETCH_FAIL", "Error: ${t.message}")
             }
         })
-
 
         // Inflate the layout for this fragment
         return recyclerListBinding.root
