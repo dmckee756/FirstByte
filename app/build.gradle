@@ -28,15 +28,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    /*flavorDimensions "app"
 
-    //Change names eventually
+    flavorDimensions "default"
+
     productFlavors {
         persistent_database {
-            dimension "firstByteDevelopment"
         }
         in_memory_database{
-            dimension "testDevelopment"
         }
     }
 
@@ -46,7 +44,7 @@ android {
             variant.setIgnore(true);
         }
     }
-*/
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
