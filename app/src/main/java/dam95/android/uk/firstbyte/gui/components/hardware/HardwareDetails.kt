@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dam95.android.uk.firstbyte.api.RetrofitBuild
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
-import dam95.android.uk.firstbyte.model.SearchedHardwareItem
-import dam95.android.uk.firstbyte.model.components.Component
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,25 +31,7 @@ class HardwareDetails : Fragment() {
             Log.i("SEARCH_CATEGORY", componentName)
 
             //REMOVE/REWORK and change back from string to component... maybe pass in category to get correct Component object... NOTE ME
-            val retrofitGet = RetrofitBuild.apiIntegrator.getHardware(componentName)
-            //
-            retrofitGet.enqueue(object : Callback<List<String>?> {
-                //
-                override fun onResponse(
-                    call: Call<List<String>?>,
-                    response: Response<List<String>?>
-                ) {
-                    val responseBody = response.body()!!
-                    hardwareDetailsBinding.tempDisplayHardwareSpecs.text = responseBody.toString()
-                }
-                //
-                override fun onFailure(call: Call<List<String>?>, t: Throwable) {
-                    Log.i("FETCH_FAIL", "Error: ${t.message}")
-                }
-            })
 
-        } else {
-            Log.i("SEARCH_FAILED", "Error: Cannot search")
         }
         // Inflate the layout for this fragment
         return hardwareDetailsBinding.root

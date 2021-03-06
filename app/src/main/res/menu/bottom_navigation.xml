@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/home_fragmentID"
+        android:icon="@drawable/icon_home"
+        android:title="@string/homeBtn"
+        />
+
+    <item
+        android:id="@+id/buildPC_fragmentID"
+        android:icon="@drawable/icon_buildpc"
+        android:title="@string/pcBuildBtn"
+        />
+
+    <item
+        android:id="@+id/compare_fragmentID"
+        android:icon="@drawable/icon_compare"
+        android:title="@string/compareBtn"/>
+
+</menu>

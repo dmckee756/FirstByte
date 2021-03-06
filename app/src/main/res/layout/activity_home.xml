@@ -28,60 +28,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <HorizontalScrollView
-            android:id="@+id/top_navigation"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:background="@color/primaryColor"
+            app:menu="@menu/bottom_navigation"
+            app:elevation="10dp"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fb_app_bar"
-            android:scrollbars="none"
-            android:elevation="2dp">
-
-            <LinearLayout
-                android:id="@+id/top_navigation_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/halved_standard_margins">
-
-                <Button
-                    android:id="@+id/homeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/standard_margins"
-                    android:text="@string/homeBtn"
-                    android:background="@color/primaryColor"
-                    android:textColor="@color/btn_text_unselected"
-                    android:textSize="@dimen/nav_text_size"
-                    style="?android:attr/borderlessButtonStyle"/>
-
-                <Button
-                    android:id="@+id/pcBuildBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/standard_margins"
-                    android:text="@string/pcBuildBtn"
-                    android:background="@color/primaryColor"
-                    android:textColor="@color/btn_text_unselected"
-                    android:textSize="@dimen/nav_text_size"
-                    style="?android:attr/borderlessButtonStyle"/>
-
-                <Button
-                    android:id="@+id/selectCompareBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="@dimen/standard_margins"
-                    android:text="@string/compareBtn"
-                    android:background="@color/primaryColor"
-                    android:textColor="@color/btn_text_unselected"
-                    android:textSize="@dimen/nav_text_size"
-                    style="?android:attr/borderlessButtonStyle"/>
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <fragment
             android:id="@+id/nav_fragment"
@@ -89,10 +46,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintTop_toBottomOf="@id/top_navigation"
+            app:layout_constraintTop_toBottomOf="@id/fb_app_bar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/navigation_graph"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -105,4 +64,5 @@
         app:itemIconTint="?colorPrimaryDark"
         app:itemTextColor="?android:textColorPrimary"
         app:menu="@menu/drawer_nav_menu" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

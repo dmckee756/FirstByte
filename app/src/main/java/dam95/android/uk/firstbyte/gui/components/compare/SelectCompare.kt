@@ -35,7 +35,7 @@ class SelectCompare : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_select_compare, container, false)
+        return inflater.inflate(R.layout.fragment_compare, container, false)
     }
 
     companion object {

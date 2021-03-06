@@ -30,7 +30,7 @@ class SearchCategoryRecyclerList(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-        val categoryBtn: Button = displaySearchBinding.categoryBtn
+        val categoryBtn: Button = displaySearchBinding.hardwareListFragmentID
 
             init {
                 if (firstCard) {

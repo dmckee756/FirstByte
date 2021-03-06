@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/categoryBtn"
+            android:id="@+id/hardwareList_fragmentID"
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="@color/categoryNormal"

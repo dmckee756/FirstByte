@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/searchID"
+        android:id="@+id/searchCategory_fragmentID"
         android:icon="@drawable/icon_search"
         android:title="@string/searchBtn"
         app:showAsAction="ifRoom" />

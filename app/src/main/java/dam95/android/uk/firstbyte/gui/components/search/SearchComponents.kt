@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
@@ -15,7 +17,7 @@ import dam95.android.uk.firstbyte.gui.mainactivity.HomeActivity
  *
  */
 private const val CATEGORY_KEY = "CATEGORY"
-private const val HARDWARELIST_KEY = "HARDWARELIST"
+
 class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
@@ -40,8 +42,10 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
     private fun setupSearchSelection() {
         //
         val categories: ArrayList<Pair<String, String>> = ArrayList()
-        val categoryHolder = ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
-        val categoryConnector = ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
+        val categoryHolder =
+            ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
+        val categoryConnector =
+            ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
 
         for (i in categoryHolder.indices) {
             categories.add(Pair(categoryHolder[i], categoryConnector[i]))
@@ -58,10 +62,12 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
      *
      */
     override fun onButtonClick(chosenCategory: String) {
-        //
         Log.i("CHOSEN_CATEGORY", chosenCategory)
-            val categoryBundle = Bundle()
-            categoryBundle.putString(CATEGORY_KEY, chosenCategory)
-            (activity as HomeActivity).changeFragmentWithArgs(HARDWARELIST_KEY, categoryBundle)
+        //
+        val categoryBundle = bundleOf(CATEGORY_KEY to chosenCategory)
+        
+        //
+        val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(R.id.action_searchCategory_fragmentID_to_hardwareList_fragmentID, categoryBundle)
     }
 }

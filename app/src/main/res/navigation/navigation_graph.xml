@@ -4,11 +4,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/homeID">
+    app:startDestination="@id/home_fragmentID">
 
     <fragment
-        android:id="@+id/homeID"
+        android:id="@+id/home_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.mainactivity.Home"
         android:label="@string/homeTitle"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_fragmentID_to_searchCategory_fragmentID"
+            app:destination="@id/searchCategory_fragmentID" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/buildPC_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList"
+        android:label="Build PCs Hardcoded"
+        tools:layout="@layout/fragment_pc_builds">
+        <action
+            android:id="@+id/action_buildPC_fragmentID_to_searchCategory_fragmentID"
+            app:destination="@id/searchCategory_fragmentID" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/compare_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.compare.SelectCompare"
+        android:label="Compare hardware hardcoded"
+        tools:layout="@layout/fragment_compare">
+        <action
+            android:id="@+id/action_compare_fragmentID_to_searchCategory_fragmentID"
+            app:destination="@id/searchCategory_fragmentID" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchCategory_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.search.SearchComponents"
+        android:label="Search category hardcoded"
+        tools:layout="@layout/recycler_list">
+        <action
+            android:id="@+id/action_searchCategory_fragmentID_to_hardwareList_fragmentID"
+            app:destination="@id/hardwareList_fragmentID" />
+        <argument
+            android:name="CATEGORY"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/hardwareList_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.search.HardwareList"
+        android:label="Hardware Search hardcoded"
+        tools:layout="@layout/recycler_list"/>
+
 </navigation>
