@@ -27,7 +27,7 @@ class ApiRepository {
     /**
      *
      */
-    suspend fun repoGetGpu(name: String?): Response<List<Component>> {
+    suspend fun repoGetGpu(name: String?): Response<List<Gpu>> {
         return RetrofitBuildInstance.apiIntegrator.getGpu(name)
     }
 

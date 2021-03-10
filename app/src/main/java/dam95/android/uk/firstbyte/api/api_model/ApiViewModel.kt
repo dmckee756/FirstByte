@@ -21,7 +21,7 @@ class ApiViewModel(private val apiRepository: ApiRepository) : ViewModel() {
         MutableLiveData()
 
     //Hardware specifications responses
-    val apiGpuResponse: MutableLiveData<Response<List<Component>>> = MutableLiveData()
+    val apiGpuResponse: MutableLiveData<Response<List<Gpu>>> = MutableLiveData()
     val apiCpuResponse: MutableLiveData<Response<List<Cpu>>> = MutableLiveData()
     val apiRamResponse: MutableLiveData<Response<List<Ram>>> = MutableLiveData()
     val apiPsuResponse: MutableLiveData<Response<List<Psu>>> = MutableLiveData()

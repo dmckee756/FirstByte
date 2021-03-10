@@ -11,11 +11,12 @@ import com.google.gson.annotations.SerializedName
 data class Ram(
     @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
-    var type: String,
+    override var type: String,
     @SerializedName("image_link")
-    var imageLink: String,
+    override var imageLink: String,
 
-    var ram_name: String,
+    @SerializedName("ram_name")
+    override var name: String,
     @SerializedName("ram_memory_speed_mhz")
     var memory_speed_mhz: Int,
     @SerializedName("ram_memory_size_gb")
@@ -24,15 +25,14 @@ data class Ram(
     var num_of_sticks: Int,
 
     @SerializedName("rrp_price")
-    var rrpPrice: Double,
+    override var rrpPrice: Double,
     @SerializedName("amazon_price")
-    var amazonPrice: Double?,
+    override var amazonPrice: Double?,
     @SerializedName("amazon_link")
-    var amazonLink: String?,
+    override var amazonLink: String?,
     @SerializedName("scan_price")
-    var scanPrice: Double?,
+    override var scanPrice: Double?,
     @SerializedName("scan_link")
-    var scanLink: String?,
-    var deletable: Boolean = true
-
-): Component() {}
+    override var scanLink: String?,
+    override var deletable: Boolean = true
+): Component {}

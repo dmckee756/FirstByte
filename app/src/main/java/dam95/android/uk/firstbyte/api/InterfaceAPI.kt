@@ -18,7 +18,7 @@ interface InterfaceAPI {
     suspend fun searchCategory(@Path("type") type: String?, @Path("name") name: String?): Response<List<SearchedHardwareItem>>
 
     @GET("hardware={name}")
-    suspend fun getGpu(@Path("name") name: String?): Response<List<Component>>
+    suspend fun getGpu(@Path("name") name: String?): Response<List<Gpu>>
 
     @GET("hardware={name}")
     suspend fun getCpu(@Path("name") name: String?): Response<List<Cpu>>

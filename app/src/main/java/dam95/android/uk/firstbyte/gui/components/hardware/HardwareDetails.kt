@@ -6,12 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import dam95.android.uk.firstbyte.api.ConvertImageURL
 import dam95.android.uk.firstbyte.api.api_model.ApiRepository
 import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBHelper
-import dam95.android.uk.firstbyte.model.components.Component
-import dam95.android.uk.firstbyte.model.components.ComponentsEnum
+import dam95.android.uk.firstbyte.model.components.*
 import java.util.*
 
 /**
@@ -21,10 +21,12 @@ private const val NAME_KEY = "NAME"
 private const val CATEGORY_KEY = "CATEGORY"
 private const val ONLINE_LOAD_KEY = "ONLINE"
 private const val OFFLINE_LOAD_KEY = "OFFLINE"
+private const val COMPONENT_INDEX = 0
 
 class HardwareDetails : Fragment() {
 
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
+    private lateinit var  displayCorrectHardware: DisplayCorrectHardware
     private lateinit var componentsComponentDB: ComponentDBHelper
 
     override fun onCreateView(
@@ -36,7 +38,8 @@ class HardwareDetails : Fragment() {
         val componentType = arguments?.getString(CATEGORY_KEY)
 
         if (componentName != null && componentType != null) {
-            componentsComponentDB = ComponentDBHelper(requireContext())
+            //componentsComponentDB = ComponentDBHelper(requireContext())
+            displayCorrectHardware = DisplayCorrectHardware()
 
             Log.i("SEARCH_CATEGORY", componentName)
             //Check which fragment this was navigated from.
@@ -70,7 +73,6 @@ class HardwareDetails : Fragment() {
         val apiRepository = ApiRepository()
         val apiViewModel = ApiViewModel(apiRepository)
 
-        val component: Component
         apiViewModel.getHardware(name, type)
         when (type.toUpperCase(Locale.ROOT)) {
             ComponentsEnum.GPU.toString() -> apiViewModel.apiGpuResponse
@@ -83,16 +85,23 @@ class HardwareDetails : Fragment() {
             ComponentsEnum.HEATSINK.toString() -> apiViewModel.apiHeatsinkResponse
             ComponentsEnum.FAN.toString() -> apiViewModel.apiFanResponse
             else -> null
-        }
-            ?.observe(viewLifecycleOwner, { res ->
-            if (res.isSuccessful) {
-                //ConvertImageURL()
-                hardwareDetailsBinding.tempDisplayHardwareSpecs.text = res.body().toString()
-                setUpButtons(name, type, res)
-            } else {
-                Log.i("HARDWARE_RES_FAIL", "FAILED LOAD")
-            }
-        })!!
+        }?.observe(viewLifecycleOwner, { res ->
+                //
+                if (res.isSuccessful) {
+                    //
+                    if (res.body()?.get(COMPONENT_INDEX) != null) {
+                        ConvertImageURL.convertURLtoImage(res.body()!![COMPONENT_INDEX].imageLink, hardwareDetailsBinding.componentImage)
+                        displayCorrectHardware.loadCorrectHardware(res.body()!![COMPONENT_INDEX], hardwareDetailsBinding)
+                        setUpButtons(name, type, res)
+                        //
+                    } else {
+                        Log.e("NULL_COMPONENT", "Error, loaded hardware component is empty.")
+                    }
+                    //
+                } else {
+                    Log.e("HARDWARE_RES_FAIL", "FAILED LOAD")
+                }
+            })
     }
 
     /**
@@ -103,8 +112,8 @@ class HardwareDetails : Fragment() {
     }
 
     private fun setUpButtons(name: String, type: String, res: Any) {
-       /* val addHardware = hardwareDetailsBinding.addHardwareBtn
-        val removeHardware = hardwareDetailsBinding.removeHardwareBtn*/
+        /* val addHardware = hardwareDetailsBinding.addHardwareBtn
+         val removeHardware = hardwareDetailsBinding.removeHardwareBtn*/
 /*
         if (componentsViewModel.hardwareExists(name, type)){
             addHardware.isClickable = false
@@ -119,5 +128,4 @@ class HardwareDetails : Fragment() {
 
         }*/
     }
-
 }

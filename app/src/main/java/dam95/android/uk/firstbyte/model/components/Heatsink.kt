@@ -11,11 +11,12 @@ import com.google.gson.annotations.SerializedName
 data class Heatsink(
     @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
-    var type: String,
+    override var type: String,
     @SerializedName("image_link")
-    var imageLink: String,
+    override var imageLink: String,
 
-    var heatsink_name: String,
+    @SerializedName("heatsink_name")
+    override var name: String,
     var socket: String,
     var fan_slots: Int,
     var amd_socket_min: String?,
@@ -25,15 +26,15 @@ data class Heatsink(
     var heatsink_dimensions: String,
 
     @SerializedName("rrp_price")
-    var rrpPrice: Double,
+    override var rrpPrice: Double,
     @SerializedName("amazon_price")
-    var amazonPrice: Double?,
+    override var amazonPrice: Double?,
     @SerializedName("amazon_link")
-    var amazonLink: String?,
+    override var amazonLink: String?,
     @SerializedName("scan_price")
-    var scanPrice: Double?,
+    override var scanPrice: Double?,
     @SerializedName("scan_link")
-    var scanLink: String?,
-    var deletable: Boolean = true
+    override var scanLink: String?,
+    override var deletable: Boolean = true
 
-): Component() {}
+): Component {}

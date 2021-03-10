@@ -11,11 +11,12 @@ import com.google.gson.annotations.SerializedName
 data class Storage(
     @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
-    var type: String,
+    override var type: String,
     @SerializedName("image_link")
-    var imageLink: String,
+    override var imageLink: String,
 
-    var storage_name: String,
+    @SerializedName("storage_name")
+    override var name: String,
     var storage_type: String,
     @SerializedName("external_storage")
     val isExternalStorage: Byte,
@@ -23,14 +24,14 @@ data class Storage(
     var storage_speed_mbps: Int,
 
     @SerializedName("rrp_price")
-    var rrpPrice: Double,
+    override var rrpPrice: Double,
     @SerializedName("amazon_price")
-    var amazonPrice: Double?,
+    override var amazonPrice: Double?,
     @SerializedName("amazon_link")
-    var amazonLink: String?,
+    override var amazonLink: String?,
     @SerializedName("scan_price")
-    var scanPrice: Double?,
+    override var scanPrice: Double?,
     @SerializedName("scan_link")
-    var scanLink: String?,
-    var deletable: Boolean = true
-): Component() {}
+    override var scanLink: String?,
+    override var deletable: Boolean = true
+): Component {}

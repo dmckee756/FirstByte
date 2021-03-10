@@ -11,11 +11,12 @@ import com.google.gson.annotations.SerializedName
 data class Cpu(
     @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
-    var type: String,
+    override var type: String,
     @SerializedName("image_link")
-    var imageLink: String,
+    override var imageLink: String,
 
-    var cpu_name: String,
+    @SerializedName("cpu_name")
+    override var name: String,
     var core_speed_ghz: Double,
     var core_count: Int,
     @SerializedName("multi_threading")
@@ -26,14 +27,14 @@ data class Cpu(
     var hasHeatsink: Byte,
 
     @SerializedName("rrp_price")
-    var rrpPrice: Double,
+    override var rrpPrice: Double,
     @SerializedName("amazon_price")
-    var amazonPrice: Double?,
+    override var amazonPrice: Double?,
     @SerializedName("amazon_link")
-    var amazonLink: String?,
+    override var amazonLink: String?,
     @SerializedName("scan_price")
-    var scanPrice: Double?,
+    override var scanPrice: Double?,
     @SerializedName("scan_link")
-    var scanLink: String?,
-    var deletable: Boolean = true
-): Component() {}
+    override var scanLink: String?,
+    override var deletable: Boolean = true
+): Component {}
