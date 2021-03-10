@@ -25,7 +25,7 @@ class DisplayCorrectHardware {
     }
 
     private fun displayGpu(gpu: Gpu, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = gpu.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = gpu.toString()
     }
 
     private fun displayCpu(cpu: Cpu, hardwareBinding: FragmentHardwareDetailsBinding){

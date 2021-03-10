@@ -3,6 +3,7 @@ package dam95.android.uk.firstbyte.api.api_model
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.Ignore
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import kotlinx.coroutines.launch
@@ -21,15 +22,7 @@ class ApiViewModel(private val apiRepository: ApiRepository) : ViewModel() {
         MutableLiveData()
 
     //Hardware specifications responses
-    val apiGpuResponse: MutableLiveData<Response<List<Gpu>>> = MutableLiveData()
-    val apiCpuResponse: MutableLiveData<Response<List<Cpu>>> = MutableLiveData()
-    val apiRamResponse: MutableLiveData<Response<List<Ram>>> = MutableLiveData()
-    val apiPsuResponse: MutableLiveData<Response<List<Psu>>> = MutableLiveData()
-    val apiStorageResponse: MutableLiveData<Response<List<Storage>>> = MutableLiveData()
-    val apiMotherboardResponse: MutableLiveData<Response<List<Motherboard>>> = MutableLiveData()
-    val apiCaseResponse: MutableLiveData<Response<List<Case>>> = MutableLiveData()
-    val apiHeatsinkResponse: MutableLiveData<Response<List<Heatsink>>> = MutableLiveData()
-    val apiFanResponse: MutableLiveData<Response<List<Fan>>> = MutableLiveData()
+    val apiHardwareResponse: MutableLiveData<Response<List<Component>>> = MutableLiveData()
 
     /**
      *
@@ -54,19 +47,21 @@ class ApiViewModel(private val apiRepository: ApiRepository) : ViewModel() {
     /**
      *
      */
+    @Suppress("UNCHECKED_CAST")
     fun getHardware(name: String, type: String) {
         viewModelScope.launch {
-            when (type.toUpperCase(Locale.ROOT)) {
-                ComponentsEnum.GPU.toString() -> apiGpuResponse.value = apiRepository.repoGetGpu(name)
-                ComponentsEnum.CPU.toString() -> apiCpuResponse.value = apiRepository.repoGetCpu(name)
-                ComponentsEnum.RAM.toString() -> apiRamResponse.value = apiRepository.repoGetRam(name)
-                ComponentsEnum.PSU.toString() -> apiPsuResponse.value = apiRepository.repoGetPsu(name)
-                ComponentsEnum.STORAGE.toString() -> apiStorageResponse.value = apiRepository.repoGetStorage(name)
-                ComponentsEnum.MOTHERBOARD.toString() -> apiMotherboardResponse.value = apiRepository.repoGetMotherboard(name)
-                ComponentsEnum.CASES.toString() -> apiCaseResponse.value = apiRepository.repoGetCase(name)
-                ComponentsEnum.HEATSINK.toString() -> apiHeatsinkResponse.value = apiRepository.repoGetHeatsink(name)
-                ComponentsEnum.FAN.toString() -> apiFanResponse.value = apiRepository.repoGetFan(name)
-            }
+            apiHardwareResponse.value = (when (type.toUpperCase(Locale.ROOT)) {
+                ComponentsEnum.GPU.toString() -> apiRepository.repoGetGpu(name)
+                ComponentsEnum.CPU.toString() -> apiRepository.repoGetCpu(name)
+                ComponentsEnum.RAM.toString() -> apiRepository.repoGetRam(name)
+                ComponentsEnum.PSU.toString() -> apiRepository.repoGetPsu(name)
+                ComponentsEnum.STORAGE.toString() -> apiRepository.repoGetStorage(name)
+                ComponentsEnum.MOTHERBOARD.toString() -> apiRepository.repoGetMotherboard(name)
+                ComponentsEnum.CASES.toString() -> apiRepository.repoGetCase(name)
+                ComponentsEnum.HEATSINK.toString() -> apiRepository.repoGetHeatsink(name)
+                ComponentsEnum.FAN.toString() -> apiRepository.repoGetFan(name)
+                else -> null
+            }) as Response<List<Component>>
         }
     }
 }

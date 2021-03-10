@@ -74,18 +74,7 @@ class HardwareDetails : Fragment() {
         val apiViewModel = ApiViewModel(apiRepository)
 
         apiViewModel.getHardware(name, type)
-        when (type.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> apiViewModel.apiGpuResponse
-            ComponentsEnum.CPU.toString() -> apiViewModel.apiCpuResponse
-            ComponentsEnum.RAM.toString() -> apiViewModel.apiRamResponse
-            ComponentsEnum.PSU.toString() -> apiViewModel.apiPsuResponse
-            ComponentsEnum.STORAGE.toString() -> apiViewModel.apiStorageResponse
-            ComponentsEnum.MOTHERBOARD.toString() -> apiViewModel.apiMotherboardResponse
-            ComponentsEnum.CASES.toString() -> apiViewModel.apiCaseResponse
-            ComponentsEnum.HEATSINK.toString() -> apiViewModel.apiHeatsinkResponse
-            ComponentsEnum.FAN.toString() -> apiViewModel.apiFanResponse
-            else -> null
-        }?.observe(viewLifecycleOwner, { res ->
+        apiViewModel.apiHardwareResponse.observe(viewLifecycleOwner, { res ->
                 //
                 if (res.isSuccessful) {
                     //
