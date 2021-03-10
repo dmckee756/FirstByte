@@ -1,17 +1,36 @@
 package dam95.android.uk.firstbyte.model.components
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
  *
  */
-object Storage : Component() {
-    @SerializedName("storage_type")
-    private lateinit var storageType: String
+@Entity(tableName = "savedStorage")
+data class Storage(
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName("component_type")
+    var type: String,
+    @SerializedName("image_link")
+    var imageLink: String,
+
+    var storage_name: String,
+    var storage_type: String,
     @SerializedName("external_storage")
-    private var externalStorage: Boolean = false
-    @SerializedName("storage_capacity_gb")
-    private var storageCapacityGB: Int = INT_DEFAULT
-    @SerializedName("storage_speed_mbps")
-    private var storageSpeedMBps: Int = INT_DEFAULT
-}
+    val isExternalStorage: Byte,
+    var storage_capacity_gb: Int,
+    var storage_speed_mbps: Int,
+
+    @SerializedName("rrp_price")
+    var rrpPrice: Double,
+    @SerializedName("amazon_price")
+    var amazonPrice: Double?,
+    @SerializedName("amazon_link")
+    var amazonLink: String?,
+    @SerializedName("scan_price")
+    var scanPrice: Double?,
+    @SerializedName("scan_link")
+    var scanLink: String?,
+    var deletable: Boolean = true
+): Component() {}

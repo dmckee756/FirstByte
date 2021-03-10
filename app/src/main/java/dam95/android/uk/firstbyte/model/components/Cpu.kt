@@ -1,21 +1,39 @@
 package dam95.android.uk.firstbyte.model.components
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
  *
  */
-object Cpu : Component() {
-    @SerializedName("core_speed_ghz")
-    private var coreSpeedGhz: Double = DOUBLE_DEFAULT
-    @SerializedName("core_count")
-    private var coreCount: Int = INT_DEFAULT
+@Entity(tableName = "savedCpu")
+data class Cpu(
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName("component_type")
+    var type: String,
+    @SerializedName("image_link")
+    var imageLink: String,
+
+    var cpu_name: String,
+    var core_speed_ghz: Double,
+    var core_count: Int,
     @SerializedName("multi_threading")
-    private var boolean: Boolean = false
-    @SerializedName("cpu_socket")
-    private lateinit var cpuSocket: String
-    @SerializedName("cpu_wattage")
-    private var wattage: Int = INT_DEFAULT
+    var isMultiThreaded: Byte,
+    var cpu_socket: String,
+    var cpu_wattage: Int,
     @SerializedName("default_heatsink")
-    private var defaultHeatsink: Double = DOUBLE_DEFAULT
-}
+    var hasHeatsink: Byte,
+
+    @SerializedName("rrp_price")
+    var rrpPrice: Double,
+    @SerializedName("amazon_price")
+    var amazonPrice: Double?,
+    @SerializedName("amazon_link")
+    var amazonLink: String?,
+    @SerializedName("scan_price")
+    var scanPrice: Double?,
+    @SerializedName("scan_link")
+    var scanLink: String?,
+    var deletable: Boolean = true
+): Component() {}

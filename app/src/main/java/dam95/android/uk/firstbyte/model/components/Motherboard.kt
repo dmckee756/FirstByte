@@ -1,32 +1,43 @@
 package dam95.android.uk.firstbyte.model.components
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
  *
  */
-object Motherboard : Component() {
-    @SerializedName("board_type")
-    private lateinit var boardType: String
+@Entity(tableName = "savedMotherboard")
+data class Motherboard(
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName("component_type")
+    var type: String,
+    @SerializedName("image_link")
+    var imageLink: String,
 
-    @SerializedName("board_dimensions")
-    private lateinit var dimensions: String
-
-    @SerializedName("processor_socket")
-    private lateinit var cpuSocket: String
-
-    @SerializedName("ddr_sdram")
-    private lateinit var ddrSDRAM: String
-
+    var board_name: String,
+    var board_type: String,
+    var board_dimensions: String,
+    var processor_socket: String,
+    var ddr_sdram: String,
     @SerializedName("usb3+")
-    private var usb3Plus: Boolean = false //Default Value
-
+    val hasUsb3Plus: Byte,
     @SerializedName("wifi")
-    private var wifi: Boolean = false //Default Value
-
+    var hasWifi: Byte,
     @SerializedName("pci-e")
-    private var pci_e: Double = DOUBLE_DEFAULT
-
+    var pci_e: Double,
     @SerializedName("nvme_support")
-    private var nvmeSupport: Boolean = false //Default Value
-}
+    val hasNvmeSupport: Byte,
+
+    @SerializedName("rrp_price")
+    var rrpPrice: Double,
+    @SerializedName("amazon_price")
+    var amazonPrice: Double?,
+    @SerializedName("amazon_link")
+    var amazonLink: String?,
+    @SerializedName("scan_price")
+    var scanPrice: Double?,
+    @SerializedName("scan_link")
+    var scanLink: String?,
+    var deletable: Boolean = true
+): Component() {}

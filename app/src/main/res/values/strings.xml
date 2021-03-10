@@ -44,4 +44,9 @@
         <item>fan</item>
     </string-array>
 
+    <!-- HardwareDetails -->
+    <string name="addHardware">Save %1$s</string>
+    <string name="removeHardware">Remove %1$s</string>
+
+
 </resources>

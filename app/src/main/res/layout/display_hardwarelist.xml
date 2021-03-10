@@ -22,17 +22,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/addHardwareBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/icon_add"
-            android:elevation="10dp"
-            android:layout_marginHorizontal="@dimen/standard_margins"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/hardwareSearchName"
             style="@style/headlineTextFB"
@@ -59,7 +48,6 @@
             app:layout_constraintStart_toEndOf="@+id/hardwareSearchImage"
             app:layout_constraintBottom_toBottomOf="parent"
             />
-
 
         <ImageView
             android:id="@+id/hardwareSearchImage"

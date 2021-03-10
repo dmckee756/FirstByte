@@ -19,5 +19,5 @@ data class SearchedHardwareItem(
     /**
      *
      */
-    fun rrpPriceToCurrency(): String = "£$rrpPrice"
+    fun rrpPriceToCurrency(): String = "£${String.format("%.2f", rrpPrice)}"
 }

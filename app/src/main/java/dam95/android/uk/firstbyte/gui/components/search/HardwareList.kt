@@ -1,32 +1,33 @@
 package dam95.android.uk.firstbyte.gui.components.search
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
-import dam95.android.uk.firstbyte.datasource.api_model.ApiRepository
-import dam95.android.uk.firstbyte.datasource.api_model.ApiViewModel
+import dam95.android.uk.firstbyte.api.api_model.ApiRepository
+import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
-import dam95.android.uk.firstbyte.model.components.*
 import retrofit2.Response
 
 /**
  *
  */
 private const val CATEGORY_KEY = "CATEGORY"
-
+private const val NAME_KEY = "NAME"
+private const val ONLINE_LOAD_KEY = "ONLINE"
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var apiViewModel: ApiViewModel
+
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
     private var searchCategory: String? = null
@@ -42,7 +43,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
             Log.i("SEARCH_CATEGORY", searchCategory!!)
-            //MVVM
+
             val apiRepository = ApiRepository()
             apiViewModel = ApiViewModel(apiRepository)
 
@@ -102,38 +103,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     /**
      *
      */
-    private fun loadComponentChild(componentType: String): Component? {
-        return when (componentType) {
-            "gpu" -> Gpu
-            "cpu" -> Cpu
-            "ram" -> Ram
-            "psu" -> Psu
-            "storage" -> Storage
-            "motherboard" -> Motherboard
-            "case" -> Case
-            "heatsink" -> Heatsink
-            "fan" -> Fan
-            else -> null
-        }
-    }
-
-    companion object {
-        /**
-         *
-         *
-         *
-         */
-        @JvmStatic
-        fun newInstance(chosenCategory: Bundle): HardwareList {
-            val hardwareList = HardwareList()
-            hardwareList.arguments = chosenCategory
-            return hardwareList
-        }
-    }
-
-    /**
-     *
-     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -184,33 +153,11 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      *
      */
     override fun onHardwareClick(componentName: String, componentType: String) {
-        /*
-        val component: Component? = loadComponentChild(componentType)
 
-        if (component != null) {
-            val retrofitGet = RetrofitBuild.apiIntegrator.getHardware(componentName)
-            //
-            retrofitGet.enqueue(object : Callback<List<>?> {
-                //
-                override fun onResponse(
-                    call: Call<List<>?>,
-                    response: Response<List<>?>
-                ) {
-                    val responseBody = response.body()!!
-                    setUpHardwareList(responseBody)
-                }
+        val nameBundle = bundleOf(NAME_KEY to componentName, CATEGORY_KEY to componentType, ONLINE_LOAD_KEY to ONLINE_LOAD_KEY)
 
-                override fun onFailure(call: Call<List<>?>, t: Throwable) {
-                    Log.i("FETCH_FAIL", "Error: ${t.message}")
-                }
-            })
-
-            Log.i("COMPONENT", componentName)
-            val categoryBundle = Bundle()
-            categoryBundle.putString(COMPONENT_KEY, componentName)
-            (activity as HomeActivity).changeFragmentWithArgs(COMPONENT_KEY, categoryBundle)
-        } else {
-            Log.i("ERROR_HARDWARE", "Category type is Null.")
-        }*/
+        //
+        val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(R.id.action_hardwareList_fragmentID_to_hardwareDetails_fragmentID, nameBundle)
     }
 }

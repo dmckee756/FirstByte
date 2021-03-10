@@ -20,7 +20,6 @@ class HardwareListRecyclerList(
 ) : RecyclerView.Adapter<HardwareListRecyclerList.ViewHolder>() {
 
     private var hardwareListFull = emptyList<SearchedHardwareItem>()
-    private var searchList: List<SearchedHardwareItem> = emptyList()
 
     /**
      *
@@ -30,19 +29,12 @@ class HardwareListRecyclerList(
         private val nameText: TextView,
         private val priceText: TextView,
         private val componentImage: ImageView,
-        private val hardwareBtn: Button,
-        private val addHardwareBtn: Button
+        private val hardwareBtn: Button
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
         init {
             hardwareBtn.setOnClickListener(this)
-            /*
-            if hardware is saved{
-            addHardwareBtn == not visible
-            } else {
-             */
-            addHardwareBtn.setOnClickListener(this)
         }
 
         /**
@@ -53,7 +45,7 @@ class HardwareListRecyclerList(
             Log.i("LIST_HARDWARE_NAME", displayedComponent.name)
             Log.i("LIST_HARDWARE_LINK", displayedComponent.image_link)
             ConvertImageURL.convertURLtoImage(
-                displayedComponent,
+                displayedComponent.image_link,
                 componentImage
             )
             nameText.text = displayedComponent.name
@@ -111,8 +103,7 @@ class HardwareListRecyclerList(
             hardwareListBinding.hardwareSearchName,
             hardwareListBinding.hardwareSearchPrice,
             hardwareListBinding.hardwareSearchImage,
-            hardwareListBinding.hardwareBtn,
-            hardwareListBinding.addHardwareBtn
+            hardwareListBinding.hardwareBtn
         )
     }
 

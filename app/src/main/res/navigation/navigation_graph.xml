@@ -53,6 +53,18 @@
         android:id="@+id/hardwareList_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.search.HardwareList"
         android:label="Hardware Search hardcoded"
-        tools:layout="@layout/recycler_list"/>
+        tools:layout="@layout/recycler_list">
+        <action
+            android:id="@+id/action_hardwareList_fragmentID_to_hardwareDetails_fragmentID"
+            app:destination="@id/hardwareDetails_fragmentID" />
+        <argument
+            android:name="NAME"
+            app:argType="string"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/hardwareDetails_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails"
+        android:label="HardwareDetails" />
 
 </navigation>

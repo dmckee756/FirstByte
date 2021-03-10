@@ -1,19 +1,36 @@
 package dam95.android.uk.firstbyte.model.components
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
  *
  */
-object Gpu : Component() {
-    @SerializedName("core_speed_mhz")
-    private var coreSpeedMhz: Int = INT_DEFAULT
-    @SerializedName("memory_size_gb")
-    private var memorySizeGb: Int = INT_DEFAULT
-    @SerializedName("memory_speed_mhz")
-    private var memorySpeedMhz: Int = INT_DEFAULT
-    @SerializedName("wattage")
-    private var wattage: Int = INT_DEFAULT
-    @SerializedName("dimensions")
-    private lateinit var dimensions: String
-}
+@Entity(tableName = "savedGpu")
+data class Gpu(
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName("component_type")
+    var type: String,
+    @SerializedName("image_link")
+    var imageLink: String,
+
+    val gpu_name: String,
+    var core_speed_mhz: Int,
+    var memory_size_gb: Int,
+    var memory_speed_mhz: Int,
+    var wattage: Int,
+    var dimensions: String,
+
+    @SerializedName("rrp_price")
+    var rrpPrice: Double,
+    @SerializedName("amazon_price")
+    var amazonPrice: Double?,
+    @SerializedName("amazon_link")
+    var amazonLink: String?,
+    @SerializedName("scan_price")
+    var scanPrice: Double?,
+    @SerializedName("scan_link")
+    var scanLink: String?,
+    var deletable: Boolean = true
+): Component() {}
