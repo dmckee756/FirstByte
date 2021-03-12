@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
@@ -14,26 +13,59 @@
         <action
             android:id="@+id/action_home_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
+        <action
+            android:id="@+id/action_home_fragmentID_to_help"
+            app:destination="@id/help_fragmentID" />
+        <action
+            android:id="@+id/action_home_fragmentID_to_settings"
+            app:destination="@id/settings_fragmentID" />
+        <action
+            android:id="@+id/action_home_fragmentID_to_searchSavedComponents"
+            app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 
     <fragment
         android:id="@+id/buildPC_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList"
         android:label="Build PCs Hardcoded"
-        tools:layout="@layout/fragment_pc_builds">
+        tools:layout="@layout/fragment_pc_build">
         <action
             android:id="@+id/action_buildPC_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
+        <action
+            android:id="@+id/action_buildPC_fragmentID_to_personalBuild"
+            app:destination="@id/personalBuild" />
+        <action
+            android:id="@+id/action_buildPC_fragmentID_to_help"
+            app:destination="@id/help_fragmentID" />
+        <action
+            android:id="@+id/action_buildPC_fragmentID_to_settings"
+            app:destination="@id/settings_fragmentID" />
+        <action
+            android:id="@+id/action_buildPC_fragmentID_to_searchSavedComponents"
+            app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 
     <fragment
         android:id="@+id/compare_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.SelectCompare"
         android:label="Compare hardware hardcoded"
-        tools:layout="@layout/fragment_compare">
+        tools:layout="@layout/fragment_select_compare">
         <action
             android:id="@+id/action_compare_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
+        <action
+            android:id="@+id/action_compare_fragmentID_to_compareHardware"
+            app:destination="@id/compareHardware_fragmentID" />
+        <action
+            android:id="@+id/action_compare_fragmentID_to_help"
+            app:destination="@id/help_fragmentID" />
+        <action
+            android:id="@+id/action_compare_fragmentID_to_settings"
+            app:destination="@id/settings_fragmentID" />
+        <action
+            android:id="@+id/action_compare_fragmentID_to_searchSavedComponents"
+            app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 
     <fragment
@@ -43,10 +75,12 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_searchCategory_fragmentID_to_hardwareList_fragmentID"
-            app:destination="@id/hardwareList_fragmentID" />
-        <argument
-            android:name="CATEGORY"
-            app:argType="string"/>
+            app:destination="@id/hardwareList_fragmentID">
+            <argument
+                android:name="CATEGORY"
+                app:argType="string" />
+        </action>
+
     </fragment>
 
     <fragment
@@ -59,12 +93,57 @@
             app:destination="@id/hardwareDetails_fragmentID" />
         <argument
             android:name="NAME"
-            app:argType="string"/>
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/hardwareDetails_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails"
         android:label="HardwareDetails" />
+    <fragment
+        android:id="@+id/personalBuild"
+        android:name="dam95.android.uk.firstbyte.gui.components.builds.PersonalBuild"
+        android:label="PersonalBuild">
+        <action
+            android:id="@+id/action_personalBuild_to_hardwareDetails_fragmentID"
+            app:destination="@id/hardwareDetails_fragmentID" />
+    </fragment>
+    <fragment
+        android:id="@+id/settings_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.configuration.Settings"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/help_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.configuration.Help"
+        android:label="fragment_help"
+        tools:layout="@layout/fragment_help" />
+    <fragment
+        android:id="@+id/compareHardware_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.compare.CompareHardware"
+        android:label="fragment_compare_hardware"
+        tools:layout="@layout/fragment_compare_hardware" />
+    <fragment
+        android:id="@+id/searchSavedComponents_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.search.SearchSavedComponents"
+        android:label="fragment_search_saved_components"
+        tools:layout="@layout/recycler_list">
+        <action
+            android:id="@+id/action_searchSavedComponents_to_savedHardwareList"
+            app:destination="@id/savedHardwareList_fragmentID" />
+        <argument
+            android:name="CATEGORY"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedHardwareList_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.search.SavedHardwareList"
+        android:label="SavedHardwareList"
+        tools:layout="@layout/recycler_list">
+
+        <action
+            android:id="@+id/action_savedHardwareList_fragmentID_to_hardwareDetails_fragmentID"
+            app:destination="@id/hardwareDetails_fragmentID" />
+    </fragment>
 
 </navigation>

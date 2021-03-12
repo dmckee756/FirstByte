@@ -32,4 +32,34 @@ data class Fan(
     @SerializedName("scan_link")
     override var scanLink: String?,
     override var deletable: Boolean = true
-): Component {}
+): Component {
+
+    /**
+     * Bundles all variables of a Fan into a list and returns it to the caller.
+     */
+    override fun getDetails(): List<*> {
+        return listOf(
+            name, type,
+            imageLink, rrpPrice,
+            amazonPrice, amazonLink,
+            scanPrice, scanLink, deletable,
+            name,
+            fan_size_mm, fan_rpm)
+    }
+
+    override fun setDetails(database_Read: List<*>){
+        name = database_Read[0] as String
+        type = database_Read[1] as String
+        imageLink = database_Read[2] as String
+        rrpPrice = database_Read[3] as Double
+        amazonPrice = database_Read[4] as Double?
+        amazonLink = database_Read[5] as String?
+        scanPrice = database_Read[6] as Double?
+        scanLink = database_Read[7] as String?
+        deletable = database_Read[8] as Boolean
+        //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
+        fan_size_mm = database_Read[10] as Int
+        fan_rpm = database_Read[database_Read.lastIndex] as Int
+    }
+
+}

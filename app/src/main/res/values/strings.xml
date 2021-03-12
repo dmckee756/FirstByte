@@ -2,10 +2,21 @@
     <string name="app_name">FirstByte</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="offlineText">You are currently offline, to see the information on this page please connect back online.</string>
 
     <!-- Toggle Drawer -->
-    <string name="openDrawer">Open Drawer Navigation</string>
-    <string name="closeDrawer">Close Drawer Navigation</string>
+    <string name="openDrawer">Open Toggle Drawer Navigation</string>
+    <string name="closeDrawer">Close Toggle Drawer Navigation</string>
+    <string name="headerImageDesc">Image of a computer, FirstByte Logo and what FirstByte is about in one line.</string>
+    <string name="drawerNavigation">Navigation</string>
+    <string name="firstByteInOneSentence">Search and build your computer</string>
+    <string name="home">Home</string>
+    <string name="savedPC_Parts">Saved PC Parts</string>
+    <string name="searchPC_Parts">Search PC Parts</string>
+    <string name="drawerSupport">Support</string>
+    <string name="settings">Settings</string>
+    <string name="help">Help</string>
+
     <!-- Toolbar Menu -->
     <string name="searchBtn">Search</string>
     <string name="tipsBtn">Tips</string>
@@ -19,6 +30,7 @@
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
+    <string name="offlineSearchAll">Search All Saved Components</string>
     <string-array name="categoriesDisplayText">
         <item>Search All Components</item>
         <item>Graphics Cards</item>

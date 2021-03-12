@@ -16,21 +16,19 @@ import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
  *
  */
 private const val CATEGORY_KEY = "CATEGORY"
-private const val IS_ONLINE_KEY = "IS_ONLINE"
-class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
+private const val CATEGORY_ALL = 0
+
+class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
 
-    /**
-     *
-     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
-        //Initialise the recycler adapter for searching the server
         setupSearchSelection()
+
         return recyclerListBinding.root
     }
 
@@ -42,6 +40,7 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
         val categories: ArrayList<Pair<String, String>> = ArrayList()
         val categoryHolder =
             ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
+        categoryHolder[CATEGORY_ALL] = resources.getString(R.string.offlineSearchAll)
         val categoryConnector =
             ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
 
@@ -53,7 +52,8 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
         val displayCategories = recyclerListBinding.recyclerList
         //
         displayCategories.layoutManager = LinearLayoutManager(this.context)
-        displayCategories.adapter = SearchCategoryRecyclerList(context, this, categories, online = true)
+        displayCategories.adapter =
+            SearchCategoryRecyclerList(context, this, categories, online = false)
 
     }
 
@@ -67,7 +67,10 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
 
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(R.id.action_searchCategory_fragmentID_to_hardwareList_fragmentID, categoryBundle)
+        navController?.navigate(
+            R.id.action_searchSavedComponents_to_savedHardwareList,
+            categoryBundle
+        )
     }
 
 }

@@ -29,34 +29,34 @@ class DisplayCorrectHardware {
     }
 
     private fun displayCpu(cpu: Cpu, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = cpu.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = cpu.toString()
     }
 
     private fun displayRam(ram: Ram, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = ram.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = ram.toString()
     }
 
     private fun displayPsu(psu: Psu, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = psu.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = psu.toString()
     }
 
     private fun displayStorage(storage: Storage, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = storage.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = storage.toString()
     }
 
     private fun displayMotherboard(motherboard: Motherboard, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = motherboard.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = motherboard.toString()
     }
 
     private fun displayCases(case: Case, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = case.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = case.toString()
     }
 
     private fun displayHeatsink(heatsink: Heatsink, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = heatsink.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = heatsink.toString()
     }
 
     private fun displayFan(fan: Fan, hardwareBinding: FragmentHardwareDetailsBinding){
-        hardwareBinding.tempDisplayHardwareSpecs.text = fan.name
+        hardwareBinding.tempDisplayHardwareSpecs.text = fan.toString()
     }
 }

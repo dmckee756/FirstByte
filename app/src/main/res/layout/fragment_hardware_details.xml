@@ -7,7 +7,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="?android:actionBarSize"
         android:layout_marginBottom="@dimen/halved_standard_margins"
         app:layout_constraintBottom_toTopOf="@id/addHardwareBtn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,7 +23,6 @@
                 android:layout_height="200dp"
                 android:layout_margin="@dimen/standard_margins"
                 android:contentDescription="TODO"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -33,22 +31,24 @@
                 android:id="@+id/tempDisplayHardwareSpecs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Temp"
+                android:text="@string/offlineText"
+                android:textAlignment="center"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/componentImage"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-<!--
-            <ViewStub
-                android:id="@+id/gpuDetailsLink"
-                layout=""
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/componentImage"
-                app:layout_constraintBottom_toBottomOf="parent"/>
--->
+                app:layout_constraintTop_toBottomOf="@id/componentImage" />
+            <!--
+                        <ViewStub
+                            android:id="@+id/gpuDetailsLink"
+                            layout=""
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/componentImage"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+            -->
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
@@ -60,7 +60,6 @@
         android:layout_marginVertical="@dimen/standard_margins"
         android:background="@drawable/object_save_remove_hardware"
         android:elevation="2dp"
-        android:focusable="true"
         android:text="@string/addHardware"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/removeHardwareBtn"
@@ -75,11 +74,9 @@
         android:layout_marginVertical="@dimen/standard_margins"
         android:background="@drawable/object_save_remove_hardware"
         android:elevation="2dp"
-        android:focusable="true"
         android:text="@string/removeHardware"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addHardwareBtn" />
 
-    -->
 </androidx.constraintlayout.widget.ConstraintLayout>

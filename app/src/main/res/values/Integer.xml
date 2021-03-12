@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="AndroidFB_HardwareVersion">1</integer>
+    <integer name="PC_Build_DBVersion">1</integer>
+    <integer name="Recommended_PC_DBVersion">1</integer>
 </resources>

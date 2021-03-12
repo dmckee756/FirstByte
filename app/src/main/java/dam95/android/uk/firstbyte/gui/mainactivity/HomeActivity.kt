@@ -2,14 +2,12 @@ package dam95.android.uk.firstbyte.gui.mainactivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,11 +16,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
-import dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList
-import dam95.android.uk.firstbyte.gui.components.compare.SelectCompare
-import dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails
-import dam95.android.uk.firstbyte.gui.components.search.HardwareList
-import dam95.android.uk.firstbyte.gui.components.search.SearchComponents
 
 /**
  *
@@ -31,13 +24,16 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var homeActivityBinding: ActivityHomeBinding
     private lateinit var drawerToggle: ActionBarDrawerToggle
-    private lateinit var  navController: NavController
+    private lateinit var navController: NavController
 
     /**
      *
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //Create recommended builds and build databases
+
         homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(homeActivityBinding.root)
         navController = findNavController(R.id.nav_fragment)
@@ -59,6 +55,19 @@ class HomeActivity : AppCompatActivity() {
 
         drawerToggle.toolbarNavigationClickListener = View.OnClickListener {
             onBackPressed()
+        }
+
+        //
+        homeActivityBinding.navDrawer.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home_fragmentID -> item.onNavDestinationSelected(navController)
+                R.id.searchSavedComponents_fragmentID -> item.onNavDestinationSelected(navController)
+                R.id.searchCategory_fragmentID -> item.onNavDestinationSelected(navController)
+                R.id.settings_fragmentID -> item.onNavDestinationSelected(navController)
+                R.id.help_fragmentID -> item.onNavDestinationSelected(navController)
+            }
+            drawer.close()
+            true
         }
 
         setUpNavigationBottomNavigation()
@@ -103,11 +112,14 @@ class HomeActivity : AppCompatActivity() {
      *
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //If a button within the toggle navigation drawer was clicked on, inform the listener
+        if(drawerToggle.onOptionsItemSelected(item)) return true
+        //Otherwise execute toolbar button command.
         when (item.itemId) {
             // Navigate to search components fragment
             R.id.searchCategory_fragmentID -> item.onNavDestinationSelected(navController)
-                // Display a tip to the user
-                R.id.tipsID -> Toast.makeText(this, "Tip Displayed", Toast.LENGTH_SHORT).show()
+            // Display a tip to the user
+            R.id.tipsID -> Toast.makeText(this, "Tip Displayed", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }

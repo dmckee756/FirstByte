@@ -18,11 +18,11 @@ import dam95.android.uk.firstbyte.model.components.*
 class SearchCategoryRecyclerList(
     private val context: Context?,
     private val listener: OnItemClickListener,
-    private val categories: ArrayList<Pair<String, String>>
+    private val categories: ArrayList<Pair<String, String>>,
+    private val online: Boolean
 ) : RecyclerView.Adapter<SearchCategoryRecyclerList.ViewHolder>() {
 
     private lateinit var displaySearchBinding: DisplaySearchBinding
-    private var firstCard = true
 
     /**
      *
@@ -32,20 +32,16 @@ class SearchCategoryRecyclerList(
 
         val categoryBtn: Button = displaySearchBinding.hardwareListFragmentID
 
-            init {
-                if (firstCard) {
-                    categoryBtn.setBackgroundResource(R.drawable.object_on_search_all)
-                    firstCard = false
-                }
-                categoryBtn.setOnClickListener(this)
-            }
+        init {
+            categoryBtn.setOnClickListener(this)
+        }
 
         /**
          *
          */
         override fun onClick(category: View?) {
 
-            if (adapterPosition != RecyclerView.NO_POSITION){
+            if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (category?.id) {
                     categoryBtn.id -> listener.onButtonClick(categories[adapterPosition].second)
                 }
@@ -83,16 +79,26 @@ class SearchCategoryRecyclerList(
      *
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        displaySearchBinding.categoryImage.background = loadCorrectImage(categories[position].second)
+        displaySearchBinding.categoryImage.background =
+            loadCorrectImage(categories[position].second)
         displaySearchBinding.categorySearchTxt.text = categories[position].first
-        //implement image
+
+        //Assign the correct colour to the actual first card of the recycler list, because it looks nice.
+        if (displaySearchBinding.categorySearchTxt.text == categories[0].first) {
+            if (online) {
+                displaySearchBinding.hardwareListFragmentID.setBackgroundResource(R.drawable.object_on_search_all)
+            } else {
+                displaySearchBinding.hardwareListFragmentID.setBackgroundResource(R.drawable.object_saved_search_all)
+            }
+        }
+
     }
 
     /**
      *
      */
     private fun loadCorrectImage(category: String): Drawable? {
-        val drawableID: Int = when(category){
+        val drawableID: Int = when (category) {
             "gpu" -> R.drawable.img_gpu_search
             "cpu" -> R.drawable.img_cpu_search
             "ram" -> R.drawable.img_ram_search

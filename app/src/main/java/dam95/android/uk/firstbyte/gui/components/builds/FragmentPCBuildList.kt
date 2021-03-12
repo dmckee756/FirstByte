@@ -6,14 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 
 class FragmentPCBuildList : Fragment() {
+
+    private lateinit var recyclerListBinding: RecyclerListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pc_builds, container, false)
+    ): View {
+        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
+
+        return recyclerListBinding.root
     }
 }

@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/drawer_header"
+        app:headerLayout="@layout/toggle_drawer_header"
         app:itemIconTint="?colorPrimaryDark"
         app:itemTextColor="?android:textColorPrimary"
         app:menu="@menu/drawer_nav_menu" />

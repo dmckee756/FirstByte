@@ -3,8 +3,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_message"
-            android:title="Message" />
-    </group>
+    <item android:title="@string/drawerNavigation">
+        <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/home_fragmentID"
+                android:icon="@drawable/icon_home"
+                android:title="@string/home" />
+
+            <item
+                android:id="@+id/searchSavedComponents_fragmentID"
+                android:icon="@drawable/icon_saved"
+                android:title="@string/savedPC_Parts" />
+            <item
+                android:id="@+id/searchCategory_fragmentID"
+                android:icon="@drawable/icon_search"
+                android:title="@string/searchPC_Parts" />
+        </group>
+    </item>
+
+    <item android:title="@string/drawerSupport">
+        <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/settings_fragmentID"
+                android:icon="@drawable/icon_settings"
+                android:title="@string/settings" />
+            <item
+                android:id="@+id/help_fragmentID"
+                android:icon="@drawable/icon_help"
+                android:title="@string/help" />
+        </group>
+    </item>
 </menu>
