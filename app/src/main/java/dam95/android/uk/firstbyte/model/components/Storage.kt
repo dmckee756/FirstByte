@@ -66,6 +66,8 @@ data class Storage(
         isExternalStorage = database_Read[11] as Int
         storage_capacity_gb = database_Read[12] as Int
         storage_capacity_gb = database_Read[13] as Int
-        storage_speed_mbps = database_Read[database_Read.lastIndex] as Int
+        storage_speed_mbps = database_Read[14] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

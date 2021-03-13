@@ -17,11 +17,12 @@ data class PCBuild(
     var pc_name: String,
     var gpu_name: String?,
     var cpu_name: String?,
-    var ram_name: String?,
+    var ram_name: List<String>?,
     var psu_name: String?,
     var motherboard_name: String?,
-    var storage_list: List<String?>,
+    var storage_list: List<String>?,
     var heatsink_name: String?,
     var case_name: String?,
-    var fan_list: List<String?>?
+    var fan_list: List<String>?,
+    var deleteable: Boolean = true
 ) {}

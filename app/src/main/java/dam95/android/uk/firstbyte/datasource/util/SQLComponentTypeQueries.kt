@@ -5,8 +5,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
+import java.lang.Exception
 import java.util.*
 
 /*If you are going to add or remove  values to the Component Interface class,
@@ -27,7 +29,8 @@ class SQLComponentTypeQueries {
     ): Boolean {
         //First add details to the components table, if all values are added successfully,
         //then it will switch over to specific components.
-        val currentTableColumns: List<String> = SQLComponentConstants.Components.COLUMN_LIST + tableColumns
+        val currentTableColumns: List<String> =
+            SQLComponentConstants.Components.COLUMN_LIST + tableColumns
 
         //Utilising ContentValues to safely put data into the database and...
         //...minimise the possibility of sql injections being successful.
@@ -76,24 +79,25 @@ class SQLComponentTypeQueries {
      *
      */
     @Throws(NullPointerException::class)
-    fun buildTheComponent(cursor: Cursor, type:String): Component{
+    fun buildTheComponent(cursor: Cursor, type: String): Component {
 
+        //Load default values for a component
         val component: Component = when (type.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> Gpu("","","", 0,0,0,0,"",0.0,null, null, null, null)
-            ComponentsEnum.CPU.toString() -> Cpu("","","", 0.0,0,0,"",0,0,0.0, null, null, null, null)
-            ComponentsEnum.RAM.toString() -> Ram("","","", 0,0,"",0,0.0,0.0,null, null, null)
-            ComponentsEnum.PSU.toString() -> Psu("","","", 0,"",0,0.0,null, null, null, null)
-            ComponentsEnum.STORAGE.toString() -> Storage("","","", "",0,0,0,0.0,null, null, null, null)
-            ComponentsEnum.MOTHERBOARD.toString() -> Motherboard("","","", "","","","",0,0,0.0, 0, 0.0,null,null,null, null)
-            ComponentsEnum.CASES.toString() -> Case("","","", 0,0,"","",0.0,null, null, null, null)
-            ComponentsEnum.HEATSINK.toString() -> Heatsink("","","", 0,"","","","","", 0.0,null, null, null, null)
-            ComponentsEnum.FAN.toString() -> Fan("","","", 0,0,0.0,null, null, null, null)
+            ComponentsEnum.GPU.toString() -> Gpu("", "", "", 0, 0, 0, 0, "", 0.0, null, null, null, null)
+            ComponentsEnum.CPU.toString() -> Cpu("", "", "", 0.0, 0, 0, "", 0, 0, 0.0, null, null, null, null)
+            ComponentsEnum.RAM.toString() -> Ram("", "", "", 0, 0, "", 0, 0.0, 0.0, null, null, null)
+            ComponentsEnum.PSU.toString() -> Psu("", "", "", 0, "", 0, 0.0, null, null, null, null)
+            ComponentsEnum.STORAGE.toString() -> Storage("", "", "", "", 0, 0, 0, 0.0, null, null, null, null)
+            ComponentsEnum.MOTHERBOARD.toString() -> Motherboard("", "", "", "", "", "", "", 0, 0, 0.0, 0, 0.0, null, null, null, null)
+            ComponentsEnum.CASES.toString() -> Case("", "", "", 0, 0, "", "", 0.0, null, null, null, null)
+            ComponentsEnum.HEATSINK.toString() -> Heatsink("", "", "", 0, "", "", "", "", "", 0.0, null, null, null, null)
+            ComponentsEnum.FAN.toString() -> Fan("", "", "", 0, 0, 0.0, null, null, null, null)
             else -> null
         } ?: throw java.lang.NullPointerException()
 
         cursor.moveToFirst()
         val listComponent = component.getDetails().toMutableList()
-        for (i in listComponent.indices){
+        for (i in listComponent.indices) {
             //Skip adding the duplicate component name from the relational table
             Log.i("INDEX", i.toString())
             Log.i("INDEX_COLUMN", cursor.getColumnName(i))
@@ -101,21 +105,38 @@ class SQLComponentTypeQueries {
                 is String -> listComponent[i] = cursor.getString(i)
                 is Double -> listComponent[i] = cursor.getDouble(i)
                 is Int -> listComponent[i] = cursor.getInt(i)
-                is Boolean -> listComponent[i] = cursor.getInt(i) == 1
+                is Boolean -> listComponent[i] = (cursor.getInt(i) == 1)
                 else -> listComponent[i] = null
             }
         }
         //Assign details to component
         component.setDetails(listComponent)
-        Log.i("BUILT_VALUES", component.toString())
         return component
     }
 
-    fun buildSearchItemList(cursor: Cursor): LiveData<List<SearchedHardwareItem>>?{
-/*
-        do {
+    /**
+     *
+     */
+    @Throws(NullPointerException::class)
+    fun buildSearchItemList(cursor: Cursor): LiveData<List<SearchedHardwareItem>> {
+        val buildDisplayList: MutableList<SearchedHardwareItem> = mutableListOf()
+        val liveDataList: MutableLiveData<List<SearchedHardwareItem>> = MutableLiveData()
 
-        } while ()*/
-        return TODO()
+        cursor.moveToFirst()
+        //Load all Display Items
+        for (i in 0 until cursor.count) {
+            val displayItem = SearchedHardwareItem(
+                cursor.getString(0),
+                cursor.getString(1),
+                cursor.getString(2),
+                cursor.getDouble(3)
+            )
+            buildDisplayList.add(displayItem)
+            cursor.moveToNext()
+        }
+
+        //Put the built display list into a Mutable Live Data List of Display Items and return it as LiveData
+        liveDataList.value = buildDisplayList.toList()
+        return liveDataList
     }
 }

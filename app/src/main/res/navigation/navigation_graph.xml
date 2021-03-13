@@ -77,8 +77,14 @@
             android:id="@+id/action_searchCategory_fragmentID_to_hardwareList_fragmentID"
             app:destination="@id/hardwareList_fragmentID">
             <argument
+                android:name="NAME"
+                app:argType="string" />
+            <argument
                 android:name="CATEGORY"
                 app:argType="string" />
+            <argument
+                android:name="LOADING_METHOD"
+                app:argType="boolean" />
         </action>
 
     </fragment>
@@ -94,6 +100,12 @@
         <argument
             android:name="NAME"
             app:argType="string" />
+        <argument
+            android:name="CATEGORY"
+            app:argType="string" />
+        <argument
+            android:name="LOADING_METHOD"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -129,21 +141,17 @@
         android:label="fragment_search_saved_components"
         tools:layout="@layout/recycler_list">
         <action
-            android:id="@+id/action_searchSavedComponents_to_savedHardwareList"
-            app:destination="@id/savedHardwareList_fragmentID" />
+            android:id="@+id/action_searchSavedComponents_fragmentID_to_hardwareList_fragmentID"
+            app:destination="@id/hardwareList_fragmentID" />
+        <argument
+            android:name="NAME"
+            app:argType="string" />
         <argument
             android:name="CATEGORY"
             app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/savedHardwareList_fragmentID"
-        android:name="dam95.android.uk.firstbyte.gui.components.search.SavedHardwareList"
-        android:label="SavedHardwareList"
-        tools:layout="@layout/recycler_list">
-
-        <action
-            android:id="@+id/action_savedHardwareList_fragmentID_to_hardwareDetails_fragmentID"
-            app:destination="@id/hardwareDetails_fragmentID" />
+        <argument
+            android:name="LOADING_METHOD"
+            app:argType="boolean" />
     </fragment>
 
 </navigation>

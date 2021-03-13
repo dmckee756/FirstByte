@@ -15,6 +15,10 @@ import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 import dam95.android.uk.firstbyte.model.components.Component
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 /**
@@ -22,8 +26,7 @@ import java.util.*
  */
 private const val NAME_KEY = "NAME"
 private const val CATEGORY_KEY = "CATEGORY"
-private const val ONLINE_LOAD_KEY = "ONLINE"
-private const val OFFLINE_LOAD_KEY = "OFFLINE"
+private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 private const val COMPONENT_INDEX = 0
 
 class HardwareDetails : Fragment() {
@@ -31,40 +34,35 @@ class HardwareDetails : Fragment() {
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
     private lateinit var displayCorrectHardware: DisplayCorrectHardware
     private lateinit var componentsComponentDB: ComponentDBAccess
+    private var isLoadingFromServer: Boolean? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         hardwareDetailsBinding = FragmentHardwareDetailsBinding.inflate(inflater, container, false)
         val componentName = arguments?.getString(NAME_KEY)
         val componentType = arguments?.getString(CATEGORY_KEY)
+        isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
 
         if (componentName != null && componentType != null) {
-            //DB
+            //Load FB_Hardware_Android Instance
             componentsComponentDB = context?.let { ComponentDBAccess.dbInstance(it) }!!
 
             //Display class initialisation
             displayCorrectHardware = DisplayCorrectHardware()
-
             Log.i("SEARCH_CATEGORY", componentName)
-            //Check which fragment this was navigated from.
-            val onlineLoad = arguments?.getString(ONLINE_LOAD_KEY)
-            val offlineLoad = arguments?.getString(OFFLINE_LOAD_KEY)
-
-            //Determine if offline load from Room databases or online.
-            when {
-                onlineLoad != null -> {
+            //Determine if offline load from FB_Hardware_Android Database or the online server.
+            when (isLoadingFromServer){
+                true -> {
                     streamInHardware(componentName, componentType)
                 }
-                offlineLoad != null -> {
+                false -> {
                     loadSavedHardware(componentName, componentType)
                 }
                 else -> {
-                    Log.i(
-                        "NULL_CATEGORY",
-                        "Error, null category imported into HardwareDetails. How?"
-                    )
+                    Log.e("NULL_CONNECTION?", "Error, Connection is showing null. How?")
                 }
             }
         }
@@ -109,7 +107,14 @@ class HardwareDetails : Fragment() {
      *
      */
     private fun loadSavedHardware(name: String, type: String) {
+        coroutineScope.launch {
+            val component: Component =
+                componentsComponentDB.getHardware(name, type)
 
+            ConvertImageURL.convertURLtoImage(component.imageLink, hardwareDetailsBinding.componentImage)
+            displayCorrectHardware.loadCorrectHardware(component, hardwareDetailsBinding)
+            setUpButtons(component)
+        }
     }
 
     /**
@@ -120,7 +125,7 @@ class HardwareDetails : Fragment() {
 
         //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons. TODO REMOVE '!' from !component.deletable when that problem is fixed
         //THIS CHECK NEEDS WORK, IT DOESN'T MAKE THE BUTTONS DISAPPEAR, BUT IT STOPS THE LISTENERS TO USERS CAN'T ADD NON EXISTENT DATA... SO OK FOR NOW I GUESS
-        if (hardwareDetailsBinding.tempDisplayHardwareSpecs.text != resources.getString(R.string.offlineText)) {
+        if (component.name != "" || component.name != "null") {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
             val removeHardware = hardwareDetailsBinding.removeHardwareBtn
@@ -130,28 +135,34 @@ class HardwareDetails : Fragment() {
 
             //If the loaded component is already stored in the Component Database...
             //...then do not allow the user to click on addHardware
-            if (componentsComponentDB.hardwareExists(component.name) > 0) {
-                setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
-                //...then do not allow the user to click on removeHardware...
-            } else {
-                setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
+            coroutineScope.launch {
+                if (componentsComponentDB.hardwareExists(component.name) > 0) {
+                    setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
+                    //...then do not allow the user to click on removeHardware...
+                } else {
+                    setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
+                }
             }
 
             addHardware.setOnClickListener {
                 //Add the component to the database, make this button un-clickable
                 //and allow the user to click on the remove hardware button
-                componentsComponentDB.insertHardware(component)
+                coroutineScope.launch {
+                    componentsComponentDB.insertHardware(component)
+                }
                 setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
             }
             removeHardware.setOnClickListener {
                 //Remove the component from the database, make this button un-clickable
                 //and allow the user to click on the add hardware button
-                componentsComponentDB.removeHardware(component.name)
+                coroutineScope.launch {
+                    componentsComponentDB.removeHardware(component.name)
+                }
                 setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
             }
             //... If the component can't be deleted, then get rid of the buttons.
         } else {
-            Log.i("DOES_IT_REACH?","HELLO????") //Bug with it not reaching this code
+            Log.i("DOES_IT_REACH?", "HELLO????") //Bug with it not reaching this code
             hardwareDetailsBinding.addHardwareBtn.visibility = View.GONE
             hardwareDetailsBinding.removeHardwareBtn.visibility = View.GONE
         }
@@ -181,6 +192,6 @@ class HardwareDetails : Fragment() {
      */
     override fun onDestroy() {
         super.onDestroy()
-        componentsComponentDB.closeDatabase()
+        if (isLoadingFromServer!!) componentsComponentDB.closeDatabase()
     }
 }

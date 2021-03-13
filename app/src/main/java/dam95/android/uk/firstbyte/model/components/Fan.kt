@@ -59,7 +59,9 @@ data class Fan(
         deletable = database_Read[8] as Boolean
         //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
         fan_size_mm = database_Read[10] as Int
-        fan_rpm = database_Read[database_Read.lastIndex] as Int
+        fan_rpm = database_Read[11] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 
 }

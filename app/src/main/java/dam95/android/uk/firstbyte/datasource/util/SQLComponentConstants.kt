@@ -6,7 +6,9 @@ private const val FK = "FOREIGN KEY"
 const val FK_ON = "PRAGMA foreign_keys=1"
 
 /**
- * This class is dedicated to creating a new component database and retrieving columns of tables
+ * This class is dedicated to creating the FB_Hardware_Android database and retrieving columns of tables
+ * It's a long class filled with SQL that will only be executed once when creating the database.
+ * It is not meant to be pretty, but rather a storage compartment for constant value commands
  */
 abstract class SQLComponentConstants {
 
@@ -116,6 +118,44 @@ abstract class SQLComponentConstants {
                 "$FK (${Fans.FAN_NAME})\n" +
                 "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
+        private const val CREATE_PCBUILD_TABLE = "CREATE TABLE ${PcBuild.PC_BUILD_TABLE}(\n" +
+                "${PcBuild.PC_ID} INT(3) $PK,\n" +
+                "${PcBuild.PC_NAME} VARCHAR(20),\n" +
+                "${PcBuild.PC_GPU_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_CPU_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_PSU_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_BOARD_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_HEATSINK_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_CASE_NAME} VARCHAR(50),\n" +
+                "${PcBuild.PC_IS_DELETABLE} VARCHAR(50),\n" +
+                "$FK(${PcBuild.PC_GPU_NAME})REFERENCES ${GraphicsCards.GPU_TABLE} (${GraphicsCards.GPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_CPU_NAME})REFERENCES ${Processors.CPU_TABLE} (${Processors.CPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_PSU_NAME})REFERENCES ${PowerSupplys.PSU_TABLE} (${PowerSupplys.PSU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_BOARD_NAME})REFERENCES ${Motherboards.MOTHERBOARD_TABLE} (${Motherboards.BOARD_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_HEATSINK_NAME})REFERENCES ${Heatsinks.HEATSINK_TABLE} (${Heatsinks.HEATSINK_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_CASE_NAME})REFERENCES ${Cases.CASE_TABLE} (${Cases.CASE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+
+        //Many to Many tables between a PC build and these created components below.
+        private const val CREATE_FANS_IN_PC_TABLE = "CREATE TABLE ${FansInPc.PC_FAN_TABLE}(" +
+                "${FansInPc.PC_ID} INT(3),\n" +
+                "${FansInPc.PC_FAN_NAME} VARCHAR(50),\n" +
+                "$FK (${FansInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK (${FansInPc.PC_FAN_NAME}) REFERENCES ${Fans.FAN_TABLE} (${Fans.FAN_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+
+        private const val CREATE_STORAGE_IN_PC_TABLE =
+            "CREATE TABLE ${StorageInPc.PC_STORAGE_TABLE}(" +
+                    "${StorageInPc.PC_ID} INT(3),\n" +
+                    "${StorageInPc.PC_STORAGE_NAME} VARCHAR(50),\n" +
+                    "$FK (${StorageInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                    "$FK (${StorageInPc.PC_STORAGE_NAME}) REFERENCES ${StorageList.STORAGE_TABLE} (${StorageList.STORAGE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+
+        private const val CREATE_RAM_IN_PC_TABLE = "CREATE TABLE ${RamInPc.PC_RAM_TABLE}(" +
+                "${RamInPc.PC_ID} INT(3),\n" +
+                "${RamInPc.PC_RAM_NAME} VARCHAR(50),\n" +
+                "$FK (${RamInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK (${RamInPc.PC_RAM_NAME}) REFERENCES ${RamSticks.RAM_TABLE} (${RamSticks.RAM_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+
+
         val TABLE_CREATION_COMMANDS: List<String> = listOf(
             CREATE_COMPONENTS_TABLE,
             CREATE_GPU_TABLE,
@@ -126,7 +166,11 @@ abstract class SQLComponentConstants {
             CREATE_MOTHERBOARD_TABLE,
             CREATE_CASES_TABLE,
             CREATE_HEATSINK_TABLE,
-            CREATE_FAN_TABLE
+            CREATE_FAN_TABLE,
+            CREATE_PCBUILD_TABLE,
+            CREATE_FANS_IN_PC_TABLE,
+            CREATE_STORAGE_IN_PC_TABLE,
+            CREATE_RAM_IN_PC_TABLE
         )
     }
 
@@ -148,6 +192,8 @@ abstract class SQLComponentConstants {
             const val SCAN_LINK: String = "scan_link"
             const val IS_DELETABLE: String = "deletable"
 
+            //This is the Brain of the database, this is where all components link to.
+            //This list is for easier data insertion and retrieval
             val COLUMN_LIST = listOf(
                 COMPONENT_NAME,
                 COMPONENT_TYPE,
@@ -358,6 +404,65 @@ abstract class SQLComponentConstants {
             const val FAN_SIZE: String = "fan_size_mm"
             const val FAN_SPEED: String = "fan_rpm"
             val COLUMN_LIST = listOf(FAN_NAME, FAN_SIZE, FAN_SPEED)
+        }
+    }
+
+    /**
+     *
+     */
+    interface PcBuild {
+        companion object {
+            const val PC_BUILD_TABLE: String = "pcbuild"
+
+            //Columns
+            const val PC_ID: String = "pc_id"
+            const val PC_NAME: String = "pc_name"
+            const val PC_GPU_NAME: String = "gpu_name"
+            const val PC_CPU_NAME: String = "cpu_name"
+            const val PC_PSU_NAME: String = "psu_name"
+            const val PC_BOARD_NAME: String = "board_name"
+            const val PC_HEATSINK_NAME: String = "heatsink_name"
+            const val PC_CASE_NAME: String = "case_name"
+            const val PC_IS_DELETABLE: String = "deletable"
+        }
+    }
+
+    /**
+     *
+     */
+    interface RamInPc {
+        companion object {
+            const val PC_RAM_TABLE: String = "ram_in_pc"
+
+            //Columns
+            const val PC_ID: String = "pc_id"
+            const val PC_RAM_NAME: String = "ram_name"
+        }
+    }
+
+    /**
+     *
+     */
+    interface StorageInPc {
+        companion object {
+            const val PC_STORAGE_TABLE: String = "storage_in_pc"
+
+            //Columns
+            const val PC_ID: String = "pc_id"
+            const val PC_STORAGE_NAME: String = "storage_name"
+        }
+    }
+
+    /**
+     *
+     */
+    interface FansInPc {
+        companion object {
+            const val PC_FAN_TABLE: String = "fans_in_pc"
+
+            //Columns
+            const val PC_ID: String = "pc_id"
+            const val PC_FAN_NAME: String = "fan_name"
         }
     }
 }

@@ -63,6 +63,8 @@ data class Psu(
         //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
         psu_wattage = database_Read[10] as Int
         rating = database_Read[11] as String
-        isModular = database_Read[database_Read.lastIndex] as Int
+        isModular = database_Read[12] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

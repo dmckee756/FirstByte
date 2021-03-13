@@ -65,6 +65,8 @@ data class Ram(
         memory_speed_mhz = database_Read[10] as Int
         memory_size_gb = database_Read[11] as Int
         ram_ddr = database_Read[12] as String
-        num_of_sticks = database_Read[database_Read.lastIndex] as Int
+        num_of_sticks = database_Read[13] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

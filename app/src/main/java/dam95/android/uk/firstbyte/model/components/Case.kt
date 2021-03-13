@@ -50,7 +50,7 @@ data class Case(
         )
     }
 
-   override fun setDetails(database_Read: List<*>){
+    override fun setDetails(database_Read: List<*>) {
         name = database_Read[0] as String
         type = database_Read[1] as String
         imageLink = database_Read[2] as String
@@ -60,10 +60,12 @@ data class Case(
         scanPrice = database_Read[6] as Double?
         scanLink = database_Read[7] as String?
         deletable = database_Read[8] as Boolean
-       //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
+        //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
         case_fan_slots = database_Read[10] as Int
         case_fan_sizes_mm = database_Read[11] as Int
         case_motherboard = database_Read[12] as String
-        case_dimensions = database_Read[database_Read.lastIndex] as String
+        case_dimensions = database_Read[13] as String
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

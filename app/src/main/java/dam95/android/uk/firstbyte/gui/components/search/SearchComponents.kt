@@ -11,12 +11,13 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
+import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 
 /**
  *
  */
 private const val CATEGORY_KEY = "CATEGORY"
-private const val IS_ONLINE_KEY = "IS_ONLINE"
+private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
@@ -30,6 +31,7 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
         //Initialise the recycler adapter for searching the server
+
         setupSearchSelection()
         return recyclerListBinding.root
     }
@@ -63,7 +65,7 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
     override fun onButtonClick(chosenCategory: String) {
         Log.i("CHOSEN_CATEGORY", chosenCategory)
         //
-        val categoryBundle = bundleOf(CATEGORY_KEY to chosenCategory)
+        val categoryBundle = bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to true)
 
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }

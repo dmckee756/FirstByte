@@ -66,6 +66,8 @@ data class Gpu(
         memory_size_gb = database_Read[11] as Int
         memory_speed_mhz = database_Read[12] as Int
         wattage = database_Read[13] as Int
-        dimensions = database_Read[database_Read.lastIndex] as String
+        dimensions = database_Read[14] as String
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

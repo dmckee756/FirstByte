@@ -9,11 +9,11 @@ data class SearchedHardwareItem(
     @SerializedName("component_name")
     var name: String,
     @SerializedName("component_type")
-    val category: String,
+    var category: String,
     @SerializedName("image_link")
-    val image_link: String,
+    var image_link: String,
     @SerializedName("rrp_price")
-    val rrpPrice: Double
+    var rrpPrice: Double
 ) {
 
     /**

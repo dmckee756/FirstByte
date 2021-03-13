@@ -70,12 +70,15 @@ data class Motherboard(
         scanLink = database_Read[7] as String?
         deletable = database_Read[8] as Boolean
         //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
-        board_dimensions = database_Read[10] as String
-        processor_socket = database_Read[11] as String
-        ddr_sdram = database_Read[12] as String
-        hasUsb3Plus = database_Read[13] as Int
-        hasWifi = database_Read[14] as Int
-        pci_e = database_Read[15] as Double
-        hasNvmeSupport = database_Read[database_Read.lastIndex] as Int
+        board_type = database_Read[10] as String
+        board_dimensions = database_Read[11] as String
+        processor_socket = database_Read[12] as String
+        ddr_sdram = database_Read[13] as String
+        hasUsb3Plus = database_Read[14] as Int
+        hasWifi = database_Read[15] as Int
+        pci_e = database_Read[16] as Double
+        hasNvmeSupport = database_Read[17] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

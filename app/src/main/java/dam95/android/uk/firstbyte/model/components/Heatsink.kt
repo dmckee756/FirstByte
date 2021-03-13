@@ -70,6 +70,8 @@ data class Heatsink(
         amd_socket_max = database_Read[12] as String?
         intel_socket_min = database_Read[13] as String?
         intel_socket_max = database_Read[14] as String?
-        heatsink_dimensions = database_Read[database_Read.lastIndex] as String
+        heatsink_dimensions = database_Read[15] as String
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }

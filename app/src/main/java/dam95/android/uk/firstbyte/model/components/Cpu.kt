@@ -71,6 +71,8 @@ data class Cpu(
         isMultiThreaded = database_Read[12] as Int
         cpu_socket = database_Read[13] as String
         cpu_wattage = database_Read[14] as Int
-        hasHeatsink = database_Read[database_Read.lastIndex] as Int
+        hasHeatsink = database_Read[15] as Int
+        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
+        deletable = database_Read[database_Read.lastIndex] == 1
     }
 }
