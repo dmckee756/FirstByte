@@ -4,6 +4,7 @@ private const val NN = "NOT NULL"
 private const val PK = "PRIMARY KEY"
 private const val FK = "FOREIGN KEY"
 const val FK_ON = "PRAGMA foreign_keys=1"
+
 /**
  * This class is dedicated to creating the FB_Hardware_Android database and retrieving columns of tables
  * It's a long class filled with SQL that will only be executed once when creating the database.
@@ -18,7 +19,7 @@ abstract class SQLComponentConstants {
     companion object Creation {
 
         private const val CREATE_COMPONENTS_TABLE =
-            "CREATE TABLE ${Components.COMPONENT_TABLE}(\n" +
+            "CREATE TABLE ${Components.TABLE}(\n" +
                     "${Components.COMPONENT_NAME} VARCHAR(50) $PK,\n" +
                     "${Components.COMPONENT_TYPE} VARCHAR(20) $NN,\n" +
                     "${Components.COMPONENT_IMAGE} TEXT $NN," +
@@ -29,7 +30,7 @@ abstract class SQLComponentConstants {
                     "${Components.SCAN_LINK} TEXT," +
                     "${Components.IS_DELETABLE} TINYINT(1));"
 
-        private const val CREATE_GPU_TABLE = "CREATE TABLE ${GraphicsCards.GPU_TABLE}(\n" +
+        private const val CREATE_GPU_TABLE = "CREATE TABLE ${GraphicsCards.TABLE}(\n" +
                 "${GraphicsCards.GPU_NAME} VARCHAR(50) $PK,\n" +
                 "${GraphicsCards.GPU_CORE_SPEED} INT(10) $NN,\n" +
                 "${GraphicsCards.GPU_MEMORY_SIZE} INT(4) $NN,\n" +
@@ -37,9 +38,9 @@ abstract class SQLComponentConstants {
                 "${GraphicsCards.GPU_WATTAGE} INT(5) $NN,\n" +
                 "${GraphicsCards.GPU_DIMENSIONS} VARCHAR(20) $NN,\n" +
                 "$FK (${GraphicsCards.GPU_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_CPU_TABLE = "CREATE TABLE ${Processors.CPU_TABLE}(\n" +
+        private const val CREATE_CPU_TABLE = "CREATE TABLE ${Processors.TABLE}(\n" +
                 "${Processors.CPU_NAME} VARCHAR(50) $PK,\n" +
                 "${Processors.CPU_CORE_SPEED} DOUBLE(3, 2) $NN,\n" +
                 "${Processors.CPU_CORE_COUNT} INT(2) $NN,\n" +
@@ -48,36 +49,36 @@ abstract class SQLComponentConstants {
                 "${Processors.CPU_WATTAGE} INT(5) $NN,\n" +
                 "${Processors.HAS_HEATSINK} TINYINT(1) $NN,\n" +
                 "$FK (${Processors.CPU_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_RAM_TABLE = "CREATE TABLE ${RamSticks.RAM_TABLE}(\n" +
+        private const val CREATE_RAM_TABLE = "CREATE TABLE ${RamSticks.TABLE}(\n" +
                 "${RamSticks.RAM_NAME} VARCHAR(50) $PK,\n" +
                 "${RamSticks.RAM_SPEED} INT(8) $NN,\n" +
                 "${RamSticks.RAM_SIZE} INT(4) $NN,\n" +
                 "${RamSticks.RAM_DDR} VARCHAR(5) $NN,\n" +
                 "${RamSticks.NUM_OF_STICKS} INT(1) $NN,\n" +
                 "$FK (${RamSticks.RAM_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_PSU_TABLE = "CREATE TABLE ${PowerSupplys.PSU_TABLE}(\n" +
+        private const val CREATE_PSU_TABLE = "CREATE TABLE ${PowerSupplys.TABLE}(\n" +
                 "${PowerSupplys.PSU_NAME} VARCHAR(50) $PK,\n" +
                 "${PowerSupplys.PSU_WATTAGE} INT(5) $NN,\n" +
                 "${PowerSupplys.PSU_RATING} VARCHAR(12) $NN,\n" +
                 "${PowerSupplys.PSU_IS_MODULAR} TINYINT(1) $NN,\n" +
                 "$FK (${PowerSupplys.PSU_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_STORAGE_TABLE = "CREATE TABLE ${StorageList.STORAGE_TABLE}(\n" +
+        private const val CREATE_STORAGE_TABLE = "CREATE TABLE ${StorageList.TABLE}(\n" +
                 "${StorageList.STORAGE_NAME} VARCHAR(50) $PK,\n" +
                 "${StorageList.STORAGE_TYPE} VARCHAR(10) $NN,\n" +
                 "${StorageList.EXTERNAL_STORAGE} TINYINT(1) $NN,\n" +
                 "${StorageList.STORAGE_CAPACITY} INT(10) $NN,\n" +
                 "${StorageList.STORAGE_SPEED} INT(10) $NN,\n" +
                 "$FK (${StorageList.STORAGE_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
         private const val CREATE_MOTHERBOARD_TABLE =
-            "CREATE TABLE ${Motherboards.MOTHERBOARD_TABLE}(\n" +
+            "CREATE TABLE ${Motherboards.TABLE}(\n" +
                     "${Motherboards.BOARD_NAME} VARCHAR(50) $PK,\n" +
                     "${Motherboards.BOARD_TYPE} VARCHAR(10) $NN,\n" +
                     "${Motherboards.BOARD_DIMENSION} VARCHAR(20) $NN,\n" +
@@ -88,18 +89,18 @@ abstract class SQLComponentConstants {
                     "${Motherboards.BOARD_PCIE} DOUBLE(4, 2) $NN,\n" +
                     "${Motherboards.HAS_NVME} TINYINT(1) $NN,\n" +
                     "$FK (${Motherboards.BOARD_NAME})\n" +
-                    "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                    "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_CASES_TABLE = "CREATE TABLE ${Cases.CASE_TABLE}(\n" +
+        private const val CREATE_CASES_TABLE = "CREATE TABLE ${Cases.TABLE}(\n" +
                 "${Cases.CASE_NAME} VARCHAR(50) $PK,\n" +
                 "${Cases.CASE_FAN_SLOTS} INT(1) $NN,\n" +
                 "${Cases.CASE_FAN_SIZES} INT(4) $NN,\n" +
                 "${Cases.CASE_BOARD} VARCHAR(10) $NN,\n" +
                 "${Cases.CASE_DIMENSIONS} VARCHAR(20) $NN,\n" +
                 "$FK (${Cases.CASE_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_HEATSINK_TABLE = "CREATE TABLE ${Heatsinks.HEATSINK_TABLE}(\n" +
+        private const val CREATE_HEATSINK_TABLE = "CREATE TABLE ${Heatsinks.TABLE}(\n" +
                 "${Heatsinks.HEATSINK_NAME} VARCHAR(50) $PK,\n" +
                 "${Heatsinks.AMD_SOCKET_MIN} VARCHAR(10),\n" +
                 "${Heatsinks.AMD_SOCKET_MAX} VARCHAR(10),\n" +
@@ -108,16 +109,16 @@ abstract class SQLComponentConstants {
                 "${Heatsinks.HEATSINK_FAN_SLOTS} INT(1) $NN,\n" +
                 "${Heatsinks.HEATSINK_DIMENSIONS} VARCHAR(20) $NN,\n" +
                 "$FK (${Heatsinks.HEATSINK_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_FAN_TABLE = "CREATE TABLE ${Fans.FAN_TABLE}(\n" +
+        private const val CREATE_FAN_TABLE = "CREATE TABLE ${Fans.TABLE}(\n" +
                 "${Fans.FAN_NAME} VARCHAR(50) $PK,\n" +
                 "${Fans.FAN_SIZE} INT(4) $NN,\n" +
                 "${Fans.FAN_SPEED} INT(6) $NN,\n" +
                 "$FK (${Fans.FAN_NAME})\n" +
-                "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_PCBUILD_TABLE = "CREATE TABLE ${PcBuild.PC_BUILD_TABLE}(\n" +
+        private const val CREATE_PCBUILD_TABLE = "CREATE TABLE ${PcBuild.TABLE}(\n" +
                 "${PcBuild.PC_ID} INTEGER $PK AUTOINCREMENT,\n" +
                 "${PcBuild.PC_NAME} VARCHAR(20),\n" +
                 "${PcBuild.PC_RRP_PRICE} DOUBLE(10,2),\n" +
@@ -129,32 +130,32 @@ abstract class SQLComponentConstants {
                 "${PcBuild.PC_HEATSINK_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_CASE_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_IS_DELETABLE} VARCHAR(50),\n" +
-                "$FK(${PcBuild.PC_GPU_NAME})REFERENCES ${GraphicsCards.GPU_TABLE} (${GraphicsCards.GPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK(${PcBuild.PC_CPU_NAME})REFERENCES ${Processors.CPU_TABLE} (${Processors.CPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK(${PcBuild.PC_PSU_NAME})REFERENCES ${PowerSupplys.PSU_TABLE} (${PowerSupplys.PSU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK(${PcBuild.PC_BOARD_NAME})REFERENCES ${Motherboards.MOTHERBOARD_TABLE} (${Motherboards.BOARD_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK(${PcBuild.PC_HEATSINK_NAME})REFERENCES ${Heatsinks.HEATSINK_TABLE} (${Heatsinks.HEATSINK_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK(${PcBuild.PC_CASE_NAME})REFERENCES ${Cases.CASE_TABLE} (${Cases.CASE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "$FK(${PcBuild.PC_GPU_NAME})REFERENCES ${GraphicsCards.TABLE} (${GraphicsCards.GPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_CPU_NAME})REFERENCES ${Processors.TABLE} (${Processors.CPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_PSU_NAME})REFERENCES ${PowerSupplys.TABLE} (${PowerSupplys.PSU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_BOARD_NAME})REFERENCES ${Motherboards.TABLE} (${Motherboards.BOARD_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_HEATSINK_NAME})REFERENCES ${Heatsinks.TABLE} (${Heatsinks.HEATSINK_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${PcBuild.PC_CASE_NAME})REFERENCES ${Cases.TABLE} (${Cases.CASE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
         //Many to Many tables between a PC build and these created components below.
-        private const val CREATE_FANS_IN_PC_TABLE = "CREATE TABLE ${FansInPc.PC_FAN_TABLE}(" +
+        private const val CREATE_FANS_IN_PC_TABLE = "CREATE TABLE ${FansInPc.TABLE}(" +
                 "${FansInPc.PC_ID} INT(3),\n" +
                 "${FansInPc.PC_FAN_NAME} VARCHAR(50),\n" +
-                "$FK (${FansInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK (${FansInPc.PC_FAN_NAME}) REFERENCES ${Fans.FAN_TABLE} (${Fans.FAN_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "$FK (${FansInPc.PC_ID}) REFERENCES ${PcBuild.TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK (${FansInPc.PC_FAN_NAME}) REFERENCES ${Fans.TABLE} (${Fans.FAN_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
         private const val CREATE_STORAGE_IN_PC_TABLE =
-            "CREATE TABLE ${StorageInPc.PC_STORAGE_TABLE}(" +
+            "CREATE TABLE ${StorageInPc.TABLE}(" +
                     "${StorageInPc.PC_ID} INT(3),\n" +
                     "${StorageInPc.PC_STORAGE_NAME} VARCHAR(50),\n" +
-                    "$FK (${StorageInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                    "$FK (${StorageInPc.PC_STORAGE_NAME}) REFERENCES ${StorageList.STORAGE_TABLE} (${StorageList.STORAGE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                    "$FK (${StorageInPc.PC_ID}) REFERENCES ${PcBuild.TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                    "$FK (${StorageInPc.PC_STORAGE_NAME}) REFERENCES ${StorageList.TABLE} (${StorageList.STORAGE_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
-        private const val CREATE_RAM_IN_PC_TABLE = "CREATE TABLE ${RamInPc.PC_RAM_TABLE}(" +
+        private const val CREATE_RAM_IN_PC_TABLE = "CREATE TABLE ${RamInPc.TABLE}(" +
                 "${RamInPc.PC_ID} INT(3),\n" +
                 "${RamInPc.PC_RAM_NAME} VARCHAR(50),\n" +
-                "$FK (${RamInPc.PC_ID}) REFERENCES ${PcBuild.PC_BUILD_TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
-                "$FK (${RamInPc.PC_RAM_NAME}) REFERENCES ${RamSticks.RAM_TABLE} (${RamSticks.RAM_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+                "$FK (${RamInPc.PC_ID}) REFERENCES ${PcBuild.TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK (${RamInPc.PC_RAM_NAME}) REFERENCES ${RamSticks.TABLE} (${RamSticks.RAM_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
 
         val TABLE_CREATION_COMMANDS: List<String> = listOf(
@@ -180,7 +181,7 @@ abstract class SQLComponentConstants {
      */
     interface Components {
         companion object {
-            const val COMPONENT_TABLE: String = "component"
+            const val TABLE: String = "component"
 
             //Columns
             const val COMPONENT_NAME: String = "component_name"
@@ -214,7 +215,7 @@ abstract class SQLComponentConstants {
      */
     interface GraphicsCards {
         companion object {
-            const val GPU_TABLE: String = "gpu"
+            const val TABLE: String = "gpu"
 
             //Columns
             const val GPU_NAME: String = "gpu_name"
@@ -239,7 +240,7 @@ abstract class SQLComponentConstants {
      */
     interface Processors {
         companion object {
-            const val CPU_TABLE: String = "cpu"
+            const val TABLE: String = "cpu"
 
             //Columns
             const val CPU_NAME: String = "cpu_name"
@@ -266,7 +267,7 @@ abstract class SQLComponentConstants {
      */
     interface RamSticks {
         companion object {
-            const val RAM_TABLE: String = "ram"
+            const val TABLE: String = "ram"
 
             //Columns
             const val RAM_NAME: String = "ram_name"
@@ -283,7 +284,7 @@ abstract class SQLComponentConstants {
      */
     interface PowerSupplys {
         companion object {
-            const val PSU_TABLE: String = "psu"
+            const val TABLE: String = "psu"
 
             //Columns
             const val PSU_NAME: String = "psu_name"
@@ -299,7 +300,7 @@ abstract class SQLComponentConstants {
      */
     interface StorageList {
         companion object {
-            const val STORAGE_TABLE: String = "storage"
+            const val TABLE: String = "storage"
 
             //Columns
             const val STORAGE_NAME: String = "storage_name"
@@ -322,7 +323,7 @@ abstract class SQLComponentConstants {
      */
     interface Motherboards {
         companion object {
-            const val MOTHERBOARD_TABLE: String = "motherboard"
+            const val TABLE: String = "motherboard"
 
             //Columns
             const val BOARD_NAME: String = "motherboard_name"
@@ -353,7 +354,7 @@ abstract class SQLComponentConstants {
      */
     interface Cases {
         companion object {
-            const val CASE_TABLE: String = "cases"
+            const val TABLE: String = "cases"
 
             //Columns
             const val CASE_NAME: String = "cases_name"
@@ -371,7 +372,7 @@ abstract class SQLComponentConstants {
      */
     interface Heatsinks {
         companion object {
-            const val HEATSINK_TABLE: String = "heatsink"
+            const val TABLE: String = "heatsink"
 
             //Columns
             const val HEATSINK_NAME: String = "heatsink_name"
@@ -398,7 +399,7 @@ abstract class SQLComponentConstants {
      */
     interface Fans {
         companion object {
-            const val FAN_TABLE: String = "fan"
+            const val TABLE: String = "fan"
 
             //Columns
             const val FAN_NAME: String = "fan_name"
@@ -413,7 +414,7 @@ abstract class SQLComponentConstants {
      */
     interface PcBuild {
         companion object {
-            const val PC_BUILD_TABLE: String = "pcbuild"
+            const val TABLE: String = "pcbuild"
 
             //Columns
             const val PC_ID: String = "pc_id"
@@ -427,6 +428,20 @@ abstract class SQLComponentConstants {
             const val PC_HEATSINK_NAME: String = "heatsink_name"
             const val PC_CASE_NAME: String = "case_name"
             const val PC_IS_DELETABLE: String = "deletable"
+
+            val COLUMN_LIST = listOf<String>(
+                PC_ID,
+                PC_NAME,
+                PC_RRP_PRICE,
+                PC_COMPLETED,
+                PC_GPU_NAME,
+                PC_CPU_NAME,
+                PC_PSU_NAME,
+                PC_BOARD_NAME,
+                PC_HEATSINK_NAME,
+                PC_CASE_NAME,
+                PC_IS_DELETABLE
+            )
         }
     }
 
@@ -435,11 +450,12 @@ abstract class SQLComponentConstants {
      */
     interface RamInPc {
         companion object {
-            const val PC_RAM_TABLE: String = "ram_in_pc"
+            const val TABLE: String = "ram_in_pc"
 
             //Columns
             const val PC_ID: String = "pc_id"
             const val PC_RAM_NAME: String = "ram_name"
+            val COLUMN_LIST = listOf(PC_ID, PC_RAM_NAME)
         }
     }
 
@@ -448,11 +464,12 @@ abstract class SQLComponentConstants {
      */
     interface StorageInPc {
         companion object {
-            const val PC_STORAGE_TABLE: String = "storage_in_pc"
+            const val TABLE: String = "storage_in_pc"
 
             //Columns
             const val PC_ID: String = "pc_id"
             const val PC_STORAGE_NAME: String = "storage_name"
+            val COLUMN_LIST = listOf(PC_ID, PC_STORAGE_NAME)
         }
     }
 
@@ -461,11 +478,12 @@ abstract class SQLComponentConstants {
      */
     interface FansInPc {
         companion object {
-            const val PC_FAN_TABLE: String = "fans_in_pc"
+            const val TABLE: String = "fans_in_pc"
 
             //Columns
             const val PC_ID: String = "pc_id"
             const val PC_FAN_NAME: String = "fan_name"
+            val COLUMN_LIST = listOf(PC_ID, PC_FAN_NAME)
         }
     }
 }

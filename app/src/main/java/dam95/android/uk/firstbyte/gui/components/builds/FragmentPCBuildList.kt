@@ -19,6 +19,9 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
     private lateinit var pcBuildListAdapter: PcBuildRecyclerList
     private lateinit var fb_Hardware_DB: ComponentDBAccess
 
+    /**
+     *
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,12 +45,15 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
 
         val pcList: List<PCBuild?> = fb_Hardware_DB.getPersonalPCList()
 
-        pcList[0]?.case_name = "Cooler Master MasterBox MB511"
+        pcList[0]?.caseName = "Cooler Master MasterBox MB511"
         pcBuildListAdapter.setDataList(pcList)
         displayPCbuilds.adapter = pcBuildListAdapter
     }
 
-    override fun onButtonClick() {
+    /**
+     *
+     */
+    override fun onButtonClick(pcBuild: PCBuild) {
         val nameBundle = bundleOf(
         )
         fb_Hardware_DB.closeDatabase()

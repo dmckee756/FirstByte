@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
-import java.lang.Exception
+import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
 import java.util.*
 
 /*If you are going to add or remove  values to the Component Interface class,
@@ -58,7 +58,7 @@ class SQLComponentTypeQueries {
             //Once this hits the end of the components table, switch over to the specific hardware details such as the gpu or cpu etc.
             if (i == END_OF_COMPONENTS_TABLE) {
                 result =
-                    dbHandler.insert(SQLComponentConstants.Components.COMPONENT_TABLE, null, cv)
+                    dbHandler.insert(SQLComponentConstants.Components.TABLE, null, cv)
                 //If there was an error, exit out of this insertion.
                 if (result == (-1).toLong()) {
                     Log.e("FAILED INSERT", result.toString())
@@ -246,5 +246,54 @@ class SQLComponentTypeQueries {
         //Put the built display list into a Mutable Live Data List of Display Items and return it as LiveData
         liveDataList.value = buildDisplayList.toList()
         return liveDataList
+    }
+
+    /**
+     *
+     */
+    fun getPcRelationalData(loadPC: PCBuild, pcID: Int, dbHandler: SQLiteDatabase) {
+
+        //Load Names of Ram in the PC
+        var reusableCursor: Cursor = dbHandler.rawQuery(
+            "SELECT ram_in_pc.ram_name FROM ram_in_pc WHERE pc_id = $pcID",
+            null
+        )
+        loadPC.ramList = relationalPCLoop(reusableCursor)
+
+        //Load Names of Storage in the PC
+        reusableCursor = dbHandler.rawQuery(
+            "SELECT storage_in_pc.storage_name FROM storage_in_pc WHERE pc_id = $pcID",
+            null
+        )
+        loadPC.storageList = relationalPCLoop(reusableCursor)
+
+        //Load Names of Fans in the PC
+        reusableCursor = dbHandler.rawQuery(
+            "SELECT fans_in_pc.fan_name FROM fans_in_pc WHERE pc_id = $pcID",
+            null
+        )
+        loadPC.fanList = relationalPCLoop(reusableCursor)
+    }
+
+    /**
+     *
+     */
+    fun insertPcRelationalData(cv: ContentValues, pcID: Int, tableColumns: List<String>, nameList:List<String?>, dbHandler: SQLiteDatabase): Long{
+        cv.clear()
+        for (i in nameList.indices) {
+            cv.put(tableColumns[0], pcID)
+            cv.put(tableColumns[1], nameList[i])
+        }
+        return dbHandler.insert(SQLComponentConstants.PcBuild.TABLE, null, cv)
+    }
+
+    /**
+     *
+     */
+    private fun relationalPCLoop(cursor: Cursor): List<String> {
+        val nameList = mutableListOf<String>()
+        cursor.moveToFirst()
+        for (i in 0 until cursor.count) nameList[i] = cursor.getString(i)
+        return nameList
     }
 }

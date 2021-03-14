@@ -54,16 +54,16 @@ class PcBuildRecyclerList(
             } else {
                 //Load the correct pc in the list
                 pcBtn.background = context?.let { ResourcesCompat.getDrawable(it.resources, R.drawable.object_pc_display_item, null) }
-                pcName.text = pcBuild.pc_name
+                pcName.text = pcBuild.pcName
 
-                pcPriceOrCreation.text = context?.resources?.getString(R.string.totalPrice, "£", pcBuild.pc_price)
+                pcPriceOrCreation.text = context?.resources?.getString(R.string.totalPrice, "£", pcBuild.pcPrice)
                 val pcStatus =
-                    if (pcBuild.is_pc_completed) context?.resources?.getString(R.string.buildComplete) else context?.resources?.getString(
+                    if (pcBuild.isPcCompleted) context?.resources?.getString(R.string.buildComplete) else context?.resources?.getString(
                         R.string.buildIncomplete
                     )
                 completeOrIncomplete.text = pcStatus
                 //If the pc has a case assigned to it, then find the image link.
-                pcBuild.case_name?.run {
+                pcBuild.caseName?.run {
                     val imageLink = fb_Hardware_DB.getImageLink(this)
                     //If the case image link returns a string, hopefully a URL, then have picasso load it...
                     //...otherwise don't display any image
@@ -88,10 +88,14 @@ class PcBuildRecyclerList(
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
                     R.id.pcListBtn -> {
-                        if (pcName.visibility != View.GONE) {
+                        if (pcName.visibility == View.GONE) {
                             //If Pc doesn't exist
+                                val newPC = PCBuild()
+                            fb_Hardware_DB.savePersonalPC(newPC)
+                            listener.onButtonClick(newPC)
                         } else {
                             //Create and save a new PC and enter into it
+                            pcList[adapterPosition]?.let { listener.onButtonClick(it) }
                         }
                     }
                 }
@@ -103,7 +107,7 @@ class PcBuildRecyclerList(
      *
      */
     interface OnItemClickListener {
-        fun onButtonClick()
+        fun onButtonClick(pcBuild: PCBuild)
     }
 
     /**

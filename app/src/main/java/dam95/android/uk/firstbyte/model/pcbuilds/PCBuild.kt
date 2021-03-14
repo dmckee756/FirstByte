@@ -1,22 +1,44 @@
 package dam95.android.uk.firstbyte.model.pcbuilds
 
+import kotlin.properties.Delegates
+
 /**
  *
  */
-data class PCBuild(
-    var pc_id: Int,
-    var pc_name: String? = null
-) {
-    var pc_price: Double? = null
-    var is_pc_completed: Boolean = false
-    var gpu_name: String? = null
-    var cpu_name: String? = null
-    var ram_name: List<String>? = null
-    var psu_name: String? = null
-    var motherboard_name: String? = null
-    var storage_list: List<String>? = null
-    var heatsink_name: String? = null
-    var case_name: String? = null
-    var fan_list: List<String>? = null
-    var deleteable: Boolean = true
+class PCBuild {
+    var pcName: String = "New-PC"
+    var pcPrice: Double? = null
+    var isPcCompleted: Boolean = false
+    var gpuName: String? = null
+    var cpuName: String? = null
+    var ramList: List<String?>? = null
+    var psuName: String? = null
+    var motherboardName: String? = null
+    var storageList: List<String?>? = null
+    var heatsinkName: String? = null
+    var caseName: String? = null
+    var fanList: List<String?>? = null
+    var deletable: Boolean = true
+
+    fun getPrimitiveDetails(): List<*> {
+        return listOf(
+            pcName, pcPrice,
+            isPcCompleted, gpuName, cpuName,
+            psuName, motherboardName,
+            heatsinkName, caseName, deletable
+        )
+    }
+
+    fun setPrimitiveDetails(builtPCDetails: List<*>){
+        pcName = builtPCDetails[0] as String
+        pcPrice = builtPCDetails[1] as Double?
+        isPcCompleted = builtPCDetails[2] != 0
+        gpuName = builtPCDetails[3] as String?
+        cpuName = builtPCDetails[4] as String?
+        psuName = builtPCDetails[5] as String?
+        motherboardName = builtPCDetails[6] as String?
+        heatsinkName = builtPCDetails[7] as String?
+        caseName = builtPCDetails[8] as String?
+        deletable = builtPCDetails[builtPCDetails.lastIndex] != 0
+    }
 }
