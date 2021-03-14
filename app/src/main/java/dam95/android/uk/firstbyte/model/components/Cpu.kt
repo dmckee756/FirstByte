@@ -1,15 +1,15 @@
 package dam95.android.uk.firstbyte.model.components
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 
 /**
  *
  */
-@Entity(tableName = "savedCpu")
 data class Cpu(
-    @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
     override var type: String,
     @SerializedName("image_link")
@@ -55,6 +55,24 @@ data class Cpu(
         )
     }
 
+    /**
+     *
+     */
+    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+        val details = mutableListOf(
+            context.resources.getString(R.string.cpuDisplayCoreSpeed ,core_speed_ghz),
+            context.resources.getString(R.string.cpuDisplayCoreCount ,core_count),
+            context.resources.getString(R.string.cpuDisplayMultiThreaded , HumanReadableUtils.tinyIntHumanReadable(isMultiThreaded)),
+            context.resources.getString(R.string.displayProcessorSocket ,cpu_socket),
+            context.resources.getString(R.string.displayWattage ,cpu_wattage),
+            context.resources.getString(R.string.cpuDisplayHasHeatsink ,HumanReadableUtils.tinyIntHumanReadable(hasHeatsink))
+        )
+        return super.getDetailsForDisplay(context, details)
+    }
+
+    /**
+     *
+     */
     override fun setDetails(database_Read: List<*>){
         name = database_Read[0] as String
         type = database_Read[1] as String

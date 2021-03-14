@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.ConvertImageURL
-import dam95.android.uk.firstbyte.api.NetworkCheck
 import dam95.android.uk.firstbyte.api.api_model.ApiRepository
 import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
@@ -17,7 +17,6 @@ import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -32,9 +31,13 @@ private const val COMPONENT_INDEX = 0
 class HardwareDetails : Fragment() {
 
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
-    private lateinit var displayCorrectHardware: DisplayCorrectHardware
     private lateinit var componentsComponentDB: ComponentDBAccess
+    private lateinit var hardwareDetailsListAdapter: HardwareDetailsRecyclerList
+
     private var isLoadingFromServer: Boolean? = null
+    private var offlineRemoveHardwareOnDestroy = false
+    private var componentName: String? = null
+
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreateView(
@@ -50,11 +53,9 @@ class HardwareDetails : Fragment() {
             //Load FB_Hardware_Android Instance
             componentsComponentDB = context?.let { ComponentDBAccess.dbInstance(it) }!!
 
-            //Display class initialisation
-            displayCorrectHardware = DisplayCorrectHardware()
             Log.i("SEARCH_CATEGORY", componentName)
             //Determine if offline load from FB_Hardware_Android Database or the online server.
-            when (isLoadingFromServer){
+            when (isLoadingFromServer) {
                 true -> {
                     streamInHardware(componentName, componentType)
                 }
@@ -87,10 +88,6 @@ class HardwareDetails : Fragment() {
                         res.body()!![COMPONENT_INDEX].imageLink,
                         hardwareDetailsBinding.componentImage
                     )
-                    displayCorrectHardware.loadCorrectHardware(
-                        res.body()!![COMPONENT_INDEX],
-                        hardwareDetailsBinding
-                    )
                     setUpButtons(res.body()!![COMPONENT_INDEX])
                     //
                 } else {
@@ -111,8 +108,10 @@ class HardwareDetails : Fragment() {
             val component: Component =
                 componentsComponentDB.getHardware(name, type)
 
-            ConvertImageURL.convertURLtoImage(component.imageLink, hardwareDetailsBinding.componentImage)
-            displayCorrectHardware.loadCorrectHardware(component, hardwareDetailsBinding)
+            ConvertImageURL.convertURLtoImage(
+                component.imageLink,
+                hardwareDetailsBinding.componentImage
+            )
             setUpButtons(component)
         }
     }
@@ -129,6 +128,8 @@ class HardwareDetails : Fragment() {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
             val removeHardware = hardwareDetailsBinding.removeHardwareBtn
+            //Initialise variable for database hardware removal, look at OnDestroy() for more information
+            componentName = component.name
 
             setButtonText(addHardware, R.string.addHardware, component.type)
             setButtonText(removeHardware, R.string.removeHardware, component.type)
@@ -147,25 +148,50 @@ class HardwareDetails : Fragment() {
             addHardware.setOnClickListener {
                 //Add the component to the database, make this button un-clickable
                 //and allow the user to click on the remove hardware button
-                coroutineScope.launch {
-                    componentsComponentDB.insertHardware(component)
-                }
+                if (isLoadingFromServer == true) {
+                    coroutineScope.launch {
+                        componentsComponentDB.insertHardware(component)
+                    }
+                } else offlineRemoveHardwareOnDestroy = false
                 setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
             }
             removeHardware.setOnClickListener {
                 //Remove the component from the database, make this button un-clickable
                 //and allow the user to click on the add hardware button
-                coroutineScope.launch {
-                    componentsComponentDB.removeHardware(component.name)
-                }
+                if (isLoadingFromServer == true) {
+                    coroutineScope.launch {
+                        componentsComponentDB.removeHardware(component.name)
+                    }
+                } else offlineRemoveHardwareOnDestroy = true
                 setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
             }
+            setUpRecyclerList(component)
             //... If the component can't be deleted, then get rid of the buttons.
         } else {
             Log.i("DOES_IT_REACH?", "HELLO????") //Bug with it not reaching this code
             hardwareDetailsBinding.addHardwareBtn.visibility = View.GONE
             hardwareDetailsBinding.removeHardwareBtn.visibility = View.GONE
+            setUpRecyclerList(component)
         }
+    }
+
+    /**
+     *
+     */
+    private fun setUpRecyclerList(component: Component){
+
+        //Display the component's name at the top of the screen
+        hardwareDetailsBinding.componentNameDisplay.text = component.name
+
+        val displayHardwareDetails = hardwareDetailsBinding.detailsRecyclerList
+        displayHardwareDetails.layoutManager = LinearLayoutManager(this.context)
+        hardwareDetailsListAdapter = HardwareDetailsRecyclerList(context)
+
+        val details: List<String> = context?.let { component.getDetailsForDisplay(it, null) }!!
+
+        hardwareDetailsListAdapter.setDataList(details)
+        displayHardwareDetails.adapter = hardwareDetailsListAdapter
+
     }
 
     /**
@@ -193,5 +219,14 @@ class HardwareDetails : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         if (isLoadingFromServer!!) componentsComponentDB.closeDatabase()
+        //If this class is loaded from SavedSearchComponents,
+        //only remove this component from the database when the fragment is destroyed
+        if (offlineRemoveHardwareOnDestroy) {
+            coroutineScope.launch {
+                componentName?.let {
+                    componentsComponentDB.removeHardware(it)
+                }
+            }
+        }
     }
 }

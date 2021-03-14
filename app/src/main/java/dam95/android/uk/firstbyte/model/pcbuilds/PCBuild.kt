@@ -1,28 +1,22 @@
 package dam95.android.uk.firstbyte.model.pcbuilds
 
-import androidx.annotation.NonNull
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
-import dam95.android.uk.firstbyte.model.components.Fan
-import dam95.android.uk.firstbyte.model.components.Storage
-
 /**
  *
  */
 data class PCBuild(
-    @PrimaryKey(autoGenerate = true)
-    @NonNull
     var pc_id: Int,
-    var pc_name: String,
-    var gpu_name: String?,
-    var cpu_name: String?,
-    var ram_name: List<String>?,
-    var psu_name: String?,
-    var motherboard_name: String?,
-    var storage_list: List<String>?,
-    var heatsink_name: String?,
-    var case_name: String?,
-    var fan_list: List<String>?,
+    var pc_name: String? = null
+) {
+    var pc_price: Double? = null
+    var is_pc_completed: Boolean = false
+    var gpu_name: String? = null
+    var cpu_name: String? = null
+    var ram_name: List<String>? = null
+    var psu_name: String? = null
+    var motherboard_name: String? = null
+    var storage_list: List<String>? = null
+    var heatsink_name: String? = null
+    var case_name: String? = null
+    var fan_list: List<String>? = null
     var deleteable: Boolean = true
-) {}
+}

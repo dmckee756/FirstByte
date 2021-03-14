@@ -213,7 +213,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      *
      */
     override fun onHardwareClick(componentName: String, componentType: String) {
-
         val nameBundle = bundleOf(
             NAME_KEY to componentName,
             CATEGORY_KEY to componentType,
@@ -230,6 +229,8 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!isLoadingFromServer!!) fb_Hardware_DB.closeDatabase()
+        isLoadingFromServer?.let { onlineSearch ->
+            if (!onlineSearch) fb_Hardware_DB.closeDatabase()
+        }
     }
 }

@@ -1,15 +1,13 @@
 package dam95.android.uk.firstbyte.model.components
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import dam95.android.uk.firstbyte.R
 
 /**
  *
  */
-@Entity(tableName = "savedRam")
 data class Ram(
-    @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
     override var type: String,
     @SerializedName("image_link")
@@ -51,6 +49,23 @@ data class Ram(
             ram_ddr, num_of_sticks
         )
     }
+
+    /**
+     *
+     */
+    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+        val details = mutableListOf(
+            context.resources.getString(R.string.ramDisplayMemorySize, memory_size_gb),
+            context.resources.getString(R.string.ramDisplayMemorySpeed, memory_speed_mhz),
+            context.resources.getString(R.string.displayRamDDR, ram_ddr),
+            context.resources.getString(R.string.ramDisplayNumOfSticks, num_of_sticks)
+        )
+        return super.getDetailsForDisplay(context, details)
+    }
+
+    /**
+     *
+     */
     override fun setDetails(database_Read: List<*>){
         name = database_Read[0] as String
         type = database_Read[1] as String

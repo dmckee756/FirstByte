@@ -1,15 +1,13 @@
 package dam95.android.uk.firstbyte.model.components
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import dam95.android.uk.firstbyte.R
 
 /**
  *
  */
-@Entity(tableName = "savedHeatsink")
 data class Heatsink(
-    @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
     override var type: String,
     @SerializedName("image_link")
@@ -52,6 +50,21 @@ data class Heatsink(
             intel_socket_min, intel_socket_max,
             heatsink_dimensions
         )
+    }
+
+    /**
+     *
+     */
+    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+        val details = mutableListOf(
+            context.resources.getString(R.string.displayFanSlots, fan_slots),
+            context.resources.getString(R.string.heatsinkDisplayAMDSocketMin, amd_socket_min), //CHECK IF NULL
+            context.resources.getString(R.string.heatsinkDisplayAMDSocketMax, amd_socket_max), //CHECK IF NULL
+            context.resources.getString(R.string.heatsinkDisplayINTELSocketMin, intel_socket_min), //CHECK IF NULL
+            context.resources.getString(R.string.heatsinkDisplayINTELSocketMax, intel_socket_max), //CHECK IF NULL
+            context.resources.getString(R.string.displayDimensions, heatsink_dimensions)
+        )
+        return super.getDetailsForDisplay(context, details)
     }
 
     override fun setDetails(database_Read: List<*>){

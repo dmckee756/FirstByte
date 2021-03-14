@@ -1,5 +1,8 @@
 package dam95.android.uk.firstbyte.model.components
 
+import android.content.Context
+import dam95.android.uk.firstbyte.R
+
 /**
  *
  */
@@ -21,6 +24,19 @@ interface Component {
      * has started being read/written to/from.
      */
     fun getDetails(): List<*>
+
+    /**
+     *
+     */
+    fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+       val prettyPriceDetails = listOf(
+           context.resources.getString(R.string.displayRrpPrice, "£", rrpPrice),
+           context.resources.getString(R.string.displayAmazonPrice, "£", amazonPrice), //CHECK IF NULL
+           context.resources.getString(R.string.displayScanPrice, "£", scanPrice) //CHECK IF NULL
+       )
+        childDetails?.addAll(prettyPriceDetails)
+        return childDetails?.toList()
+    }
 
     /**
      *

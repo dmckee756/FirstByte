@@ -10,6 +10,7 @@ import dam95.android.uk.firstbyte.datasource.util.SQLComponentConstants
 import dam95.android.uk.firstbyte.datasource.util.SQLComponentTypeQueries
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
+import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -99,24 +100,25 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    suspend fun getHardware(hardwareName: String, hardwareType: String): Component = withContext(Dispatchers.Main){
-        Log.i("HARDWARE_SEARCH", "Getting $hardwareName's details...")
-        val compTable = SQLComponentConstants.Components.COMPONENT_TABLE
+    suspend fun getHardware(hardwareName: String, hardwareType: String): Component =
+        withContext(Dispatchers.Main) {
+            Log.i("HARDWARE_SEARCH", "Getting $hardwareName's details...")
+            val compTable = SQLComponentConstants.Components.COMPONENT_TABLE
 
-        //Full details query
-        val queryString =
-            "SELECT $compTable.*, $hardwareType.* FROM $compTable INNER JOIN $hardwareType " +
-                    "ON $compTable.${SQLComponentConstants.Components.COMPONENT_NAME} = $hardwareType.${hardwareType}_name " +
-                    "WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
-        //Implement error check
-        val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(hardwareName))
-        val createComponent = SQLComponentTypeQueries()
-        val componentResult: Component = createComponent.buildTheComponent(cursor, hardwareType)
-        cursor.close()
-        return@withContext componentResult
-    }
+            //Full details query
+            val queryString =
+                "SELECT $compTable.*, $hardwareType.* FROM $compTable INNER JOIN $hardwareType " +
+                        "ON $compTable.${SQLComponentConstants.Components.COMPONENT_NAME} = $hardwareType.${hardwareType}_name " +
+                        "WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
+            //Implement error check
+            val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(hardwareName))
+            val createComponent = SQLComponentTypeQueries()
+            val componentResult: Component = createComponent.buildTheComponent(cursor, hardwareType)
+            cursor.close()
+            return@withContext componentResult
+        }
 
-    suspend fun hardwareExists(name: String): Int = withContext(Dispatchers.Main){
+    suspend fun hardwareExists(name: String): Int = withContext(Dispatchers.Main) {
         val queryString =
             "SELECT ${SQLComponentConstants.Components.COMPONENT_NAME} FROM ${SQLComponentConstants.Components.COMPONENT_TABLE} WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
         val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(name))
@@ -134,7 +136,7 @@ class ComponentDBAccess(context: Context) {
     suspend fun getCategorySearch(
         category: String,
         searchQuery: String
-    ): LiveData<List<SearchedHardwareItem>>? = withContext(Dispatchers.Main){
+    ): LiveData<List<SearchedHardwareItem>>? = withContext(Dispatchers.Main) {
 
 //Retrieve components search details
         var queryString =
@@ -143,17 +145,16 @@ class ComponentDBAccess(context: Context) {
                     "${SQLComponentConstants.Components.COMPONENT_TABLE}.image_link, " +
                     "${SQLComponentConstants.Components.COMPONENT_TABLE}.rrp_price FROM ${SQLComponentConstants.Components.COMPONENT_TABLE}"
 
-        val cursor: Cursor
+
         //If a specific category is being searched, append the specific category onto the MySQL query
-        if (category != "all") {
-            queryString += " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} LIKE $category " +
-                    "AND ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE %${searchQuery}"
-            cursor = dbHandler.rawQuery(queryString, arrayOf(category,searchQuery))
+        queryString += if (category != "all") {
+            " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} LIKE '$category' " +
+                    "AND ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
         } else {
-            queryString += " WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE %${searchQuery}"
-            cursor = dbHandler.rawQuery(queryString, arrayOf(searchQuery))
+            " WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
         }
 
+        val cursor = dbHandler.rawQuery(queryString, null)
         if (cursor.count > 0) {
             val accessCategories = SQLComponentTypeQueries()
             val categoryResults: LiveData<List<SearchedHardwareItem>> =
@@ -161,7 +162,8 @@ class ComponentDBAccess(context: Context) {
             cursor.close()
             //Implement error check
             return@withContext categoryResults
-        } else{
+        } else {
+            cursor.close()
             return@withContext null
         }
     }
@@ -169,33 +171,74 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-   suspend fun getCategory(category: String): LiveData<List<SearchedHardwareItem>>? = withContext(Dispatchers.Main){
+    suspend fun getCategory(category: String): LiveData<List<SearchedHardwareItem>>? =
+        withContext(Dispatchers.Main) {
 
-        //Retrieve components search details
-        var queryString =
-            "SELECT ${SQLComponentConstants.Components.COMPONENT_TABLE}.component_name," +
-                    "${SQLComponentConstants.Components.COMPONENT_TABLE}.component_type," +
-                    "${SQLComponentConstants.Components.COMPONENT_TABLE}.image_link," +
-                    "${SQLComponentConstants.Components.COMPONENT_TABLE}.rrp_price FROM ${SQLComponentConstants.Components.COMPONENT_TABLE}"
+            //Retrieve components search details
+            var queryString =
+                "SELECT ${SQLComponentConstants.Components.COMPONENT_TABLE}.component_name," +
+                        "${SQLComponentConstants.Components.COMPONENT_TABLE}.component_type," +
+                        "${SQLComponentConstants.Components.COMPONENT_TABLE}.image_link," +
+                        "${SQLComponentConstants.Components.COMPONENT_TABLE}.rrp_price FROM ${SQLComponentConstants.Components.COMPONENT_TABLE}"
 
-        val cursor: Cursor
+            val cursor: Cursor
+            //If a specific category is being searched, append the specific category onto the MySQL query
+            if (category != "all") {
+                queryString += " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} =?"
+                cursor = dbHandler.rawQuery(queryString, arrayOf(category))
+            } else {
+                cursor = dbHandler.rawQuery(queryString, null)
+            }
+
+            if (cursor.count > 0) {
+                val accessCategories = SQLComponentTypeQueries()
+                val categoryResults: LiveData<List<SearchedHardwareItem>> =
+                    accessCategories.buildSearchItemList(cursor)
+                cursor.close()
+                //Implement error check
+                return@withContext categoryResults
+            } else {
+                cursor.close()
+                return@withContext null
+            }
+        }
+
+    /**
+     *
+     */
+    fun getImageLink(componentName: String): String? {
+        //Retrieve component image
+        val queryString =
+            "SELECT ${SQLComponentConstants.Components.COMPONENT_IMAGE} FROM ${SQLComponentConstants.Components.COMPONENT_TABLE} WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
+        val cursor = dbHandler.rawQuery(queryString, arrayOf(componentName))
         //If a specific category is being searched, append the specific category onto the MySQL query
-        if (category != "all") {
-            queryString += " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} =?"
-            cursor = dbHandler.rawQuery(queryString, arrayOf(category))
-        } else{
-            cursor = dbHandler.rawQuery(queryString, null)
-        }
-
-        if (cursor.count > 0) {
-            val accessCategories = SQLComponentTypeQueries()
-            val categoryResults: LiveData<List<SearchedHardwareItem>> =
-                accessCategories.buildSearchItemList(cursor)
+        return if (cursor.count > 0) {
+            cursor.moveToFirst()
+            val result: String = cursor.getString(0)
             cursor.close()
-            //Implement error check
-            return@withContext categoryResults
-        } else{
-            return@withContext null
+            result
+        } else {
+            cursor.close()
+            null
         }
+    }
+
+    /**
+     *
+     */
+    fun savePersonalPC(personalPC : PCBuild){
+
+    }
+
+
+    /**
+     *
+     */
+    fun getPersonalPCList(): List<PCBuild?>{
+
+        val pcDisplayList = mutableListOf<PCBuild?>()
+        val queryString = "SELECT * FROM ${SQLComponentConstants.PcBuild}"
+
+        return TODO()
     }
 }

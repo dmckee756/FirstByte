@@ -1,16 +1,14 @@
 package dam95.android.uk.firstbyte.model.components
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import dam95.android.uk.firstbyte.R
 
 
 /**
  *
  */
-@Entity(tableName = "savedFan")
 data class Fan(
-    @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
     override var type: String,
     @SerializedName("image_link")
@@ -47,6 +45,20 @@ data class Fan(
             fan_size_mm, fan_rpm)
     }
 
+    /**
+     *
+     */
+    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+        val details = mutableListOf(
+            context.resources.getString(R.string.fanDisplayFanSize, fan_size_mm),
+            context.resources.getString(R.string.fanDisplayFanSpeed, fan_rpm)
+        )
+        return super.getDetailsForDisplay(context, details)
+    }
+
+    /**
+     *
+     */
     override fun setDetails(database_Read: List<*>){
         name = database_Read[0] as String
         type = database_Read[1] as String

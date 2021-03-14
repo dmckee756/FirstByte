@@ -20,4 +20,8 @@
 
     <!-- Graph Colors -->
     <color name="graph_color">#80B8EC</color>
+
+    <!-- PC List Colors -->
+    <color name="bluePCGradient">#7FD5F1</color>
+    <color name="bluePCCentreGradient">#9EE3F6</color>
 </resources>

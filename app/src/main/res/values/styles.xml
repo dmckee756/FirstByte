@@ -2,6 +2,7 @@
 <resources>
 
     <style name="headlineTextFB">
+        <item name="android:textAppearance">@font/rasa</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:textSize">@dimen/search_text_Size</item>
         <item name="android:shadowColor">@color/text_shadow</item>

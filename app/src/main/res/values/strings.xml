@@ -56,9 +56,65 @@
         <item>fan</item>
     </string-array>
 
+    <!-- PCbuildList -->
+    <string name="createPC">Create new PC Build</string>
+    <string name="pcBuildName">New-PC</string>
+    <string name="totalPrice">Total Price: %1$s %2$.2f</string>
+    <string name="buildIncomplete">Incomplete</string>
+    <string name="buildComplete">Complete</string>
+
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>
     <string name="removeHardware">Remove %1$s</string>
+    <string name="componentName">Component Name</string>
 
+    <!-- Shared Component values -->
+    <string name="displayRrpPrice">RRP Price: %1$s%2$.2f</string>
+    <string name="displayAmazonPrice">Amazon Price: %1$s%2$.2f</string>
+    <string name="displayScanPrice">Scan.co.uk Price: %1$s%2$.2f</string>
+    <string name="displayWattage">Wattage Usage: %1$d watts</string>
+    <string name="displayDimensions">Dimensions: %1$scm</string>
+    <string name="displayProcessorSocket">Processor Socket: %1$s</string>
+    <string name="displayRamDDR">SDRAM DDR: %1$s</string>
+    <string name="displayFanSlots">Number of fan slots: %1$d</string>
+    <!-- Gpu Display Text -->
+    <string name="gpuDisplayCoreSpeed">Core Speed: %1$dMHz</string>
+    <string name="gpuDisplayVirtualMemorySize">Virtual Memory Size: %1$dGB</string>
+    <string name="gpuDisplayVirtualMemorySpeed">Virtual Memory Speed: %1$dMHz</string>
+    <!-- Cpu Display Text -->
+    <string name="cpuDisplayCoreSpeed">Average Core Speed: %1$.2fGHz</string>
+    <string name="cpuDisplayCoreCount">Number of Cores: %1$d</string>
+    <string name="cpuDisplayMultiThreaded">Is it Multithreaded? %1$s</string>
+    <string name="cpuDisplayHasHeatsink">Does it come with a heatsink? %1$s</string>
+    <!-- Ram Display Text -->
+    <string name="ramDisplayMemorySize">Ram Memory Size: %1$dGB</string>
+    <string name="ramDisplayMemorySpeed">Ram Memory Speed: %1$dMHz</string>
+    <string name="ramDisplayNumOfSticks">This package comes with %1$d ram stick(s)</string>
+    <!-- Psu Display Text -->
+    <string name="psuDisplayWattageProduces">Power Supply wattage: %1$d</string>
+    <string name="psuDisplayRating">Power Supply Rating: %1$s</string>
+    <string name="psuDisplayIsModular">Is it Modular? %1$s</string>
+    <!-- Storage Display Text -->
+    <string name="storageDisplayCapacity">Storage Capacity: %1$dGB</string>
+    <string name="storageDisplayType">Storage type: %1$s</string>
+    <string name="storageDisplaySpeed">Drive performance: %1$dMB/s</string>
+    <string name="storageDisplayExternal">Is it an external drive? %1$s</string>
+    <!-- Motherboard Display Text -->
+    <string name="motherboardDisplayBoardSize">Motherboard Size: %1$s</string>
+    <string name="motherboardDisplayHaveWifi">Does this board come with wifi?  %1$s</string>
+    <string name="motherboardDisplayHasUSB3">Does this board come with USB3+?  %1$s</string>
+    <string name="motherboardDisplayPCIE">PCI-Express Version: %1$.1f</string>
+    <string name="motherboardDisplayNVME">Does this board support NVME M.2 Drives?  %1$s</string>
+    <!-- Case Display Text -->
+    <string name="caseDisplayMotherboard">Max Motherboard size: %1$s</string>
+    <string name="caseDisplayFanSizes">Fan slot sizes: %1$dmm Fans</string>
+    <!-- Heatsink Display Text -->
+    <string name="heatsinkDisplayAMDSocketMin">Earliest AMD CPU socket support: %1$s</string>
+    <string name="heatsinkDisplayAMDSocketMax">Most recent AMD CPU socket support: %1$s</string>
+    <string name="heatsinkDisplayINTELSocketMin">Earliest Intel CPU socket support: %1$s</string>
+    <string name="heatsinkDisplayINTELSocketMax">Most recent Intel CPU socket support: %1$s</string>
+    <!-- Fan Display Text -->
+    <string name="fanDisplayFanSize">Fan Size: %1$dmm</string>
+    <string name="fanDisplayFanSpeed">Fan Speed: %1$dRPM</string>
 
 </resources>

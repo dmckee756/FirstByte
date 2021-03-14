@@ -14,13 +14,13 @@
             android:id="@+id/action_home_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
         <action
-            android:id="@+id/action_home_fragmentID_to_help"
+            android:id="@+id/action_home_fragmentID_to_help_fragmentID"
             app:destination="@id/help_fragmentID" />
         <action
-            android:id="@+id/action_home_fragmentID_to_settings"
+            android:id="@+id/action_home_fragmentID_to_settings_fragmentID"
             app:destination="@id/settings_fragmentID" />
         <action
-            android:id="@+id/action_home_fragmentID_to_searchSavedComponents"
+            android:id="@+id/action_home_fragmentID_to_searchSavedComponents_fragmentID"
             app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 
@@ -28,18 +28,18 @@
         android:id="@+id/buildPC_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList"
         android:label="Build PCs Hardcoded"
-        tools:layout="@layout/fragment_pc_build">
+        tools:layout="@layout/display_pclist">
         <action
             android:id="@+id/action_buildPC_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
         <action
-            android:id="@+id/action_buildPC_fragmentID_to_personalBuild"
+            android:id="@+id/action_buildPC_fragmentID_to_personalBuild_fragmentID"
             app:destination="@id/personalBuild" />
         <action
-            android:id="@+id/action_buildPC_fragmentID_to_help"
+            android:id="@+id/action_buildPC_fragmentID_to_help_fragmentID"
             app:destination="@id/help_fragmentID" />
         <action
-            android:id="@+id/action_buildPC_fragmentID_to_settings"
+            android:id="@+id/action_buildPC_fragmentID_to_settings_fragmentID"
             app:destination="@id/settings_fragmentID" />
         <action
             android:id="@+id/action_buildPC_fragmentID_to_searchSavedComponents"
@@ -55,16 +55,16 @@
             android:id="@+id/action_compare_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
         <action
-            android:id="@+id/action_compare_fragmentID_to_compareHardware"
+            android:id="@+id/action_compare_fragmentID_to_compareHardware_fragmentID"
             app:destination="@id/compareHardware_fragmentID" />
         <action
-            android:id="@+id/action_compare_fragmentID_to_help"
+            android:id="@+id/action_compare_fragmentID_to_help_fragmentID"
             app:destination="@id/help_fragmentID" />
         <action
-            android:id="@+id/action_compare_fragmentID_to_settings"
+            android:id="@+id/action_compare_fragmentID_to_settings_fragmentID"
             app:destination="@id/settings_fragmentID" />
         <action
-            android:id="@+id/action_compare_fragmentID_to_searchSavedComponents"
+            android:id="@+id/action_compare_fragmentID_to_searchSavedComponents_fragmentID"
             app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 

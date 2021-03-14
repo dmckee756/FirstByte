@@ -4,7 +4,6 @@ private const val NN = "NOT NULL"
 private const val PK = "PRIMARY KEY"
 private const val FK = "FOREIGN KEY"
 const val FK_ON = "PRAGMA foreign_keys=1"
-
 /**
  * This class is dedicated to creating the FB_Hardware_Android database and retrieving columns of tables
  * It's a long class filled with SQL that will only be executed once when creating the database.
@@ -119,8 +118,10 @@ abstract class SQLComponentConstants {
                 "REFERENCES ${Components.COMPONENT_TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
         private const val CREATE_PCBUILD_TABLE = "CREATE TABLE ${PcBuild.PC_BUILD_TABLE}(\n" +
-                "${PcBuild.PC_ID} INT(3) $PK,\n" +
+                "${PcBuild.PC_ID} INTEGER $PK AUTOINCREMENT,\n" +
                 "${PcBuild.PC_NAME} VARCHAR(20),\n" +
+                "${PcBuild.PC_RRP_PRICE} DOUBLE(10,2),\n" +
+                "${PcBuild.PC_COMPLETED} TINYINT(1),\n" +
                 "${PcBuild.PC_GPU_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_CPU_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_PSU_NAME} VARCHAR(50),\n" +
@@ -417,6 +418,8 @@ abstract class SQLComponentConstants {
             //Columns
             const val PC_ID: String = "pc_id"
             const val PC_NAME: String = "pc_name"
+            const val PC_RRP_PRICE: String = "pc_price"
+            const val PC_COMPLETED: String = "is_pc_completed"
             const val PC_GPU_NAME: String = "gpu_name"
             const val PC_CPU_NAME: String = "cpu_name"
             const val PC_PSU_NAME: String = "psu_name"

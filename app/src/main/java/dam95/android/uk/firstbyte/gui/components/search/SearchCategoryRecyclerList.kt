@@ -71,7 +71,7 @@ class SearchCategoryRecyclerList(
             DisplaySearchBinding.inflate(LayoutInflater.from(context), parent, false)
 
         return ViewHolder(
-            displaySearchBinding.categoryCard,
+            displaySearchBinding.categoryCard
         )
     }
 

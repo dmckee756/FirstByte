@@ -83,7 +83,7 @@ class HomeActivity : AppCompatActivity() {
         val appBarConfig = AppBarConfiguration(
             setOf(
                 R.id.homeFragment,
-                R.id.pcBuildFragment,
+                R.id.recycler_list,
                 R.id.compareFragment
             )
         )

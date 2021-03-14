@@ -1,15 +1,14 @@
 package dam95.android.uk.firstbyte.model.components
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
 import com.google.gson.annotations.SerializedName
+import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 
 /**
  *
  */
-@Entity(tableName = "savedMotherboard")
 data class Motherboard(
-    @PrimaryKey(autoGenerate = false)
     @SerializedName("component_type")
     override var type: String,
     @SerializedName("image_link")
@@ -59,6 +58,27 @@ data class Motherboard(
             pci_e, hasNvmeSupport
         )
     }
+
+    /**
+     *
+     */
+    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+        val details = mutableListOf(
+            context.resources.getString(R.string.motherboardDisplayBoardSize, board_type),
+            context.resources.getString(R.string.displayProcessorSocket, processor_socket),
+            context.resources.getString(R.string.displayRamDDR, ddr_sdram),
+            context.resources.getString(R.string.motherboardDisplayHaveWifi, HumanReadableUtils.tinyIntHumanReadable(hasWifi)),
+            context.resources.getString(R.string.motherboardDisplayHasUSB3, HumanReadableUtils.tinyIntHumanReadable(hasUsb3Plus)),
+            context.resources.getString(R.string.motherboardDisplayPCIE, pci_e),
+            context.resources.getString(R.string.motherboardDisplayNVME, HumanReadableUtils.tinyIntHumanReadable(hasNvmeSupport)),
+            context.resources.getString(R.string.displayDimensions, board_dimensions)
+        )
+        return super.getDetailsForDisplay(context, details)
+    }
+
+    /**
+     *
+     */
     override fun setDetails(database_Read: List<*>){
         name = database_Read[0] as String
         type = database_Read[1] as String

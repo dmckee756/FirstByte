@@ -16,6 +16,9 @@ import java.util.*
  * END_OF_COMPONENTS_TABLE will = 8, because we have 9 values, but subtract 1 to make it array friendly.
  */
 private const val END_OF_COMPONENTS_TABLE = 8
+private const val INTEGER_RES = 0x00000001
+private const val FLOAT_RES = 0x00000002
+private const val STRING_RES = 0x00000003
 
 class SQLComponentTypeQueries {
 
@@ -83,14 +86,114 @@ class SQLComponentTypeQueries {
 
         //Load default values for a component
         val component: Component = when (type.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> Gpu("", "", "", 0, 0, 0, 0, "", 0.0, null, null, null, null)
-            ComponentsEnum.CPU.toString() -> Cpu("", "", "", 0.0, 0, 0, "", 0, 0, 0.0, null, null, null, null)
-            ComponentsEnum.RAM.toString() -> Ram("", "", "", 0, 0, "", 0, 0.0, 0.0, null, null, null)
+            ComponentsEnum.GPU.toString() -> Gpu(
+                "",
+                "",
+                "",
+                0,
+                0,
+                0,
+                0,
+                "",
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
+            ComponentsEnum.CPU.toString() -> Cpu(
+                "",
+                "",
+                "",
+                0.0,
+                0,
+                0,
+                "",
+                0,
+                0,
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
+            ComponentsEnum.RAM.toString() -> Ram(
+                "",
+                "",
+                "",
+                0,
+                0,
+                "",
+                0,
+                0.0,
+                0.0,
+                null,
+                null,
+                null
+            )
             ComponentsEnum.PSU.toString() -> Psu("", "", "", 0, "", 0, 0.0, null, null, null, null)
-            ComponentsEnum.STORAGE.toString() -> Storage("", "", "", "", 0, 0, 0, 0.0, null, null, null, null)
-            ComponentsEnum.MOTHERBOARD.toString() -> Motherboard("", "", "", "", "", "", "", 0, 0, 0.0, 0, 0.0, null, null, null, null)
-            ComponentsEnum.CASES.toString() -> Case("", "", "", 0, 0, "", "", 0.0, null, null, null, null)
-            ComponentsEnum.HEATSINK.toString() -> Heatsink("", "", "", 0, "", "", "", "", "", 0.0, null, null, null, null)
+            ComponentsEnum.STORAGE.toString() -> Storage(
+                "",
+                "",
+                "",
+                "",
+                0,
+                0,
+                0,
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
+            ComponentsEnum.MOTHERBOARD.toString() -> Motherboard(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                0,
+                0,
+                0.0,
+                0,
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
+            ComponentsEnum.CASES.toString() -> Case(
+                "",
+                "",
+                "",
+                0,
+                0,
+                "",
+                "",
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
+            ComponentsEnum.HEATSINK.toString() -> Heatsink(
+                "",
+                "",
+                "",
+                0,
+                null,
+                null,
+                null,
+                null,
+                "",
+                0.0,
+                null,
+                null,
+                null,
+                null
+            )
             ComponentsEnum.FAN.toString() -> Fan("", "", "", 0, 0, 0.0, null, null, null, null)
             else -> null
         } ?: throw java.lang.NullPointerException()
@@ -101,11 +204,16 @@ class SQLComponentTypeQueries {
             //Skip adding the duplicate component name from the relational table
             Log.i("INDEX", i.toString())
             Log.i("INDEX_COLUMN", cursor.getColumnName(i))
-            when (listComponent[i]) {
-                is String -> listComponent[i] = cursor.getString(i)
-                is Double -> listComponent[i] = cursor.getDouble(i)
-                is Int -> listComponent[i] = cursor.getInt(i)
-                is Boolean -> listComponent[i] = (cursor.getInt(i) == 1)
+            when (cursor.getType(i)) {
+                STRING_RES -> listComponent[i] = cursor.getString(i)
+                FLOAT_RES -> listComponent[i] = cursor.getDouble(i)
+                INTEGER_RES -> {
+                    if (listComponent[i] is Boolean) {
+                        listComponent[i] = (cursor.getInt(i) == 1)
+                    } else {
+                        listComponent[i] = cursor.getInt(i)
+                    }
+                }
                 else -> listComponent[i] = null
             }
         }
