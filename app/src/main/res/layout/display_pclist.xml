@@ -31,6 +31,7 @@
             android:elevation="10dp"
             android:padding="2dp"
             android:text="@string/pcBuildName"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/pcCaseImageOrAdd" />
 

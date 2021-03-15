@@ -45,7 +45,6 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
 
         val pcList: List<PCBuild?> = fb_Hardware_DB.getPersonalPCList()
 
-        pcList[0]?.caseName = "Cooler Master MasterBox MB511"
         pcBuildListAdapter.setDataList(pcList)
         displayPCbuilds.adapter = pcBuildListAdapter
     }

@@ -20,13 +20,21 @@
     <!-- Toolbar Menu -->
     <string name="searchBtn">Search</string>
     <string name="tipsBtn">Tips</string>
-    <!-- Top Navigation -->
+    <!-- Bottom Navigation -->
     <string name="homeBtn">Home</string>
     <string name="pcBuildBtn">PC Builds</string>
     <string name="compareBtn">Compare</string>
 
     <!-- Home Screen -->
     <string name="homeTitle">Recommended Builds</string>
+    <string name="recommendedTierTitle">Title of Tier Build</string>
+    <string name="recommendedTierPrice">Price: %1$2%2$.2f</string>
+    <string name="recommendedTierDescription">Tier Description.</string>
+
+    <!-- Compare Screen -->
+    <string name="hardwareCompareTitle">%1$s Specs</string>
+    <string name="hardwareCompareDescription">Details of what you can compare.</string>
+    <string name="compareCategory">Compare %1$s\'s</string>
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
@@ -62,6 +70,15 @@
     <string name="totalPrice">Total Price: %1$s %2$.2f</string>
     <string name="buildIncomplete">Incomplete</string>
     <string name="buildComplete">Complete</string>
+
+    <!-- PCdetailsList-->
+    <string name="componentPrice">Price: %1$2%2$.2f</string>
+    <string name="componentOtherText">Display other text if applicable.</string>
+    <string name="componentType">TYPE</string>
+    <string name="incompatiblePart">Incompatible Part</string>
+    <string name="partNeeded">Part Needed</string>
+    <string name="addPartToBuild">Add %1$s to build.</string>
+    <string name="pcPrice">Total RRP Price: %1$2%2$.2f</string>
 
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>

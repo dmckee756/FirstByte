@@ -5,16 +5,37 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dam95.android.uk.firstbyte.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 
 
-class SelectCompare : Fragment() {
+class SelectCompare : Fragment(), SelectCompareRecyclerList.OnItemClickListener {
+
+    private lateinit var recyclerListBinding: RecyclerListBinding
+    private lateinit var compareSelectionList: SelectCompareRecyclerList
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_select_compare, container, false)
+    ): View {
+        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
+        setUpCompareSelectionList()
+        return recyclerListBinding.root
+    }
+
+    private fun setUpCompareSelectionList(){
+        //
+        val displayCompareSelection = recyclerListBinding.recyclerList
+        //
+        displayCompareSelection.layoutManager = LinearLayoutManager(this.context)
+        compareSelectionList = SelectCompareRecyclerList(context, this)
+
+        val pcTiers = listOf("Processor", "Graphics Card", "RAM")
+        compareSelectionList.setDataList(pcTiers)
+        displayCompareSelection.adapter = compareSelectionList
+    }
+
+    override fun onCompareBtnClick() {
+        TODO("Not yet implemented")
     }
 }

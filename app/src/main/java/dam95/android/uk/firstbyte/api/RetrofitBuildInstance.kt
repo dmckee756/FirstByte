@@ -27,7 +27,7 @@ private const val URL = "https://users.dcs.aber.ac.uk/dam95/MMP/components/"
 class RetrofitBuildInstance(context: Context) {
 
     //Cache of 5MB of data
-    private val cacheSize: Long = (5 * 1024 * 1024)
+    private val cacheSize: Long = (4 * 1024 * 1024)
 
     //Allocate size to Cache Directory
     private val cacheLocation = okhttp3.Cache(context.cacheDir, cacheSize)

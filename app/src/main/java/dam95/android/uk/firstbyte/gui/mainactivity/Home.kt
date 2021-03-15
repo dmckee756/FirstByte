@@ -5,27 +5,53 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dam95.android.uk.firstbyte.databinding.FragmentHomeBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 
-class Home : Fragment() {
+class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
 
-    private lateinit var homeBinding: FragmentHomeBinding
-    private lateinit var createDB: ComponentDBAccess
+    private lateinit var recyclerListBinding: RecyclerListBinding
+    private lateinit var recommendedListAdapter: RecommendedBuildRecyclerList
+    private lateinit var fbHardwareDB: ComponentDBAccess
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        homeBinding = FragmentHomeBinding.inflate(inflater, container, false)
+        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
-        createDB = ComponentDBAccess(requireContext())
+        fbHardwareDB = ComponentDBAccess(requireContext())
+        setUpRecommendedBuildList()
 
+        return recyclerListBinding.root
+    }
 
-        return homeBinding.root
+    private fun setUpRecommendedBuildList(){
+        //
+        val displayDetails = recyclerListBinding.recyclerList
+        //
+        displayDetails.layoutManager = LinearLayoutManager(this.context)
+        recommendedListAdapter = RecommendedBuildRecyclerList(context, fbHardwareDB, this)
+
+        val pcTiers = listOf("Entry-Level PC", "Budget PC", "High-End PC", "Enthusiast PC")
+        recommendedListAdapter.setDataList(pcTiers)
+        displayDetails.adapter = recommendedListAdapter
+    }
+
+    override fun onBuildButtonClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onLeftImageClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onRightImageClick() {
+        TODO("Not yet implemented")
     }
 
     override fun onDestroy() {
-        createDB.closeDatabase()
+        fbHardwareDB.closeDatabase()
         super.onDestroy()
     }
 }
