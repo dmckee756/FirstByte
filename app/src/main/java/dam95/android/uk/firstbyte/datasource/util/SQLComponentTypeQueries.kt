@@ -8,19 +8,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
-import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
-import java.util.*
+import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.util.DataClassTemplate
 
-/*If you are going to add or remove  values to the Component Interface class,
- * then add/remove columns in the components table, in the Component Database.
- * END_OF_COMPONENTS_TABLE will = 8, because we have 9 values, but subtract 1 to make it array friendly.
- */
-private const val END_OF_COMPONENTS_TABLE = 8
+private const val NULL_RES = 0x00000000
 private const val INTEGER_RES = 0x00000001
 private const val FLOAT_RES = 0x00000002
 private const val STRING_RES = 0x00000003
 
 class SQLComponentTypeQueries {
+
+    private val componentsTableSize = SQLComponentConstants.Components.COLUMN_LIST.size - 1
 
     /**
      *
@@ -35,6 +33,10 @@ class SQLComponentTypeQueries {
         val currentTableColumns: List<String> =
             SQLComponentConstants.Components.COLUMN_LIST + tableColumns
 
+        //When the loop skips the duplicate name, make this value minus 1
+        // meaning that none of details being inserted into the database from the component will be skipped
+        var correctListAlign: Int = 0
+
         //Utilising ContentValues to safely put data into the database and...
         //...minimise the possibility of sql injections being successful.
         val cv = ContentValues()
@@ -43,20 +45,34 @@ class SQLComponentTypeQueries {
         val listComponent = component.getDetails()
         //Input values into the correct component table.
         for (i in currentTableColumns.indices) {
-            Log.i("DETAIL", listComponent[i].toString())
+            //When the iteration starts the component's category table, insert the first value in list Component,
+            // which should be name (if not, fix that in the component's class "getDetails" method)
+            if (i == (componentsTableSize + 1)) {
+                cv.put(currentTableColumns[i], listComponent[0] as String)
+                correctListAlign--
+                continue
+            }
+
+            Log.i("DETAIL", listComponent[i + correctListAlign].toString())
             //Load the correct type of variable and put it into the ContentValue Hash map.
-            when (listComponent[i]) {
-                is String -> cv.put(currentTableColumns[i], listComponent[i] as String)
-                is Double -> cv.put(currentTableColumns[i], listComponent[i] as Double)
-                is Int -> cv.put(currentTableColumns[i], listComponent[i] as Int)
+            when (listComponent[i + correctListAlign]) {
+                is String -> cv.put(
+                    currentTableColumns[i],
+                    listComponent[i + correctListAlign] as String
+                )
+                is Double -> cv.put(
+                    currentTableColumns[i],
+                    listComponent[i + correctListAlign] as Double
+                )
+                is Int -> cv.put(currentTableColumns[i], listComponent[i + correctListAlign] as Int)
                 is Boolean -> {
                     //Convert booleans
-                    booleanToTinyInt = if (listComponent[i] as Boolean) 1 else 0
+                    booleanToTinyInt = if (listComponent[i + correctListAlign] as Boolean) 1 else 0
                     cv.put(currentTableColumns[i], booleanToTinyInt)
                 }
             }
             //Once this hits the end of the components table, switch over to the specific hardware details such as the gpu or cpu etc.
-            if (i == END_OF_COMPONENTS_TABLE) {
+            if (i == componentsTableSize) {
                 result =
                     dbHandler.insert(SQLComponentConstants.Components.TABLE, null, cv)
                 //If there was an error, exit out of this insertion.
@@ -64,6 +80,7 @@ class SQLComponentTypeQueries {
                     Log.e("FAILED INSERT", result.toString())
                     return false
                 }
+                Log.i("COMPONENT_TABLE_INSERT", "Successfully inserted details into component")
                 //Setup for relational table insertion.
                 cv.clear()
             }
@@ -81,144 +98,33 @@ class SQLComponentTypeQueries {
     /**
      *
      */
-    @Throws(NullPointerException::class)
-    fun buildTheComponent(cursor: Cursor, type: String): Component {
+    fun buildTheComponent(cursor: Cursor, type: String, tableColumns: List<String>): Component {
 
         //Load default values for a component
-        val component: Component = when (type.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> Gpu(
-                "",
-                "",
-                "",
-                0,
-                0,
-                0,
-                0,
-                "",
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.CPU.toString() -> Cpu(
-                "",
-                "",
-                "",
-                0.0,
-                0,
-                0,
-                "",
-                0,
-                0,
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.RAM.toString() -> Ram(
-                "",
-                "",
-                "",
-                0,
-                0,
-                "",
-                0,
-                0.0,
-                0.0,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.PSU.toString() -> Psu("", "", "", 0, "", 0, 0.0, null, null, null, null)
-            ComponentsEnum.STORAGE.toString() -> Storage(
-                "",
-                "",
-                "",
-                "",
-                0,
-                0,
-                0,
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.MOTHERBOARD.toString() -> Motherboard(
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                0,
-                0,
-                0.0,
-                0,
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.CASES.toString() -> Case(
-                "",
-                "",
-                "",
-                0,
-                0,
-                "",
-                "",
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.HEATSINK.toString() -> Heatsink(
-                "",
-                "",
-                "",
-                0,
-                null,
-                null,
-                null,
-                null,
-                "",
-                0.0,
-                null,
-                null,
-                null,
-                null
-            )
-            ComponentsEnum.FAN.toString() -> Fan("", "", "", 0, 0, 0.0, null, null, null, null)
-            else -> null
-        } ?: throw java.lang.NullPointerException()
+        val component = DataClassTemplate.createTemplateObject(type)
+        val currentTableColumns: List<String> =
+            SQLComponentConstants.Components.COLUMN_LIST + tableColumns
 
         cursor.moveToFirst()
-        val listComponent = component.getDetails().toMutableList()
-        for (i in listComponent.indices) {
+        /*
+         * Get a size of all variables in the component, and add 1 to the value. We add 1 because the cursor has a duplicate instance of the components name...
+         * The first name it loads is from the components table and the second from it's own category table (Name is the primary Key).
+         * Therefore we iterate through all the columns and once it reaches the end of the components table, skip the next iteration holding the duplicate name.
+         */
+        val allDetails = mutableListOf<Any?>()
+        for (i in currentTableColumns.indices) {
             //Skip adding the duplicate component name from the relational table
-            Log.i("INDEX", i.toString())
+            if (i == (componentsTableSize + 1)) continue
             Log.i("INDEX_COLUMN", cursor.getColumnName(i))
             when (cursor.getType(i)) {
-                STRING_RES -> listComponent[i] = cursor.getString(i)
-                FLOAT_RES -> listComponent[i] = cursor.getDouble(i)
-                INTEGER_RES -> {
-                    if (listComponent[i] is Boolean) {
-                        listComponent[i] = (cursor.getInt(i) == 1)
-                    } else {
-                        listComponent[i] = cursor.getInt(i)
-                    }
-                }
-                else -> listComponent[i] = null
+                STRING_RES -> allDetails.add(cursor.getString(i))
+                FLOAT_RES -> allDetails.add(cursor.getDouble(i))
+                INTEGER_RES -> allDetails.add(cursor.getInt(i))
+                NULL_RES -> allDetails.add(null)
             }
         }
         //Assign details to component
-        component.setDetails(listComponent)
+        component.setAllDetails(allDetails)
         return component
     }
 
@@ -251,25 +157,25 @@ class SQLComponentTypeQueries {
     /**
      *
      */
-    fun getPcRelationalData(loadPC: PCBuild, pcID: Int, dbHandler: SQLiteDatabase) {
+    fun getPcRelationalData(loadPC: PCBuild, dbHandler: SQLiteDatabase) {
 
         //Load Names of Ram in the PC
         var reusableCursor: Cursor = dbHandler.rawQuery(
-            "SELECT ram_in_pc.ram_name FROM ram_in_pc WHERE pc_id = $pcID",
+            "SELECT ram_name FROM ram_in_pc WHERE pc_id = ${loadPC.pcID}",
             null
         )
         loadPC.ramList = relationalPCLoop(reusableCursor)
 
         //Load Names of Storage in the PC
         reusableCursor = dbHandler.rawQuery(
-            "SELECT storage_in_pc.storage_name FROM storage_in_pc WHERE pc_id = $pcID",
+            "SELECT storage_name FROM storage_in_pc WHERE pc_id = ${loadPC.pcID}",
             null
         )
         loadPC.storageList = relationalPCLoop(reusableCursor)
 
         //Load Names of Fans in the PC
         reusableCursor = dbHandler.rawQuery(
-            "SELECT fans_in_pc.fan_name FROM fans_in_pc WHERE pc_id = $pcID",
+            "SELECT fan_name FROM fan_in_pc WHERE pc_id = ${loadPC.pcID}",
             null
         )
         loadPC.fanList = relationalPCLoop(reusableCursor)
@@ -278,13 +184,38 @@ class SQLComponentTypeQueries {
     /**
      *
      */
-    fun insertPcRelationalData(cv: ContentValues, pcID: Int, tableColumns: List<String>, nameList:List<String?>, dbHandler: SQLiteDatabase): Long{
+    fun insertPcRelationalData(
+        cv: ContentValues,
+        pcID: Int,
+        tableColumns: List<String>,
+        nameList: List<String?>,
+        dbHandler: SQLiteDatabase
+    ): Long {
         cv.clear()
         for (i in nameList.indices) {
             cv.put(tableColumns[0], pcID)
             cv.put(tableColumns[1], nameList[i])
         }
         return dbHandler.insert(SQLComponentConstants.PcBuild.TABLE, null, cv)
+    }
+
+    fun getPCDetails(currentTableColumns: List<String>, cursor: Cursor, dbHandler: SQLiteDatabase): MutableLiveData<PCBuild>{
+        val listDetail = mutableListOf<Any?>()
+        val mutableLiveData: MutableLiveData<PCBuild> = MutableLiveData()
+        val loadPC = PCBuild()
+        for (j in currentTableColumns.indices) {
+            //
+            when (cursor.getType(j)) {
+                STRING_RES -> listDetail.add(cursor.getString(j))
+                INTEGER_RES -> listDetail.add(cursor.getInt(j))
+                FLOAT_RES -> listDetail.add(cursor.getDouble(j))
+                NULL_RES -> listDetail.add(null)
+            }
+        }
+        loadPC.setPrimitiveDetails(listDetail)
+        getPcRelationalData(loadPC, dbHandler)
+        mutableLiveData.value = loadPC
+        return mutableLiveData
     }
 
     /**
@@ -295,5 +226,11 @@ class SQLComponentTypeQueries {
         cursor.moveToFirst()
         for (i in 0 until cursor.count) nameList[i] = cursor.getString(i)
         return nameList
+    }
+
+    fun updatePCBuildRelationTables(name: String, type: String, pcID: Int, dbHandler: SQLiteDatabase) {
+        val cv = ContentValues()
+        cv.put("${type}_name", name)
+        dbHandler.update("${type}_in_pc",cv, "pc_id =?", arrayOf(pcID.toString()))
     }
 }

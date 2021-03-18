@@ -44,7 +44,6 @@ data class Storage(
             imageLink, rrpPrice,
             amazonPrice, amazonLink,
             scanPrice, scanLink, deletable,
-            name,
             storage_type, isExternalStorage,
             storage_capacity_gb, storage_speed_mbps
         )
@@ -53,36 +52,27 @@ data class Storage(
     /**
      *
      */
-    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+    override fun getDetailsForDisplay(
+        context: Context,
+        childDetails: MutableList<String>?
+    ): List<String>? {
         val details = mutableListOf(
             context.resources.getString(R.string.storageDisplayCapacity, storage_capacity_gb),
             context.resources.getString(R.string.storageDisplayType, storage_type),
             context.resources.getString(R.string.storageDisplaySpeed, storage_speed_mbps),
-            context.resources.getString(R.string.storageDisplayExternal, HumanReadableUtils.tinyIntHumanReadable(isExternalStorage))
+            context.resources.getString(
+                R.string.storageDisplayExternal,
+                HumanReadableUtils.tinyIntHumanReadable(isExternalStorage)
+            )
         )
         return super.getDetailsForDisplay(context, details)
     }
 
-    /**
-     * Hardcoded method of assigning values to component variables on creation from the sqlite database
-     */
-    override fun setDetails(database_Read: List<*>) {
-        name = database_Read[0] as String
-        type = database_Read[1] as String
-        imageLink = database_Read[2] as String
-        rrpPrice = database_Read[3] as Double
-        amazonPrice = database_Read[4] as Double?
-        amazonLink = database_Read[5] as String?
-        scanPrice = database_Read[6] as Double?
-        scanLink = database_Read[7] as String?
-        deletable = database_Read[8] as Boolean
-        //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
-        storage_type = database_Read[10] as String
-        isExternalStorage = database_Read[11] as Int
-        storage_capacity_gb = database_Read[12] as Int
-        storage_capacity_gb = database_Read[13] as Int
-        storage_speed_mbps = database_Read[14] as Int
-        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
-        deletable = database_Read[database_Read.lastIndex] == 1
+    override fun setAllDetails(allDetails: List<Any?>) {
+        storage_type = allDetails[allDetails.lastIndex - 3] as String
+        isExternalStorage = allDetails[allDetails.lastIndex - 2] as Int
+        storage_capacity_gb = allDetails[allDetails.lastIndex - 1] as Int
+        storage_speed_mbps = allDetails[allDetails.lastIndex] as Int
+        super.setAllDetails(allDetails)
     }
 }

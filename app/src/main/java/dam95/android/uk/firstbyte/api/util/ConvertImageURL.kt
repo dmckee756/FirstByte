@@ -1,4 +1,4 @@
-package dam95.android.uk.firstbyte.api
+package dam95.android.uk.firstbyte.api.util
 
 import android.util.Log
 import android.widget.ImageView

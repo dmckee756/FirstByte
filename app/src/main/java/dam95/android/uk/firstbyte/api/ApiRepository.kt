@@ -1,7 +1,7 @@
-package dam95.android.uk.firstbyte.api.api_model
+package dam95.android.uk.firstbyte.api
 
 import android.content.Context
-import dam95.android.uk.firstbyte.api.RetrofitBuildInstance
+import dam95.android.uk.firstbyte.api.util.RetrofitBuildInstance
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import retrofit2.Response

@@ -1,5 +1,8 @@
 package dam95.android.uk.firstbyte.gui.components.search
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,12 +15,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 
+
+private const val CATEGORY_ALL = 0
+
 /**
  *
  */
-private const val CATEGORY_KEY = "CATEGORY"
-private const val CATEGORY_ALL = 0
-private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
@@ -63,7 +66,8 @@ class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClick
     override fun onButtonClick(chosenCategory: String) {
         Log.i("CHOSEN_CATEGORY", chosenCategory)
         //
-        val categoryBundle = bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to false)
+        val categoryBundle =
+            bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to false, PC_ID to -1)
 
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }

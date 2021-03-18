@@ -7,9 +7,9 @@ import dam95.android.uk.firstbyte.R
  *
  */
 interface Component {
+    var name: String
     var type: String
     var imageLink: String
-    var name: String
     var rrpPrice: Double
     var amazonPrice: Double?
     var amazonLink: String?
@@ -23,7 +23,7 @@ interface Component {
      * again when the relational table in the AndroidFB_Hardware/Components database
      * has started being read/written to/from.
      */
-    fun getDetails(): List<*>
+    abstract fun getDetails(): List<*>
 
     /**
      *
@@ -39,7 +39,17 @@ interface Component {
     }
 
     /**
-     *
+     * Important to keep this in the same order as the constructor
      */
-    fun setDetails(database_Read: List<*>)
+    fun setAllDetails(allDetails: List<Any?>){
+        name = allDetails[0] as String
+        type = allDetails[1] as String
+        imageLink = allDetails[2] as String
+        rrpPrice = allDetails[3] as Double
+        amazonPrice = allDetails[4] as Double?
+        amazonLink = allDetails[5] as String?
+        scanPrice = allDetails[6] as Double?
+        scanLink = allDetails[7] as String?
+        deletable = (allDetails[8] as Int) != 0
+    }
 }

@@ -11,8 +11,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
-import dam95.android.uk.firstbyte.api.api_model.ApiRepository
-import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
+import dam95.android.uk.firstbyte.api.ApiRepository
+import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import kotlinx.coroutines.CoroutineScope
@@ -20,14 +20,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.lang.NullPointerException
+import java.util.*
 
 /**
  *
  */
-private const val CATEGORY_KEY = "CATEGORY"
-private const val NAME_KEY = "NAME"
-private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
-
+const val CATEGORY_KEY = "CATEGORY"
+const val NAME_KEY = "NAME"
+const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
+const val PC_ID = "PC_ID"
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
@@ -35,12 +36,13 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     private lateinit var apiViewModel: ApiViewModel
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
-    private lateinit var fb_Hardware_DB: ComponentDBAccess
-    private lateinit var categoryListLiveData: LiveData<List<SearchedHardwareItem>>
+    private lateinit var fbHardwareDb: ComponentDBAccess
+    var categoryListLiveData: LiveData<List<SearchedHardwareItem>>? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     private var isLoadingFromServer: Boolean? = null
     private var searchCategory: String? = null
+    private var pcID: Int = -1
 
     /**
      *
@@ -52,18 +54,18 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     ): View {
         searchCategory = arguments?.getString(CATEGORY_KEY)
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
+        pcID = arguments?.getInt(PC_ID)!!
 
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
             Log.i("SEARCH_CATEGORY", searchCategory!!)
 
-            val apiRepository = ApiRepository(requireContext())
-            apiViewModel = ApiViewModel(apiRepository)
-
             setUpSearch()
             when (isLoadingFromServer) {
                 true -> {
                     Log.i("ONLINE_METHOD", "Loading from either server or cache.")
+                    val apiRepository = ApiRepository(requireContext())
+                    apiViewModel = ApiViewModel(apiRepository)
                     //Load the values streamed from the api into a mutable live data list in the "apiRepository".
                     apiViewModel.getCategory(searchCategory)
                     //Observe the loaded displayDetails from the apiRepository
@@ -74,11 +76,14 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 false -> {
                     Log.i("OFFLINE_METHOD", "Load client database.")
                     //Load FB_Hardware_Android Instance
-                    fb_Hardware_DB = context?.let { ComponentDBAccess.dbInstance(it) }!!
+                    fbHardwareDb = context?.let { ComponentDBAccess.dbInstance(it) }!!
                     coroutineScope.launch {
                         try {
-                            categoryListLiveData = fb_Hardware_DB.getCategory(searchCategory!!)!!
-                            categoryListLiveData.observe(viewLifecycleOwner) {
+                            searchCategory?.let {
+                                categoryListLiveData =
+                                    fbHardwareDb.getCategory(it.toLowerCase(Locale.ROOT))
+                            }
+                            categoryListLiveData?.observe(viewLifecycleOwner) {
                                 setUpHardwareList(it)
                             }
                         } catch (exception: Exception) {
@@ -131,15 +136,15 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 //
                 if (newText != "") {
                     categoryListLiveData =
-                        fb_Hardware_DB.getCategorySearch(searchCategory!!, newText)!!
-                    categoryListLiveData.observe(viewLifecycleOwner) {
+                        fbHardwareDb.getCategorySearch(searchCategory!!, newText)!!
+                    categoryListLiveData?.observe(viewLifecycleOwner) {
                         hardwareListAdapter.setDataList(it)
                     }
                     //
                 } else {
                     categoryListLiveData =
-                        fb_Hardware_DB.getCategory(searchCategory!!)!!
-                    categoryListLiveData.observe(viewLifecycleOwner) {
+                        fbHardwareDb.getCategory(searchCategory!!)!!
+                    categoryListLiveData?.observe(viewLifecycleOwner) {
                         hardwareListAdapter.setDataList(it)
                     }
                 }
@@ -213,24 +218,32 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      *
      */
     override fun onHardwareClick(componentName: String, componentType: String) {
-        val nameBundle = bundleOf(
-            NAME_KEY to componentName,
-            CATEGORY_KEY to componentType,
-            LOCAL_OR_NETWORK_KEY to isLoadingFromServer
-        )
 
-        //
-        val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(
-            R.id.action_hardwareList_fragmentID_to_hardwareDetails_fragmentID,
-            nameBundle
-        )
+        if (pcID >= 0 && this::fbHardwareDb.isInitialized) {
+            fbHardwareDb.savePCPart(componentName, componentType, pcID)
+            requireActivity().onBackPressed()
+        } else {
+            val nameBundle = bundleOf(
+                NAME_KEY to componentName,
+                CATEGORY_KEY to componentType,
+                LOCAL_OR_NETWORK_KEY to isLoadingFromServer
+            )
+
+            //
+            val navController =
+                activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+            navController?.navigate(
+                R.id.action_hardwareList_fragmentID_to_hardwareDetails_fragmentID,
+                nameBundle
+            )
+        }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
         isLoadingFromServer?.let { onlineSearch ->
-            if (!onlineSearch) fb_Hardware_DB.closeDatabase()
+            if (!onlineSearch) fbHardwareDb.closeDatabase()
         }
     }
 }

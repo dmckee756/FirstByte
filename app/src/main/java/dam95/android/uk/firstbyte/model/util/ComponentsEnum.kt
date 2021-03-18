@@ -1,4 +1,4 @@
-package dam95.android.uk.firstbyte.model.components
+package dam95.android.uk.firstbyte.model.util
 
 /**
  *

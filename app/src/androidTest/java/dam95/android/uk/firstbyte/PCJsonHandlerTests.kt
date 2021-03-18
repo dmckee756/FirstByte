@@ -1,10 +1,8 @@
 package dam95.android.uk.firstbyte
 
-import android.app.Application
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.gson.GsonBuilder
-import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
-import org.junit.Assert
+import dam95.android.uk.firstbyte.model.PCBuild
 import org.junit.Assert.*
 import org.junit.Test
 import java.io.BufferedWriter

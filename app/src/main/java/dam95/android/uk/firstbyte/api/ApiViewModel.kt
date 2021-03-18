@@ -1,10 +1,11 @@
-package dam95.android.uk.firstbyte.api.api_model
+package dam95.android.uk.firstbyte.api
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.lang.Exception

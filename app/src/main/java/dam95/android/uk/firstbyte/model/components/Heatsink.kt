@@ -45,7 +45,7 @@ data class Heatsink(
             imageLink, rrpPrice,
             amazonPrice, amazonLink,
             scanPrice, scanLink, deletable,
-            name, fan_slots,
+            fan_slots,
             amd_socket_min, amd_socket_max,
             intel_socket_min, intel_socket_max,
             heatsink_dimensions
@@ -55,36 +55,41 @@ data class Heatsink(
     /**
      *
      */
-    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+    override fun getDetailsForDisplay(
+        context: Context,
+        childDetails: MutableList<String>?
+    ): List<String>? {
         val details = mutableListOf(
             context.resources.getString(R.string.displayFanSlots, fan_slots),
-            context.resources.getString(R.string.heatsinkDisplayAMDSocketMin, amd_socket_min), //CHECK IF NULL
-            context.resources.getString(R.string.heatsinkDisplayAMDSocketMax, amd_socket_max), //CHECK IF NULL
-            context.resources.getString(R.string.heatsinkDisplayINTELSocketMin, intel_socket_min), //CHECK IF NULL
-            context.resources.getString(R.string.heatsinkDisplayINTELSocketMax, intel_socket_max), //CHECK IF NULL
+            context.resources.getString(
+                R.string.heatsinkDisplayAMDSocketMin,
+                amd_socket_min
+            ), //CHECK IF NULL
+            context.resources.getString(
+                R.string.heatsinkDisplayAMDSocketMax,
+                amd_socket_max
+            ), //CHECK IF NULL
+            context.resources.getString(
+                R.string.heatsinkDisplayINTELSocketMin,
+                intel_socket_min
+            ), //CHECK IF NULL
+            context.resources.getString(
+                R.string.heatsinkDisplayINTELSocketMax,
+                intel_socket_max
+            ), //CHECK IF NULL
             context.resources.getString(R.string.displayDimensions, heatsink_dimensions)
         )
         return super.getDetailsForDisplay(context, details)
     }
 
-    override fun setDetails(database_Read: List<*>){
-        name = database_Read[0] as String
-        type = database_Read[1] as String
-        imageLink = database_Read[2] as String
-        rrpPrice = database_Read[3] as Double
-        amazonPrice = database_Read[4] as Double?
-        amazonLink = database_Read[5] as String?
-        scanPrice = database_Read[6] as Double?
-        scanLink = database_Read[7] as String?
-        deletable = database_Read[8] as Boolean
-        //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
-        fan_slots = database_Read[10] as Int
-        amd_socket_min = database_Read[11] as String?
-        amd_socket_max = database_Read[12] as String?
-        intel_socket_min = database_Read[13] as String?
-        intel_socket_max = database_Read[14] as String?
-        heatsink_dimensions = database_Read[15] as String
-        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
-        deletable = database_Read[database_Read.lastIndex] == 1
+    override fun setAllDetails(allDetails: List<Any?>) {
+        fan_slots = allDetails[allDetails.lastIndex - 5] as Int
+        amd_socket_min = allDetails[allDetails.lastIndex - 4] as String?
+        amd_socket_max = allDetails[allDetails.lastIndex - 3] as String?
+        intel_socket_min = allDetails[allDetails.lastIndex - 2] as String?
+        intel_socket_max = allDetails[allDetails.lastIndex - 1] as String?
+        heatsink_dimensions = allDetails[allDetails.lastIndex]  as String
+        super.setAllDetails(allDetails)
     }
+
 }

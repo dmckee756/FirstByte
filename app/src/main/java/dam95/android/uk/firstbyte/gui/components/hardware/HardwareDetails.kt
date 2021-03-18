@@ -9,11 +9,12 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
-import dam95.android.uk.firstbyte.api.ConvertImageURL
-import dam95.android.uk.firstbyte.api.api_model.ApiRepository
-import dam95.android.uk.firstbyte.api.api_model.ApiViewModel
+import dam95.android.uk.firstbyte.api.util.ConvertImageURL
+import dam95.android.uk.firstbyte.api.ApiRepository
+import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.gui.components.search.HardwareList
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

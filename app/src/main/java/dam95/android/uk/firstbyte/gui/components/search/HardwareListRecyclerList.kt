@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import dam95.android.uk.firstbyte.api.ConvertImageURL
+import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayHardwarelistBinding
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
+import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 
 /**
  *
@@ -49,7 +50,7 @@ class HardwareListRecyclerList(
                 componentImage
             )
             nameText.text = displayedComponent.name
-            priceText.text = displayedComponent.rrpPriceToCurrency()
+            priceText.text = HumanReadableUtils.rrpPriceToCurrency(displayedComponent.rrpPrice)
         }
 
         /**

@@ -78,7 +78,7 @@
     <string name="incompatiblePart">Incompatible Part</string>
     <string name="partNeeded">Part Needed</string>
     <string name="addPartToBuild">Add %1$s to build.</string>
-    <string name="pcPrice">Total RRP Price: %1$2%2$.2f</string>
+    <string name="pcPrice">Total RRP Price: %1$s%2$.2f</string>
 
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>

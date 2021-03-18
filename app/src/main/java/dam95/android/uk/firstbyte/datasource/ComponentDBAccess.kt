@@ -6,12 +6,14 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.datasource.util.FK_ON
 import dam95.android.uk.firstbyte.datasource.util.SQLComponentConstants
 import dam95.android.uk.firstbyte.datasource.util.SQLComponentTypeQueries
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
-import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
+import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +28,9 @@ private const val INTEGER_RES = 0x00000001
 private const val FLOAT_RES = 0x00000002
 private const val STRING_RES = 0x00000003
 
+/**
+ *
+ */
 class ComponentDBAccess(context: Context) {
 
     private var database: ComponentDBHandler = ComponentDBHandler(context)
@@ -109,26 +114,39 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    suspend fun getHardware(hardwareName: String, hardwareType: String): Component =
-        withContext(Dispatchers.Main) {
-            Log.i("HARDWARE_SEARCH", "Getting $hardwareName's details...")
-            val compTable = SQLComponentConstants.Components.TABLE
+    fun getHardware(hardwareName: String, hardwareType: String): Component {
+        Log.i("HARDWARE_SEARCH", "Getting $hardwareName's details...")
 
-            //Full details query
-            val queryString =
-                "SELECT $compTable.*, $hardwareType.* FROM $compTable INNER JOIN $hardwareType " +
-                        "ON $compTable.${SQLComponentConstants.Components.COMPONENT_NAME} = $hardwareType.${hardwareType}_name " +
-                        "WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
-            //Implement error check
-            val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(hardwareName))
-            val componentResult: Component = typeQueries.buildTheComponent(cursor, hardwareType)
-            cursor.close()
-            return@withContext componentResult
+        //Full details query
+        val queryString =
+            "SELECT component.*, $hardwareType.* FROM component INNER JOIN $hardwareType " +
+                    "ON component.component_name = $hardwareType.${hardwareType}_name " +
+                    "WHERE component_name =?"
+
+        val loadColumns: List<String> = when (hardwareType.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.GPU.toString() -> SQLComponentConstants.GraphicsCards.COLUMN_LIST
+            ComponentsEnum.CPU.toString() -> SQLComponentConstants.Processors.COLUMN_LIST
+            ComponentsEnum.RAM.toString() -> SQLComponentConstants.RamSticks.COLUMN_LIST
+            ComponentsEnum.PSU.toString() -> SQLComponentConstants.PowerSupplys.COLUMN_LIST
+            ComponentsEnum.STORAGE.toString() -> SQLComponentConstants.StorageList.COLUMN_LIST
+            ComponentsEnum.MOTHERBOARD.toString() -> SQLComponentConstants.Motherboards.COLUMN_LIST
+            ComponentsEnum.CASES.toString() -> SQLComponentConstants.Cases.COLUMN_LIST
+            ComponentsEnum.HEATSINK.toString() -> SQLComponentConstants.Heatsinks.COLUMN_LIST
+            ComponentsEnum.FAN.toString() -> SQLComponentConstants.Fans.COLUMN_LIST
+            else -> emptyList()
         }
+
+        //Implement error check
+        val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(hardwareName))
+        val componentResult: Component =
+            typeQueries.buildTheComponent(cursor, hardwareType, loadColumns)
+        cursor.close()
+        return componentResult
+    }
 
     suspend fun hardwareExists(name: String): Int = withContext(Dispatchers.Main) {
         val queryString =
-            "SELECT ${SQLComponentConstants.Components.COMPONENT_NAME} FROM ${SQLComponentConstants.Components.TABLE} WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
+            "SELECT component_name FROM component WHERE component_name =?"
         val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(name))
         //Implement error check
         val result: Int = cursor.count
@@ -148,18 +166,16 @@ class ComponentDBAccess(context: Context) {
 
 //Retrieve components search details
         var queryString =
-            "SELECT ${SQLComponentConstants.Components.TABLE}.component_name, " +
-                    "${SQLComponentConstants.Components.TABLE}.component_type, " +
-                    "${SQLComponentConstants.Components.TABLE}.image_link, " +
-                    "${SQLComponentConstants.Components.TABLE}.rrp_price FROM ${SQLComponentConstants.Components.TABLE}"
+            "SELECT component.component_name, component.component_type, " +
+                    "component.image_link, component.rrp_price FROM component"
 
 
         //If a specific category is being searched, append the specific category onto the MySQL query
         queryString += if (category != "all") {
-            " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} LIKE '$category' " +
-                    "AND ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
+            " WHERE component_type LIKE '$category' " +
+                    "AND component_name LIKE '%$searchQuery%'"
         } else {
-            " WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
+            " WHERE component_name LIKE '%$searchQuery%'"
         }
 
         val cursor = dbHandler.rawQuery(queryString, null)
@@ -183,15 +199,13 @@ class ComponentDBAccess(context: Context) {
 
             //Retrieve components search details
             var queryString =
-                "SELECT ${SQLComponentConstants.Components.TABLE}.component_name," +
-                        "${SQLComponentConstants.Components.TABLE}.component_type," +
-                        "${SQLComponentConstants.Components.TABLE}.image_link," +
-                        "${SQLComponentConstants.Components.TABLE}.rrp_price FROM ${SQLComponentConstants.Components.TABLE}"
+                "SELECT component.component_name, component.component_type," +
+                        "component.image_link, component.rrp_price FROM component"
 
             val cursor: Cursor
             //If a specific category is being searched, append the specific category onto the MySQL query
             if (category != "all") {
-                queryString += " WHERE ${SQLComponentConstants.Components.COMPONENT_TYPE} =?"
+                queryString += " WHERE component_type =?"
                 cursor = dbHandler.rawQuery(queryString, arrayOf(category))
             } else {
                 cursor = dbHandler.rawQuery(queryString, null)
@@ -215,7 +229,7 @@ class ComponentDBAccess(context: Context) {
     fun getImageLink(componentName: String): String? {
         //Retrieve component image
         val queryString =
-            "SELECT ${SQLComponentConstants.Components.COMPONENT_IMAGE} FROM ${SQLComponentConstants.Components.TABLE} WHERE ${SQLComponentConstants.Components.COMPONENT_NAME} =?"
+            "SELECT image_link FROM component WHERE component_name =?"
         val cursor = dbHandler.rawQuery(queryString, arrayOf(componentName))
         //If a specific category is being searched, append the specific category onto the MySQL query
         return if (cursor.count > 0) {
@@ -232,7 +246,65 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    fun savePersonalPC(personalPC: PCBuild): Boolean {
+    fun savePCPart(name: String, type: String, pcID: Int) {
+        coroutineScope.launch {
+            when (type.toUpperCase(Locale.ROOT)) {
+                ComponentsEnum.RAM.toString() -> typeQueries.updatePCBuildRelationTables(
+                    name,
+                    type,
+                    pcID,
+                    dbHandler
+                )
+                ComponentsEnum.STORAGE.toString() -> typeQueries.updatePCBuildRelationTables(
+                    name,
+                    type,
+                    pcID,
+                    dbHandler
+                )
+                ComponentsEnum.FAN.toString() -> typeQueries.updatePCBuildRelationTables(
+                    name,
+                    type,
+                    pcID,
+                    dbHandler
+                )
+                else -> {
+                    val cv = ContentValues()
+                    cv.put("${type}_name", name)
+                    dbHandler.update("pcbuild", cv, "pc_id =?", arrayOf(pcID.toString()))
+                }
+            }
+        }
+    }
+
+    fun removePCPart(type: String, pcID: Int){
+        coroutineScope.launch {
+            val cv = ContentValues()
+            cv.putNull("${type}_name")
+            val result = dbHandler.update("pcbuild", cv, null, null)
+            if (result == -1) {
+                Log.e("FAILED REMOVAL", result.toString())
+            } else {
+                Log.i("REMOVED_PC", "PC ID: $pcID deleted")
+            }
+        }
+    }
+
+    fun getPersonalPC(pcID: Int): MutableLiveData<PCBuild> {
+        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
+        val queryString =
+            "SELECT * FROM pcbuild WHERE pc_id = $pcID"
+        val cursor = dbHandler.rawQuery(queryString, null)
+        Log.i("GET_PC", pcID.toString())
+        cursor.moveToFirst()
+        val loadPC = typeQueries.getPCDetails(currentTableColumns, cursor, dbHandler)
+        cursor.close()
+        return loadPC
+    }
+
+    /**
+     *
+     */
+    fun createPersonalPC(personalPC: PCBuild): Int {
 
         val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
         //
@@ -243,103 +315,134 @@ class ComponentDBAccess(context: Context) {
         for (i in currentTableColumns.indices) {
             if (i == PC_ID_COLUMN) continue
             //Load the correct type of variable and put it into the ContentValue Hash map.
-            when (pcDetails[i - 1]) {
-                is String -> cv.put(currentTableColumns[i], pcDetails[i - 1] as String)
-                is Double -> cv.put(currentTableColumns[i], pcDetails[i - 1] as Double)
-                is Int -> cv.put(currentTableColumns[i], pcDetails[i - 1] as Int)
+            when (pcDetails[i]) {
+                is String -> cv.put(currentTableColumns[i], pcDetails[i] as String)
+                is Double -> cv.put(currentTableColumns[i], pcDetails[i] as Double)
+                is Int -> cv.put(currentTableColumns[i], pcDetails[i] as Int)
                 is Boolean -> {
                     //Convert booleans
-                    booleanToTinyInt = if (pcDetails[i - 1] as Boolean) 1 else 0
+                    booleanToTinyInt = if (pcDetails[i] as Boolean) 1 else 0
                     cv.put(currentTableColumns[i], booleanToTinyInt)
                 }
             }
-            Log.i("DETAIL", pcDetails[i - 1].toString())
+            Log.i("DETAIL", pcDetails[i].toString())
         }
         //Add all primitive values to table
-        val result = dbHandler.insert(SQLComponentConstants.PcBuild.TABLE, null, cv)
+        val result = dbHandler.insert("pcbuild", null, cv)
         //If there was an error, exit out of this insertion.
         if (result == (-1).toLong()) {
             Log.e("FAILED INSERT", result.toString())
-            return false
+            return -1
         } else {
             val cursor = dbHandler.rawQuery(
-                "SELECT pc_id FROM ${SQLComponentConstants.PcBuild.TABLE} WHERE pc_id =(SELECT MAX(pc_id) FROM ${SQLComponentConstants.PcBuild.TABLE})",
+                "SELECT pc_id FROM pcbuild WHERE pc_id =(SELECT MAX(pc_id) FROM pcbuild)",
                 null
             )
 
+            cursor.moveToFirst()
+            val mostRecentID = cursor.getInt(0)
             //Setup for relational table insertion.
             personalPC.ramList?.let {
                 typeQueries.insertPcRelationalData(
-                    cv, cursor.getInt(0), SQLComponentConstants.RamInPc.COLUMN_LIST,
+                    cv, mostRecentID, SQLComponentConstants.RamInPc.COLUMN_LIST,
                     it, dbHandler
                 )
             }
             personalPC.storageList?.let {
                 typeQueries.insertPcRelationalData(
-                    cv, cursor.getInt(0), SQLComponentConstants.StorageInPc.COLUMN_LIST,
+                    cv, mostRecentID, SQLComponentConstants.StorageInPc.COLUMN_LIST,
                     it, dbHandler
                 )
             }
             personalPC.fanList?.let {
                 typeQueries.insertPcRelationalData(
-                    cv, cursor.getInt(0), SQLComponentConstants.FansInPc.COLUMN_LIST,
+                    cv, mostRecentID, SQLComponentConstants.FansInPc.COLUMN_LIST,
                     it, dbHandler
                 )
             }
             cursor.close()
-            return true
+            return mostRecentID
         }
     }
 
+    fun deletePC(pcID: Int) {
+        coroutineScope.launch {
+
+            val result = dbHandler.delete(
+                "pcbuild", "pc_id =?",
+                arrayOf(pcID.toString())
+            )
+            if (result == -1) {
+                Log.e("FAILED REMOVAL", result.toString())
+            }
+        }
+    }
 
     /**
      *
      */
     @Throws(ArrayIndexOutOfBoundsException::class)
-    fun getPersonalPCList(): List<PCBuild?> {
+    fun getPersonalPCList(): LiveData<List<PCBuild?>> {
 
         val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
         val pcDisplayList = mutableListOf<PCBuild?>()
+        val liveData = MutableLiveData<List<PCBuild?>>()
 
         val queryString =
-            "SELECT * FROM ${SQLComponentConstants.PcBuild.TABLE} WHERE ${SQLComponentConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA"
+            "SELECT * FROM pcbuild WHERE deletable = $WRITABLE_DATA"
         val cursor = dbHandler.rawQuery(queryString, null)
 
-        val loadPC = PCBuild()
-        val listDetail = loadPC.getPrimitiveDetails().toMutableList()
-        var pcID: Int
         cursor.moveToFirst()
-        //Will be reworked later to be less hardcoded, it is currently computationally expensive
+        //Load in 10 PCBuild Slots when the user clicks on the pc build list screen.
         for (i in 0 until MAX_PC_LIST_SIZE) {
-            //
+            //If there are pc builds that aren't recommended builds currently existing in the database,
+            //load all of them until, when there is no more pc builds to load, stop.
+            //If there is no more pc builds to be loaded and there are still slots left,
+            // full the slots in for nulls to allow users to create a new pc build in the future.
             if (cursor.count > i) {
-                pcID = cursor.getInt(PC_ID_COLUMN)
-                for (j in currentTableColumns.indices) {
-                    Log.i("TEST_COL", cursor.getColumnName(j))
-                    if (j == PC_ID_COLUMN) continue
-                    //
-                    when (cursor.getType(j)) {
-                        STRING_RES -> listDetail[j - 1] = cursor.getString(j)
-                        INTEGER_RES -> listDetail[j - 1] = {
-                            if (listDetail[j - 1] is Boolean) {
-                                listDetail[j - 1] = cursor.getInt(j) != 0
-                            } else {
-                                listDetail[j - 1] = cursor.getInt(j)
-                            }
-                        }
-                        FLOAT_RES -> listDetail[j - 1] = cursor.getDouble(j)
-                        NULL_RES -> listDetail[j - 1] = null
-                    }
-                    Log.i("TEST_DETAIL", listDetail[j - 1].toString())
-                }
-                typeQueries.getPcRelationalData(loadPC, pcID, dbHandler)
-                loadPC.setPrimitiveDetails(listDetail)
-                pcDisplayList.add(loadPC)
+                val mutableLiveData = typeQueries.getPCDetails(currentTableColumns, cursor, dbHandler)
+                pcDisplayList.add(mutableLiveData.value)
             } else {
                 pcDisplayList.add(null)
             }
         }
         cursor.close()
-        return pcDisplayList
+        liveData.value = pcDisplayList
+        return liveData
+    }
+
+    /**
+     *
+     */
+    @Throws(ArrayIndexOutOfBoundsException::class)
+    fun getComponentListsInPc(
+        pcID: Int,
+        componentType: String,
+        componentNameList: List<String?>?,
+        numberOfComponents: Int
+    ): List<Pair<Component?, String>> {
+
+        val cursor = dbHandler.rawQuery(
+            "SELECT ${componentType}_name FROM ${componentType}_in_pc WHERE pc_id =?",
+            arrayOf(pcID.toString())
+        )
+        val relationalComponentList = mutableListOf<Pair<Component?, String>>()
+
+        for (index in 0..numberOfComponents) {
+            try {
+                componentNameList?.get(index)?.let { name ->
+                    relationalComponentList.add(
+                        Pair(
+                            getHardware(name, componentType),
+                            componentType.capitalize(Locale.ROOT)
+                        )
+                    )
+                } ?: relationalComponentList.add(Pair(null, componentType.capitalize(Locale.ROOT)))
+            } catch (exception: Exception) {
+                relationalComponentList.add(Pair(null, componentType.capitalize(Locale.ROOT)))
+            }
+        }
+        cursor.close()
+        return relationalComponentList
     }
 }

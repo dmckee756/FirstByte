@@ -1,15 +1,8 @@
-package dam95.android.uk.firstbyte.api
+package dam95.android.uk.firstbyte.api.util
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import dam95.android.uk.firstbyte.api.InterfaceAPI
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,7 +19,7 @@ private const val URL = "https://users.dcs.aber.ac.uk/dam95/MMP/components/"
 
 class RetrofitBuildInstance(context: Context) {
 
-    //Cache of 5MB of data
+    //Cache of 4MB of data
     private val cacheSize: Long = (4 * 1024 * 1024)
 
     //Allocate size to Cache Directory

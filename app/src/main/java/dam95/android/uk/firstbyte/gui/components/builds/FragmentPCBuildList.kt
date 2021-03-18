@@ -6,18 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
-import dam95.android.uk.firstbyte.model.pcbuilds.PCBuild
+import dam95.android.uk.firstbyte.model.PCBuild
 
 class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var pcBuildListAdapter: PcBuildRecyclerList
-    private lateinit var fb_Hardware_DB: ComponentDBAccess
+    private lateinit var fbHardwareDb: ComponentDBAccess
+    private lateinit var pcListLiveData: LiveData<List<PCBuild?>>
 
     /**
      *
@@ -28,22 +30,25 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
-        fb_Hardware_DB = context?.let { ComponentDBAccess.dbInstance(it) }!!
-        setupPCList()
+        fbHardwareDb = context?.let { ComponentDBAccess.dbInstance(it) }!!
+        pcListLiveData = fbHardwareDb.getPersonalPCList()
+
+        pcListLiveData.observe(viewLifecycleOwner){
+            setupPCList(it)
+        }
         return recyclerListBinding.root
     }
 
     /**
      *
      */
-    private fun setupPCList() {
+    private fun setupPCList(pcList: List<PCBuild?>) {
         //
         val displayPCbuilds = recyclerListBinding.recyclerList
         //
         displayPCbuilds.layoutManager = LinearLayoutManager(this.context)
-        pcBuildListAdapter = PcBuildRecyclerList(context, fb_Hardware_DB, this)
+        pcBuildListAdapter = PcBuildRecyclerList(context, fbHardwareDb, this)
 
-        val pcList: List<PCBuild?> = fb_Hardware_DB.getPersonalPCList()
 
         pcBuildListAdapter.setDataList(pcList)
         displayPCbuilds.adapter = pcBuildListAdapter
@@ -53,9 +58,8 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
      *
      */
     override fun onButtonClick(pcBuild: PCBuild) {
-        val nameBundle = bundleOf(
-        )
-        fb_Hardware_DB.closeDatabase()
+        val nameBundle = bundleOf()
+        nameBundle.putParcelable(SELECTED_PC, pcBuild)
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
         navController?.navigate(

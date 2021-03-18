@@ -11,10 +11,10 @@ object HumanReadableUtils {
     /**
      *
      */
-    fun booleanHumanReadable(boolean: Boolean): String = if (boolean) YES else NO
+    fun tinyIntHumanReadable(tinyInt: Int): String = if (tinyInt == ZERO) NO else YES
 
     /**
      *
      */
-    fun tinyIntHumanReadable(tinyInt: Int): String = if (tinyInt == ZERO) NO else YES
+    fun rrpPriceToCurrency(rrpPrice: Double): String = "£${String.format("%.2f", rrpPrice)}"
 }

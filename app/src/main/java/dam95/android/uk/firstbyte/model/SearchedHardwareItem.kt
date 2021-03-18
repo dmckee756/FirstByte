@@ -15,9 +15,4 @@ data class SearchedHardwareItem(
     @SerializedName("rrp_price")
     var rrpPrice: Double
 ) {
-
-    /**
-     *
-     */
-    fun rrpPriceToCurrency(): String = "£${String.format("%.2f", rrpPrice)}"
 }

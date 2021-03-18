@@ -48,7 +48,6 @@ data class Cpu(
             imageLink, rrpPrice,
             amazonPrice, amazonLink,
             scanPrice, scanLink, deletable,
-            name,
             core_speed_ghz, core_count,
             isMultiThreaded, cpu_socket,
             cpu_wattage, hasHeatsink
@@ -58,39 +57,34 @@ data class Cpu(
     /**
      *
      */
-    override fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
+    override fun getDetailsForDisplay(
+        context: Context,
+        childDetails: MutableList<String>?
+    ): List<String>? {
         val details = mutableListOf(
-            context.resources.getString(R.string.cpuDisplayCoreSpeed ,core_speed_ghz),
-            context.resources.getString(R.string.cpuDisplayCoreCount ,core_count),
-            context.resources.getString(R.string.cpuDisplayMultiThreaded , HumanReadableUtils.tinyIntHumanReadable(isMultiThreaded)),
-            context.resources.getString(R.string.displayProcessorSocket ,cpu_socket),
-            context.resources.getString(R.string.displayWattage ,cpu_wattage),
-            context.resources.getString(R.string.cpuDisplayHasHeatsink ,HumanReadableUtils.tinyIntHumanReadable(hasHeatsink))
+            context.resources.getString(R.string.cpuDisplayCoreSpeed, core_speed_ghz),
+            context.resources.getString(R.string.cpuDisplayCoreCount, core_count),
+            context.resources.getString(
+                R.string.cpuDisplayMultiThreaded,
+                HumanReadableUtils.tinyIntHumanReadable(isMultiThreaded)
+            ),
+            context.resources.getString(R.string.displayProcessorSocket, cpu_socket),
+            context.resources.getString(R.string.displayWattage, cpu_wattage),
+            context.resources.getString(
+                R.string.cpuDisplayHasHeatsink,
+                HumanReadableUtils.tinyIntHumanReadable(hasHeatsink)
+            )
         )
         return super.getDetailsForDisplay(context, details)
     }
 
-    /**
-     *
-     */
-    override fun setDetails(database_Read: List<*>){
-        name = database_Read[0] as String
-        type = database_Read[1] as String
-        imageLink = database_Read[2] as String
-        rrpPrice = database_Read[3] as Double
-        amazonPrice = database_Read[4] as Double?
-        amazonLink = database_Read[5] as String?
-        scanPrice = database_Read[6] as Double?
-        scanLink = database_Read[7] as String?
-        deletable = database_Read[8] as Boolean
-        //Skip 9, it contains a duplicate name. If this gets turned into a loop then just assign to to name again.
-        core_speed_ghz = database_Read[10] as Double
-        core_count = database_Read[11] as Int
-        isMultiThreaded = database_Read[12] as Int
-        cpu_socket = database_Read[13] as String
-        cpu_wattage = database_Read[14] as Int
-        hasHeatsink = database_Read[15] as Int
-        //The data retrieval from SQLite doesn't actually convert it to boolean, so it must be done here
-        deletable = database_Read[database_Read.lastIndex] == 1
+    override fun setAllDetails(allDetails: List<Any?>) {
+        core_speed_ghz = allDetails[allDetails.lastIndex - 5] as Double
+        core_count = allDetails[allDetails.lastIndex - 4] as Int
+        isMultiThreaded = allDetails[allDetails.lastIndex - 3] as Int
+        cpu_socket = allDetails[allDetails.lastIndex - 2] as String
+        cpu_wattage = allDetails[allDetails.lastIndex - 1] as Int
+        hasHeatsink = allDetails[allDetails.lastIndex] as Int
+        super.setAllDetails(allDetails)
     }
 }

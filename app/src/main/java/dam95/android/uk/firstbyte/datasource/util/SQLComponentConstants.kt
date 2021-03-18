@@ -102,11 +102,11 @@ abstract class SQLComponentConstants {
 
         private const val CREATE_HEATSINK_TABLE = "CREATE TABLE ${Heatsinks.TABLE}(\n" +
                 "${Heatsinks.HEATSINK_NAME} VARCHAR(50) $PK,\n" +
+                "${Heatsinks.HEATSINK_FAN_SLOTS} INT(1) $NN,\n" +
                 "${Heatsinks.AMD_SOCKET_MIN} VARCHAR(10),\n" +
                 "${Heatsinks.AMD_SOCKET_MAX} VARCHAR(10),\n" +
                 "${Heatsinks.INTEL_SOCKET_MIN} VARCHAR(10),\n" +
                 "${Heatsinks.INTEL_SOCKET_MAX} VARCHAR(10),\n" +
-                "${Heatsinks.HEATSINK_FAN_SLOTS} INT(1) $NN,\n" +
                 "${Heatsinks.HEATSINK_DIMENSIONS} VARCHAR(20) $NN,\n" +
                 "$FK (${Heatsinks.HEATSINK_NAME})\n" +
                 "REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
@@ -129,7 +129,7 @@ abstract class SQLComponentConstants {
                 "${PcBuild.PC_BOARD_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_HEATSINK_NAME} VARCHAR(50),\n" +
                 "${PcBuild.PC_CASE_NAME} VARCHAR(50),\n" +
-                "${PcBuild.PC_IS_DELETABLE} VARCHAR(50),\n" +
+                "${PcBuild.PC_IS_DELETABLE} TINYINT(1),\n" +
                 "$FK(${PcBuild.PC_GPU_NAME})REFERENCES ${GraphicsCards.TABLE} (${GraphicsCards.GPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
                 "$FK(${PcBuild.PC_CPU_NAME})REFERENCES ${Processors.TABLE} (${Processors.CPU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
                 "$FK(${PcBuild.PC_PSU_NAME})REFERENCES ${PowerSupplys.TABLE} (${PowerSupplys.PSU_NAME}) ON UPDATE CASCADE ON DELETE CASCADE," +
@@ -426,7 +426,7 @@ abstract class SQLComponentConstants {
             const val PC_PSU_NAME: String = "psu_name"
             const val PC_BOARD_NAME: String = "board_name"
             const val PC_HEATSINK_NAME: String = "heatsink_name"
-            const val PC_CASE_NAME: String = "case_name"
+            const val PC_CASE_NAME: String = "cases_name"
             const val PC_IS_DELETABLE: String = "deletable"
 
             val COLUMN_LIST = listOf<String>(
@@ -478,7 +478,7 @@ abstract class SQLComponentConstants {
      */
     interface FansInPc {
         companion object {
-            const val TABLE: String = "fans_in_pc"
+            const val TABLE: String = "fan_in_pc"
 
             //Columns
             const val PC_ID: String = "pc_id"

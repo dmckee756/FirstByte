@@ -11,13 +11,10 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
 
 /**
  *
  */
-private const val CATEGORY_KEY = "CATEGORY"
-private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding

@@ -1,4 +1,4 @@
-package dam95.android.uk.firstbyte.api
+package dam95.android.uk.firstbyte.api.util
 
 import android.content.Context
 import android.net.ConnectivityManager
