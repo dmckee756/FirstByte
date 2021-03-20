@@ -50,9 +50,13 @@ class PcBuildRecyclerList(
         fun bindDataSet(pcBuild: PCBuild?) {
             //List the pc build list as being able to create a new pc
             if (pcBuild == null) {
+                //Hide unnecessary text views
                 pcName.visibility = View.GONE
-                pcPriceOrCreation.text = context?.resources?.getString(R.string.createPC)
                 completeOrIncomplete.visibility = View.GONE
+
+                //Set up the display with instructions to create a new PC
+                pcPriceOrCreation.text = context?.resources?.getString(R.string.createPC)
+                //Get the add "+" icon from drawable resources
                 pcCaseImageOrAdd.background =
                     context?.let {
                         ResourcesCompat.getDrawable(
@@ -63,6 +67,7 @@ class PcBuildRecyclerList(
                     }
             } else {
                 //Load the correct pc in the list
+                //Load a colorful background from drawable resources
                 pcBtn.background = context?.let {
                     ResourcesCompat.getDrawable(
                         it.resources,
@@ -70,6 +75,8 @@ class PcBuildRecyclerList(
                         null
                     )
                 }
+
+                //Setup correct information for pc selection display
                 pcName.text = pcBuild.pcName
 
                 pcPriceOrCreation.text =
@@ -79,24 +86,19 @@ class PcBuildRecyclerList(
                         R.string.buildIncomplete
                     )
                 completeOrIncomplete.text = pcStatus
+
                 //If the pc has a case assigned to it, then find the image link.
                 pcBuild.caseName?.let {
                     coroutineScope.launch {
-                        val imageLink = fb_Hardware_DB.getImageLink(it)
-                        //If the case image link returns a string, hopefully a URL, then have picasso load it...
-                        //...otherwise don't display any image
-                        if (imageLink != null) {
-                            ConvertImageURL.convertURLtoImage(
-                                imageLink,
-                                pcCaseImageOrAdd
-                            )
-
-                        } else {
-                            pcCaseImageOrAdd.background = null
-                        }
+                        val imageLink = fb_Hardware_DB.retrieveImageURL(it)
+                        //If the case image link returns a URL then have picasso load it...
+                        ConvertImageURL.convertURLtoImage(
+                            imageLink!!,
+                            pcCaseImageOrAdd
+                        )
                     }
-                    return
                 }
+                //At the end of display information, remove the add symbol from the display.
                 pcCaseImageOrAdd.background = null
             }
         }
@@ -111,7 +113,7 @@ class PcBuildRecyclerList(
                         if (pcName.visibility == View.GONE) {
                             //If Pc doesn't exist
                             val newPC = PCBuild()
-                            newPC.pcID = fb_Hardware_DB.createPersonalPC(newPC)
+                            newPC.pcID = fb_Hardware_DB.createPC(newPC)
                             listener.onButtonClick(newPC)
                         } else {
                             //Create and save a new PC and enter into it

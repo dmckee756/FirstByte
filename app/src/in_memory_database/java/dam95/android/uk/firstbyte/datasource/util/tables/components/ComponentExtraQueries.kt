@@ -1,4 +1,4 @@
-package dam95.android.uk.firstbyte.datasource.util
+package dam95.android.uk.firstbyte.datasource.util.tables.components
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -6,17 +6,16 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dam95.android.uk.firstbyte.datasource.FLOAT_RES
+import dam95.android.uk.firstbyte.datasource.INTEGER_RES
+import dam95.android.uk.firstbyte.datasource.NULL_RES
+import dam95.android.uk.firstbyte.datasource.STRING_RES
+import dam95.android.uk.firstbyte.datasource.util.SQLComponentConstants
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
-import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.util.DataClassTemplate
 
-private const val NULL_RES = 0x00000000
-private const val INTEGER_RES = 0x00000001
-private const val FLOAT_RES = 0x00000002
-private const val STRING_RES = 0x00000003
-
-class SQLComponentTypeQueries {
+class ComponentExtraQueries {
 
     private val componentsTableSize = SQLComponentConstants.Components.COLUMN_LIST.size - 1
 
@@ -152,85 +151,5 @@ class SQLComponentTypeQueries {
         //Put the built display list into a Mutable Live Data List of Display Items and return it as LiveData
         liveDataList.value = buildDisplayList.toList()
         return liveDataList
-    }
-
-    /**
-     *
-     */
-    fun getPcRelationalData(loadPC: PCBuild, dbHandler: SQLiteDatabase) {
-
-        //Load Names of Ram in the PC
-        var reusableCursor: Cursor = dbHandler.rawQuery(
-            "SELECT ram_name FROM ram_in_pc WHERE pc_id = ${loadPC.pcID}",
-            null
-        )
-        loadPC.ramList = relationalPCLoop(reusableCursor)
-
-        //Load Names of Storage in the PC
-        reusableCursor = dbHandler.rawQuery(
-            "SELECT storage_name FROM storage_in_pc WHERE pc_id = ${loadPC.pcID}",
-            null
-        )
-        loadPC.storageList = relationalPCLoop(reusableCursor)
-
-        //Load Names of Fans in the PC
-        reusableCursor = dbHandler.rawQuery(
-            "SELECT fan_name FROM fan_in_pc WHERE pc_id = ${loadPC.pcID}",
-            null
-        )
-        loadPC.fanList = relationalPCLoop(reusableCursor)
-    }
-
-    /**
-     *
-     */
-    fun insertPcRelationalData(
-        cv: ContentValues,
-        pcID: Int,
-        tableColumns: List<String>,
-        nameList: List<String?>,
-        dbHandler: SQLiteDatabase
-    ): Long {
-        cv.clear()
-        for (i in nameList.indices) {
-            cv.put(tableColumns[0], pcID)
-            cv.put(tableColumns[1], nameList[i])
-        }
-        return dbHandler.insert(SQLComponentConstants.PcBuild.TABLE, null, cv)
-    }
-
-    fun getPCDetails(currentTableColumns: List<String>, cursor: Cursor, dbHandler: SQLiteDatabase): MutableLiveData<PCBuild>{
-        val listDetail = mutableListOf<Any?>()
-        val mutableLiveData: MutableLiveData<PCBuild> = MutableLiveData()
-        val loadPC = PCBuild()
-        for (j in currentTableColumns.indices) {
-            //
-            when (cursor.getType(j)) {
-                STRING_RES -> listDetail.add(cursor.getString(j))
-                INTEGER_RES -> listDetail.add(cursor.getInt(j))
-                FLOAT_RES -> listDetail.add(cursor.getDouble(j))
-                NULL_RES -> listDetail.add(null)
-            }
-        }
-        loadPC.setPrimitiveDetails(listDetail)
-        getPcRelationalData(loadPC, dbHandler)
-        mutableLiveData.value = loadPC
-        return mutableLiveData
-    }
-
-    /**
-     *
-     */
-    private fun relationalPCLoop(cursor: Cursor): List<String> {
-        val nameList = mutableListOf<String>()
-        cursor.moveToFirst()
-        for (i in 0 until cursor.count) nameList[i] = cursor.getString(i)
-        return nameList
-    }
-
-    fun updatePCBuildRelationTables(name: String, type: String, pcID: Int, dbHandler: SQLiteDatabase) {
-        val cv = ContentValues()
-        cv.put("${type}_name", name)
-        dbHandler.update("${type}_in_pc",cv, "pc_id =?", arrayOf(pcID.toString()))
     }
 }

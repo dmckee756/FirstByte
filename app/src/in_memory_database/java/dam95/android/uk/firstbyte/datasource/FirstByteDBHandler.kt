@@ -15,7 +15,7 @@ import java.lang.Exception
 private const val DATABASE_NAME = "AndroidFB_Hardware"
 private const val NEW_DATABASE = 0
 
-class ComponentDBHandler(val context: Context) : SQLiteOpenHelper(
+class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     context,
     DATABASE_NAME,
     null,

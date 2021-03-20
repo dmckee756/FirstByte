@@ -14,7 +14,6 @@ import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
-import dam95.android.uk.firstbyte.gui.components.search.HardwareList
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -107,7 +106,7 @@ class HardwareDetails : Fragment() {
     private fun loadSavedHardware(name: String, type: String) {
         coroutineScope.launch {
             val component: Component =
-                componentsComponentDB.getHardware(name, type)
+                componentsComponentDB.retrieveHardware(name, type)
 
             ConvertImageURL.convertURLtoImage(
                 component.imageLink,
@@ -219,7 +218,6 @@ class HardwareDetails : Fragment() {
      */
     override fun onDestroy() {
         super.onDestroy()
-        if (isLoadingFromServer!!) componentsComponentDB.closeDatabase()
         //If this class is loaded from SavedSearchComponents,
         //only remove this component from the database when the fragment is destroyed
         if (offlineRemoveHardwareOnDestroy) {

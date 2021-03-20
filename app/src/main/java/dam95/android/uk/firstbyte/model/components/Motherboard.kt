@@ -20,11 +20,11 @@ data class Motherboard(
     var board_dimensions: String,
     var processor_socket: String,
     var ddr_sdram: String,
-    @SerializedName("usb3+")
+    @SerializedName("usb3")
     var hasUsb3Plus: Int,
     @SerializedName("wifi")
     var hasWifi: Int,
-    @SerializedName("pci-e")
+    @SerializedName("pci_e")
     var pci_e: Double,
     @SerializedName("nvme_support")
     var hasNvmeSupport: Int,

@@ -11,7 +11,7 @@ import dam95.android.uk.firstbyte.model.components.Component
 class PCBuild() : Parcelable {
     var pcID: Int? = null
     var pcName: String = "New-PC"
-    var pcPrice: Double? = null
+    var pcPrice: Double = 0.00
     var isPcCompleted: Boolean = false
     var gpuName: String? = null
     var cpuName: String? = null
@@ -59,7 +59,7 @@ class PCBuild() : Parcelable {
     fun setPrimitiveDetails(readInData: List<*>) {
         pcID = readInData[0] as Int
         pcName = readInData[1] as String
-        pcPrice = readInData[2] as Double?
+        pcPrice = readInData[2] as Double
         isPcCompleted = (readInData[3] as Int) !=0
         gpuName = readInData[4] as String?
         cpuName = readInData[5] as String?
@@ -96,7 +96,7 @@ class PCBuild() : Parcelable {
         dest?.let {
             it.writeInt(pcID!!)
             it.writeString(pcName)
-            pcPrice?.let { price -> it.writeDouble(price) }
+            pcPrice.let { price -> it.writeDouble(price) }
             it.writeBoolean(isPcCompleted)
             it.writeString(gpuName)
             it.writeString(cpuName)

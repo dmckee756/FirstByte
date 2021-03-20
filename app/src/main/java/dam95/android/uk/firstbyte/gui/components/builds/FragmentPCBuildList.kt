@@ -31,7 +31,7 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
         fbHardwareDb = context?.let { ComponentDBAccess.dbInstance(it) }!!
-        pcListLiveData = fbHardwareDb.getPersonalPCList()
+        pcListLiveData = fbHardwareDb.retrievePCList()
 
         pcListLiveData.observe(viewLifecycleOwner){
             setupPCList(it)

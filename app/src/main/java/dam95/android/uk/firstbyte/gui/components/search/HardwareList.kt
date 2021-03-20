@@ -81,7 +81,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                         try {
                             searchCategory?.let {
                                 categoryListLiveData =
-                                    fbHardwareDb.getCategory(it.toLowerCase(Locale.ROOT))
+                                    fbHardwareDb.retrieveCategory(it.toLowerCase(Locale.ROOT))
                             }
                             categoryListLiveData?.observe(viewLifecycleOwner) {
                                 setUpHardwareList(it)
@@ -136,14 +136,14 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 //
                 if (newText != "") {
                     categoryListLiveData =
-                        fbHardwareDb.getCategorySearch(searchCategory!!, newText)!!
+                        fbHardwareDb.retrieveCategorySearch(searchCategory!!, newText)!!
                     categoryListLiveData?.observe(viewLifecycleOwner) {
                         hardwareListAdapter.setDataList(it)
                     }
                     //
                 } else {
                     categoryListLiveData =
-                        fbHardwareDb.getCategory(searchCategory!!)!!
+                        fbHardwareDb.retrieveCategory(searchCategory!!)!!
                     categoryListLiveData?.observe(viewLifecycleOwner) {
                         hardwareListAdapter.setDataList(it)
                     }
@@ -218,7 +218,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      *
      */
     override fun onHardwareClick(componentName: String, componentType: String) {
-
         if (pcID >= 0 && this::fbHardwareDb.isInitialized) {
             fbHardwareDb.savePCPart(componentName, componentType, pcID)
             requireActivity().onBackPressed()
@@ -242,8 +241,5 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
     override fun onDestroy() {
         super.onDestroy()
-        isLoadingFromServer?.let { onlineSearch ->
-            if (!onlineSearch) fbHardwareDb.closeDatabase()
-        }
     }
 }

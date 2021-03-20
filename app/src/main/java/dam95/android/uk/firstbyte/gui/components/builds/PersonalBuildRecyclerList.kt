@@ -1,13 +1,17 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayPcDetailsBinding
 import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
@@ -22,11 +26,11 @@ class PersonalBuildRecyclerList(
     private val listener: OnItemListener,
 ) : RecyclerView.Adapter<PersonalBuildRecyclerList.ViewHolder>() {
 
-    private var pcDetails = emptyList<Pair<Component?, String>>()
+    private var pcDetails = mutableListOf<Pair<Component?, String>>()
     private var totalPrice: Double = 0.00
 
     /**
-     *
+     * SET PICASSOS CACHING SIZE TODO
      */
     inner class ViewHolder(
         itemView: View,
@@ -63,6 +67,7 @@ class PersonalBuildRecyclerList(
                 priceOrAddInfo.text = HumanReadableUtils.rrpPriceToCurrency(part.rrpPrice)
                 otherDetail.text = PersonalBuildChecks.otherDetail(part)
 
+                imageView.background = null
                 ConvertImageURL.convertURLtoImage(
                     part.imageLink,
                     imageView
@@ -71,14 +76,23 @@ class PersonalBuildRecyclerList(
                 partRequiredBtn.visibility = View.GONE
                 removeComponentBtn.visibility = View.VISIBLE
                 notCompatibleBtn.visibility = PersonalBuildChecks.checkCompatibility(part)
-            } ?: addHardwareSetup()
+            } ?: addHardwareSetup(component, type)
         }
 
         /**
          *
          */
-        private fun addHardwareSetup() {
+        private fun addHardwareSetup(component: Component?, type: String) {
+            context?.let {
+                imageView.background =
+                    ResourcesCompat.getDrawable(it.resources, R.drawable.icon_add, null)
+            }
+            name.visibility = View.GONE
+            partRequiredBtn.visibility = View.VISIBLE
+            removeComponentBtn.visibility = View.GONE
+            notCompatibleBtn.visibility = View.GONE
 
+            priceOrAddInfo.text = context?.getString(R.string.addPartToBuild, type)
         }
 
         /**
@@ -90,11 +104,18 @@ class PersonalBuildRecyclerList(
                     //
                     addButton.id -> listener.onAddButtonClick(pcDetails[adapterPosition].second)
                     //
-                    removeComponentBtn.id -> listener.removePCPart(
-                        pcDetails[adapterPosition].second.toLowerCase(
-                            Locale.ROOT
-                        ), adapterPosition
-                    )
+                    removeComponentBtn.id -> pcDetails[adapterPosition].first?.let {
+                        listener.removePCPart(
+                            it, adapterPosition
+                        )
+                    }
+                    notCompatibleBtn.id -> ""
+                    partRequiredBtn.id -> ""
+                    imageView.id -> {
+                        if (imageView.background == null) {
+                            ""
+                        }
+                    }
                 }
             }
         }
@@ -105,7 +126,7 @@ class PersonalBuildRecyclerList(
      */
     interface OnItemListener {
         fun onAddButtonClick(addCategory: String)
-        fun removePCPart(category: String, position: Int)
+        fun removePCPart(component: Component, position: Int)
         fun updateTotalPrice(totalPrice: Double)
     }
 
@@ -113,7 +134,7 @@ class PersonalBuildRecyclerList(
      *
      */
     fun setDataList(updatedPCDetails: List<Pair<Component?, String>>) {
-        pcDetails = updatedPCDetails
+        pcDetails = updatedPCDetails.toMutableList()
         notifyDataSetChanged()
     }
 
@@ -151,5 +172,26 @@ class PersonalBuildRecyclerList(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindDataSet(pcDetails[position].first, pcDetails[position].second)
         if (position == pcDetails.lastIndex) listener.updateTotalPrice(totalPrice)
+    }
+
+    /**
+     *
+     */
+    fun removeDetail(position: Int, type: String) {
+        pcDetails[position].first?.let {
+            totalPrice -= it.rrpPrice
+            listener.updateTotalPrice(totalPrice)
+            Log.i("BEFORE_REPLACE", it.name)
+        }
+        pcDetails[position] = Pair(null, type)
+        Log.i("PC_LIST_POS", "$position")
+        notifyItemChanged(position)
+    }
+
+    fun removeFans(numberOfFans: Int){
+        for (i in 0 until numberOfFans){
+            pcDetails.removeLast()
+        }
+        notifyDataSetChanged()
     }
 }

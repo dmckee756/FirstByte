@@ -42,7 +42,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         if (loadedPc != null) {
             fbHardwareDb = ComponentDBAccess(requireContext())
 
-            personalPC = loadedPc.pcID?.let { fbHardwareDb.getPersonalPC(it) }!!
+            personalPC = loadedPc.pcID?.let { fbHardwareDb.retrievePC(it) }!!
             personalBuildBinding = FragmentPersonalBuildBinding.inflate(inflater, container, false)
 
             personalPC.observe(viewLifecycleOwner) {
@@ -73,7 +73,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             pcSingularParts[i].first?.let {
                 pcParts.add(
                     Pair(
-                        fbHardwareDb.getHardware(it, pcSingularParts[i].second),
+                        fbHardwareDb.retrieveHardware(it, pcSingularParts[i].second),
                         pcSingularParts[i].second.capitalize(Locale.ROOT)
                     )
                 )
@@ -89,7 +89,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                     temp.imageLink,
                     personalBuildBinding.caseImage
                 )
-
+                personalBuildBinding.caseImage.visibility = View.VISIBLE
             } else if (pcParts[i].first is Heatsink) {
                 val temp = pcParts[i].first as Heatsink
                 numberOfFans += temp.fan_slots
@@ -99,7 +99,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
         //Load Ram
         pcParts.addAll(
-            fbHardwareDb.getComponentListsInPc(
+            fbHardwareDb.retrievePCComponents(
                 personalPC.pcID!!, ComponentsEnum.RAM.toString()
                     .toLowerCase(Locale.ROOT), personalPC.ramList, NUM_OF_RAM
             )
@@ -108,7 +108,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
         //Load Storage
         pcParts.addAll(
-            fbHardwareDb.getComponentListsInPc(
+            fbHardwareDb.retrievePCComponents(
                 personalPC.pcID!!, ComponentsEnum.STORAGE.toString()
                     .toLowerCase(Locale.ROOT), personalPC.storageList, NUM_OF_STORAGE
             )
@@ -117,7 +117,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
         //Load Fans
         pcParts.addAll(
-            fbHardwareDb.getComponentListsInPc(
+            fbHardwareDb.retrievePCComponents(
                 personalPC.pcID!!, ComponentsEnum.FAN.toString()
                     .toLowerCase(Locale.ROOT), personalPC.fanList, numberOfFans - 1
             )
@@ -177,14 +177,62 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         )
     }
 
-    override fun removePCPart(category: String, position: Int) {
-        personalPC.value?.pcID?.let {
-            fbHardwareDb.removePCPart(category, it)
-            personalBuildListAdapter.notifyItemChanged(position)
+    override fun removePCPart(component: Component, position: Int) {
+        val category = component.type
+
+        //Check to determine if the pc part we want to remove is [RAM, STORAGE, FAN]
+        if (category.toUpperCase(Locale.ROOT) == ComponentsEnum.RAM.toString()
+            || category.toUpperCase(Locale.ROOT) == ComponentsEnum.STORAGE.toString()
+            || category.toUpperCase(Locale.ROOT) == ComponentsEnum.FAN.toString()
+        ) {
+            //Remove the relational database pc part
+            fbHardwareDb.removePCPart(
+                category.toLowerCase(Locale.ROOT), component.name,
+                personalPC.value?.pcID
+            )
+        } else {
+
+            when (category.toUpperCase(Locale.ROOT)) {
+                ComponentsEnum.CASES.toString() -> {
+                    //If the pc part was the computer case...
+                    //remove the personal build image at the top of the screen
+                    //and remove the "overflowed" fan slots
+                    personalBuildBinding.caseImage.background = null
+                    personalBuildBinding.caseImage.visibility = View.GONE
+                    val tempComponent = component as Case
+                    personalPC.value?.pcID?.let {
+                        fbHardwareDb.trimFanList(
+                            "fan",
+                            it,
+                            tempComponent.case_fan_slots
+                        )
+                        personalBuildListAdapter.removeFans(tempComponent.case_fan_slots)
+                    }
+                }
+                ComponentsEnum.HEATSINK.toString() -> {
+                    //If the pc part was the heatsink...
+                    //remove the "overflowed" fan slots
+                    val tempComponent = component as Heatsink
+                    personalPC.value?.pcID?.let {
+                        fbHardwareDb.trimFanList(
+                            "fan",
+                            it,
+                            tempComponent.fan_slots
+                        )
+                        personalBuildListAdapter.removeFans(tempComponent.fan_slots)
+                    }
+                }
+            }
+            //Remove the pc part within the pcbuilds table
+            fbHardwareDb.removePCPart(category.toLowerCase(Locale.ROOT), null, null)
         }
+        //After removing the pc part in the correct table, update the recycler list by freeing up the slot in the correct position.
+        personalBuildListAdapter.removeDetail(position, category)
     }
 
     override fun updateTotalPrice(totalPrice: Double) {
-        personalBuildBinding.pcTotalPrice.text = resources.getString(R.string.totalPrice, "£", totalPrice)
+        personalBuildBinding.pcTotalPrice.text =
+            resources.getString(R.string.totalPrice, "£", totalPrice)
+        personalPC.value?.pcID?.let { fbHardwareDb.updatePCPrice(totalPrice, it) }
     }
 }
