@@ -1,10 +1,8 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
@@ -12,13 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.FragmentPersonalBuildBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.components.search.CATEGORY_KEY
 import dam95.android.uk.firstbyte.gui.components.search.LOCAL_OR_NETWORK_KEY
 import dam95.android.uk.firstbyte.gui.components.search.PC_ID
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
+import kotlinx.coroutines.Dispatchers
 import java.util.*
 
 const val SELECTED_PC = "SELECTED_PC"
@@ -28,7 +27,7 @@ private const val NUM_OF_STORAGE = 2
 class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
     private lateinit var personalBuildBinding: FragmentPersonalBuildBinding
-    private lateinit var fbHardwareDb: ComponentDBAccess
+    private lateinit var fbHardwareDb: FirstByteDBAccess
     private lateinit var personalBuildListAdapter: PersonalBuildRecyclerList
     private lateinit var personalPC: MutableLiveData<PCBuild>
 
@@ -38,9 +37,9 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         savedInstanceState: Bundle?
     ): View {
         val loadedPc = arguments?.getParcelable(SELECTED_PC) as PCBuild?
-
         if (loadedPc != null) {
-            fbHardwareDb = ComponentDBAccess(requireContext())
+            setHasOptionsMenu(true)
+            fbHardwareDb = FirstByteDBAccess(requireContext(), Dispatchers.Main)
 
             personalPC = loadedPc.pcID?.let { fbHardwareDb.retrievePC(it) }!!
             personalBuildBinding = FragmentPersonalBuildBinding.inflate(inflater, container, false)
@@ -186,10 +185,12 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             || category.toUpperCase(Locale.ROOT) == ComponentsEnum.FAN.toString()
         ) {
             //Remove the relational database pc part
-            fbHardwareDb.removePCPart(
-                category.toLowerCase(Locale.ROOT), component.name,
-                personalPC.value?.pcID
-            )
+            personalPC.value?.pcID?.let {
+                fbHardwareDb.removeRelationalPCPart(
+                    category.toLowerCase(Locale.ROOT), component.name,
+                    it
+                )
+            }
         } else {
 
             when (category.toUpperCase(Locale.ROOT)) {
@@ -224,7 +225,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                 }
             }
             //Remove the pc part within the pcbuilds table
-            fbHardwareDb.removePCPart(category.toLowerCase(Locale.ROOT), null, null)
+            fbHardwareDb.removePCPart(category.toLowerCase(Locale.ROOT), personalPC.value!!.pcID!!)
         }
         //After removing the pc part in the correct table, update the recycler list by freeing up the slot in the correct position.
         personalBuildListAdapter.removeDetail(position, category)
@@ -234,5 +235,11 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         personalBuildBinding.pcTotalPrice.text =
             resources.getString(R.string.totalPrice, "£", totalPrice)
         personalPC.value?.pcID?.let { fbHardwareDb.updatePCPrice(totalPrice, it) }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.pc_build_toolbar_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

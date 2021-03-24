@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplaySearchBinding
 import dam95.android.uk.firstbyte.model.components.*
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  *
@@ -98,16 +101,16 @@ class SearchCategoryRecyclerList(
      *
      */
     private fun loadCorrectImage(category: String): Drawable? {
-        val drawableID: Int = when (category) {
-            "gpu" -> R.drawable.img_gpu_search
-            "cpu" -> R.drawable.img_cpu_search
-            "ram" -> R.drawable.img_ram_search
-            "psu" -> R.drawable.img_psu_search
-            "storage" -> R.drawable.img_storage_search
-            "motherboard" -> R.drawable.img_motherboard_search
-            "cases" -> R.drawable.img_case_search
-            "heatsink" -> R.drawable.img_heatsink_search
-            "fan" -> R.drawable.img_fan_search
+        val drawableID: Int = when (category.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.GPU.toString() -> R.drawable.img_gpu_search
+            ComponentsEnum.CPU.toString() -> R.drawable.img_cpu_search
+            ComponentsEnum.RAM.toString() -> R.drawable.img_ram_search
+            ComponentsEnum.PSU.toString() -> R.drawable.img_psu_search
+            ComponentsEnum.STORAGE.toString() -> R.drawable.img_storage_search
+            ComponentsEnum.MOTHERBOARD.toString() -> R.drawable.img_motherboard_search
+            ComponentsEnum.CASES.toString() -> R.drawable.img_case_search
+            ComponentsEnum.HEATSINK.toString() -> R.drawable.img_heatsink_search
+            ComponentsEnum.MOTHERBOARD.toString() -> R.drawable.img_fan_search
             else -> R.drawable.img_search_all
         }
         return context?.let { AppCompatResources.getDrawable(it, drawableID) }

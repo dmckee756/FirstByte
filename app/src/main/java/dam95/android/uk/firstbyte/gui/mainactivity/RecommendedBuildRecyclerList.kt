@@ -5,13 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import dam95.android.uk.firstbyte.databinding.DisplayRecommendedBuildLeftBinding
 import dam95.android.uk.firstbyte.databinding.DisplayRecommendedBuildRightBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 
 class RecommendedBuildRecyclerList (
     private val context: Context?,
-    private val fbHardware: ComponentDBAccess,
+    private val fbHardware: FirstByteDBAccess,
     private val listener: OnItemClickListener,
 ) : RecyclerView.Adapter<RecommendedBuildRecyclerList.ViewHolder>() {
 

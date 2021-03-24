@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/deleteID"
+        android:icon="@drawable/ic_delete_bin"
+        android:title="@string/deletePC"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/moreMenuID"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/moreMenu"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/pdfID"
+                android:icon="@drawable/ic_to_pdf"
+                android:title="@string/toPDF"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/tipsID"
+                android:icon="@drawable/ic_tips"
+                android:title="@string/tips"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+</menu>

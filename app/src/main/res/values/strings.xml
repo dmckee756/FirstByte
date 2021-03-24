@@ -20,6 +20,13 @@
     <!-- Toolbar Menu -->
     <string name="searchBtn">Search</string>
     <string name="tipsBtn">Tips</string>
+    <string name="moreMenu">Toolbar Menu</string>
+    <string name="tips">Tips</string>
+    <string name="toPDF">To PDF</string>
+    <string name="deletePC">Delete PC</string>
+    <string name="sortList">Sort list</string>
+    <string name="filterSearch">Filter Search Results</string>
+
     <!-- Bottom Navigation -->
     <string name="homeBtn">Home</string>
     <string name="pcBuildBtn">PC Builds</string>
@@ -35,6 +42,7 @@
     <string name="hardwareCompareTitle">%1$s Specs</string>
     <string name="hardwareCompareDescription">Details of what you can compare.</string>
     <string name="compareCategory">Compare %1$s\'s</string>
+    <string name="selectCompareComponentPicture">Image of the component that will have its specifications compared.</string>
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>

@@ -6,26 +6,30 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.onNavDestinationSelected
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import kotlinx.coroutines.Dispatchers
 
 /**
  *
  */
 class HomeActivity : AppCompatActivity() {
 
+    private lateinit var fbHardwareDB: FirstByteDBAccess
+
     private lateinit var homeActivityBinding: ActivityHomeBinding
-    private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var navController: NavController
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var bottomNavigationBar: BottomNavigationView
+    private lateinit var appBarConfig: AppBarConfiguration
+    private lateinit var navListener: NavController.OnDestinationChangedListener
 
     /**
      *
@@ -34,77 +38,53 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Create recommended builds and build databases
+        fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
 
         homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(homeActivityBinding.root)
-        navController = findNavController(R.id.nav_fragment)
 
         //
         val topAppBar = homeActivityBinding.HomeActTopBar
         setSupportActionBar(topAppBar)
 
-        val drawer: DrawerLayout = homeActivityBinding.actMainDrawer
-        drawerToggle = ActionBarDrawerToggle(
-            this,
-            drawer,
-            topAppBar,
-            R.string.openDrawer,
-            R.string.closeDrawer
-        )
-        drawer.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
-
-        drawerToggle.toolbarNavigationClickListener = View.OnClickListener {
-            onBackPressed()
-        }
-
-        //
-        homeActivityBinding.navDrawer.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.home_fragmentID -> item.onNavDestinationSelected(navController)
-                R.id.searchSavedComponents_fragmentID -> item.onNavDestinationSelected(navController)
-                R.id.searchCategory_fragmentID -> item.onNavDestinationSelected(navController)
-                R.id.settings_fragmentID -> item.onNavDestinationSelected(navController)
-                R.id.help_fragmentID -> item.onNavDestinationSelected(navController)
-            }
-            drawer.close()
-            true
-        }
-
-        setUpNavigationBottomNavigation()
+        drawerLayout = homeActivityBinding.actMainDrawer
+        navController = findNavController(R.id.nav_fragment)
+        setUpNavigation()
     }
 
     /**
      *
      */
-    private fun setUpNavigationBottomNavigation() {
+    private fun setUpNavigation() {
 
-        val bottomNavBar = homeActivityBinding.bottomNav
-        //Set up bottom navigation bar for 4 fragments
-        val appBarConfig = AppBarConfiguration(
-            setOf(
-                R.id.homeFragment,
-                R.id.recycler_list,
-                R.id.compareFragment
-            )
+        //Setup navigation for toggle Drawer and bottom navigation bar
+        bottomNavigationBar = homeActivityBinding.bottomNav
+        bottomNavigationBar.setupWithNavController(navController)
+        homeActivityBinding.navDrawer.setupWithNavController(navController)
+
+        //Let Jet Pack handle the navigation of the application and allow it to set up the toggle drawer
+        //Allowing back navigation on other fragments.
+        appBarConfig = AppBarConfiguration(
+            navController.graph, drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfig)
-        bottomNavBar.setupWithNavController(navController)
+        navListener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.home_fragmentID -> bottomNavigationBar.visibility = View.VISIBLE
+                R.id.buildPC_fragmentID -> bottomNavigationBar.visibility = View.VISIBLE
+                R.id.compare_fragmentID -> bottomNavigationBar.visibility = View.VISIBLE
+                else -> bottomNavigationBar.visibility = View.GONE
+            }
+        }
 
-    }
-
-    /**
-     *
-     */
-    private fun bringBackNavBar() {
-        if (homeActivityBinding.bottomNav.visibility == View.GONE) homeActivityBinding.bottomNav.visibility =
-            View.VISIBLE
+        navController.addOnDestinationChangedListener(navListener)
     }
 
     /**
      *
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.clear()
         menuInflater.inflate(R.menu.toolbar_menu_items, menu)
         return true
     }
@@ -113,8 +93,6 @@ class HomeActivity : AppCompatActivity() {
      *
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        //If a button within the toggle navigation drawer was clicked on, inform the listener
-        if(drawerToggle.onOptionsItemSelected(item)) return true
         //Otherwise execute toolbar button command.
         when (item.itemId) {
             // Navigate to search components fragment
@@ -126,10 +104,27 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * If the toggleDrawer is clicked on when the icon is the back arrow,
+     * navigate one place up the fragment stack.
      */
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp(appBarConfig)
+                || super.onSupportNavigateUp()
+    }
+
     override fun onBackPressed() {
-        bringBackNavBar()
-        super.onBackPressed()
+        if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    /**
+     * Close database on app's exit
+     */
+    override fun onDestroy() {
+        fbHardwareDB.closeDatabase()
+        super.onDestroy()
     }
 }

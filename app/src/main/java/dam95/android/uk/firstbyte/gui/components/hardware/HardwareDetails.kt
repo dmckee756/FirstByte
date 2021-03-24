@@ -2,9 +2,7 @@ package dam95.android.uk.firstbyte.gui.components.hardware
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,11 +11,12 @@ import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -31,7 +30,7 @@ private const val COMPONENT_INDEX = 0
 class HardwareDetails : Fragment() {
 
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
-    private lateinit var componentsComponentDB: ComponentDBAccess
+    private lateinit var componentsFirstByteDB: FirstByteDBAccess
     private lateinit var hardwareDetailsListAdapter: HardwareDetailsRecyclerList
 
     private var isLoadingFromServer: Boolean? = null
@@ -50,8 +49,9 @@ class HardwareDetails : Fragment() {
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
 
         if (componentName != null && componentType != null) {
+            setHasOptionsMenu(true)
             //Load FB_Hardware_Android Instance
-            componentsComponentDB = context?.let { ComponentDBAccess.dbInstance(it) }!!
+            componentsFirstByteDB = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
 
             Log.i("SEARCH_CATEGORY", componentName)
             //Determine if offline load from FB_Hardware_Android Database or the online server.
@@ -69,6 +69,12 @@ class HardwareDetails : Fragment() {
         }
         // Inflate the layout for this fragment
         return hardwareDetailsBinding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.hardware_related_toolbar_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     /**
@@ -106,7 +112,7 @@ class HardwareDetails : Fragment() {
     private fun loadSavedHardware(name: String, type: String) {
         coroutineScope.launch {
             val component: Component =
-                componentsComponentDB.retrieveHardware(name, type)
+                componentsFirstByteDB.retrieveHardware(name, type)
 
             ConvertImageURL.convertURLtoImage(
                 component.imageLink,
@@ -137,7 +143,7 @@ class HardwareDetails : Fragment() {
             //If the loaded component is already stored in the Component Database...
             //...then do not allow the user to click on addHardware
             coroutineScope.launch {
-                if (componentsComponentDB.hardwareExists(component.name) > 0) {
+                if (componentsFirstByteDB.hardwareExists(component.name) > 0) {
                     setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
                     //...then do not allow the user to click on removeHardware...
                 } else {
@@ -150,7 +156,7 @@ class HardwareDetails : Fragment() {
                 //and allow the user to click on the remove hardware button
                 if (isLoadingFromServer == true) {
                     coroutineScope.launch {
-                        componentsComponentDB.insertHardware(component)
+                        componentsFirstByteDB.insertHardware(component)
                     }
                 } else offlineRemoveHardwareOnDestroy = false
                 setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
@@ -160,7 +166,7 @@ class HardwareDetails : Fragment() {
                 //and allow the user to click on the add hardware button
                 if (isLoadingFromServer == true) {
                     coroutineScope.launch {
-                        componentsComponentDB.removeHardware(component.name)
+                        componentsFirstByteDB.removeHardware(component.name)
                     }
                 } else offlineRemoveHardwareOnDestroy = true
                 setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
@@ -221,9 +227,9 @@ class HardwareDetails : Fragment() {
         //If this class is loaded from SavedSearchComponents,
         //only remove this component from the database when the fragment is destroyed
         if (offlineRemoveHardwareOnDestroy) {
-            coroutineScope.launch {
+            runBlocking{
                 componentName?.let {
-                    componentsComponentDB.removeHardware(it)
+                    componentsFirstByteDB.removeHardware(it)
                 }
             }
         }

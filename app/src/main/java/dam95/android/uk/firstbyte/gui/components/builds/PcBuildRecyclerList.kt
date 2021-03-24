@@ -1,6 +1,7 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayPclistBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.PCBuild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class PcBuildRecyclerList(
     private val context: Context?,
-    private val fb_Hardware_DB: ComponentDBAccess,
+    private val fb_Hardware_DB: FirstByteDBAccess,
     private val listener: OnItemClickListener,
 ) : RecyclerView.Adapter<PcBuildRecyclerList.ViewHolder>() {
 
@@ -61,20 +62,17 @@ class PcBuildRecyclerList(
                     context?.let {
                         ResourcesCompat.getDrawable(
                             it.resources,
-                            R.drawable.icon_add,
+                            R.drawable.ic_add,
                             null
                         )
                     }
             } else {
                 //Load the correct pc in the list
                 //Load a colorful background from drawable resources
-                pcBtn.background = context?.let {
-                    ResourcesCompat.getDrawable(
-                        it.resources,
-                        R.drawable.object_pc_display_item,
-                        null
-                    )
-                }
+                    val test = (adapterPosition % 2)
+                    Log.i("TEST", "$test")
+
+                pcBtn.setBackgroundResource(R.drawable.object_pc_display_item)
 
                 //Setup correct information for pc selection display
                 pcName.text = pcBuild.pcName

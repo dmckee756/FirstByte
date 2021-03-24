@@ -11,14 +11,15 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.PCBuild
+import kotlinx.coroutines.Dispatchers
 
 class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var pcBuildListAdapter: PcBuildRecyclerList
-    private lateinit var fbHardwareDb: ComponentDBAccess
+    private lateinit var fbHardwareDb: FirstByteDBAccess
     private lateinit var pcListLiveData: LiveData<List<PCBuild?>>
 
     /**
@@ -30,7 +31,7 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
-        fbHardwareDb = context?.let { ComponentDBAccess.dbInstance(it) }!!
+        fbHardwareDb = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
         pcListLiveData = fbHardwareDb.retrievePCList()
 
         pcListLiveData.observe(viewLifecycleOwner){

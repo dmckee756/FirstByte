@@ -32,7 +32,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_margin="@dimen/halved_standard_margins"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/selectCompareComponentPicture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="@color/text_color"

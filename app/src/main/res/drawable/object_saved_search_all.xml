@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <gradient android:startColor="@color/allSearchSavedGradient"
-        android:endColor="@color/allSearchSaved"/>
-</shape>
+<!--
+CODE REFERENCE
+AUTHOR: Jake Lee
+DATE: July 31, 2020
+TITLE: A few experiments with Android drawable gradients
+SUB TITLE: Sweep rotations
+VERSION: 1.0
+TYPE: Source Code
+WEB ADDRESS: https://blog.jakelee.co.uk/a-few-experiments-with-android-drawable-gradients/
+
+This has been altered to my own version, as the original was both too clustered...
+... and didn't suit the correct theme
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape>
+        <solid android:color="@android:color/black" />
+    </shape></item>
+
+    <item><rotate android:fromDegrees="66" android:toDegrees="0" android:pivotY="50%" android:pivotX="50%"><shape>
+        <gradient
+            android:type="sweep"
+            android:centerX="0.3"
+            android:centerY="0.5"
+            android:startColor="@android:color/holo_green_dark"
+            android:centerColor="@android:color/transparent"
+            android:endColor="@android:color/transparent"/>
+    </shape></rotate></item>
+
+    <item><rotate android:fromDegrees="290" android:toDegrees="0" android:pivotY="40%" android:pivotX="30%"><shape>
+        <gradient
+            android:type="sweep"
+            android:centerX="0.8"
+            android:centerY="0.3"
+            android:startColor="@color/allSearchSavedGradient"
+            android:centerColor="@android:color/transparent"
+            android:endColor="@android:color/transparent"/>
+    </shape></rotate></item>
+
+    <item><rotate android:fromDegrees="0" android:toDegrees="0" android:pivotY="50%" android:pivotX="30%"><shape>
+        <gradient
+            android:type="sweep"
+            android:centerX="0.0"
+            android:centerY="0.0"
+            android:startColor="@color/categoryOfflineDisplay"
+            android:centerColor="@android:color/transparent"
+            android:endColor="@android:color/transparent"/>
+    </shape></rotate></item>
+
+</layer-list>

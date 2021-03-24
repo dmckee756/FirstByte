@@ -4,33 +4,32 @@
     tools:showIn="navigation_view">
 
     <item android:title="@string/drawerNavigation">
-        <group android:checkableBehavior="single">
+        <menu android:checkableBehavior="single">
             <item
                 android:id="@+id/home_fragmentID"
-                android:icon="@drawable/icon_home"
+                android:icon="@drawable/ic_home"
                 android:title="@string/home" />
-
             <item
                 android:id="@+id/searchSavedComponents_fragmentID"
-                android:icon="@drawable/icon_saved"
+                android:icon="@drawable/ic_saved"
                 android:title="@string/savedPC_Parts" />
             <item
                 android:id="@+id/searchCategory_fragmentID"
-                android:icon="@drawable/icon_search"
+                android:icon="@drawable/ic_search"
                 android:title="@string/searchPC_Parts" />
-        </group>
+        </menu>
     </item>
 
     <item android:title="@string/drawerSupport">
-        <group android:checkableBehavior="single">
+        <menu android:checkableBehavior="single">
             <item
                 android:id="@+id/settings_fragmentID"
-                android:icon="@drawable/icon_settings"
+                android:icon="@drawable/ic_settings"
                 android:title="@string/settings" />
             <item
                 android:id="@+id/help_fragmentID"
-                android:icon="@drawable/icon_help"
+                android:icon="@drawable/ic_help"
                 android:title="@string/help" />
-        </group>
+        </menu>
     </item>
 </menu>

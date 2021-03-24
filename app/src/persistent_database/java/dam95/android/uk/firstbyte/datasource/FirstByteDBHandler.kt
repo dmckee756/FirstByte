@@ -5,11 +5,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import dam95.android.uk.firstbyte.R
-import dam95.android.uk.firstbyte.datasource.util.FK_ON
-import dam95.android.uk.firstbyte.datasource.util.SQLComponentConstants
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import dam95.android.uk.firstbyte.model.tables.FK_ON
+import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
 import java.lang.Exception
 
 private const val DATABASE_NAME = "AndroidFB_Hardware"
@@ -21,29 +18,24 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     null,
     context.resources.getInteger(R.integer.AndroidFB_HardwareVersion)
 ) {
-    private var coroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
      *
      */
     override fun onCreate(database: SQLiteDatabase?) {
-        coroutineScope.launch {
-            Log.i("DATABASE_START", "Creating $DATABASE_NAME...")
-            updateFBHardware(
-                database,
-                NEW_DATABASE,
-                context.resources.getInteger(R.integer.AndroidFB_HardwareVersion)
-            )
-        }
+        Log.i("DATABASE_START", "Creating $DATABASE_NAME...")
+        updateFBHardware(
+            database,
+            NEW_DATABASE,
+            context.resources.getInteger(R.integer.AndroidFB_HardwareVersion)
+        )
     }
 
     /**
      *
      */
     override fun onUpgrade(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        coroutineScope.launch {
-            updateFBHardware(database, oldVersion, newVersion)
-        }
+        updateFBHardware(database, oldVersion, newVersion)
     }
 
     /**
@@ -55,7 +47,7 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
         if (oldVersion < 1) {
             buildNewFBDatabase(database)
             //If it is not the first version of the database and a new version is requested, then update/rebuild the database
-        } else if (oldVersion < newVersion){
+        } else if (oldVersion < newVersion) {
             rebuildFBDatabase(database)
         }
     }

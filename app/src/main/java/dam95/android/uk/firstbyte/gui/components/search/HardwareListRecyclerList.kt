@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayHardwarelistBinding
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
@@ -18,6 +19,7 @@ import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 class HardwareListRecyclerList(
     private val context: Context?,
     private val listener: OnItemClickListener,
+    private val isLoadingFromServer: Boolean,
 ) : RecyclerView.Adapter<HardwareListRecyclerList.ViewHolder>() {
 
     private var hardwareListFull = emptyList<SearchedHardwareItem>()
@@ -42,6 +44,11 @@ class HardwareListRecyclerList(
          *
          */
         fun bindDataSet(displayedComponent: SearchedHardwareItem) {
+            if (isLoadingFromServer){
+                hardwareBtn.setBackgroundResource(R.drawable.object_online_display)
+            } else{
+                hardwareBtn.setBackgroundResource(R.drawable.object_offline_display)
+            }
 
             Log.i("LIST_HARDWARE_NAME", displayedComponent.name)
             Log.i("LIST_HARDWARE_LINK", displayedComponent.image_link)

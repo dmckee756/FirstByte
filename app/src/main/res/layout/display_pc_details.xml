@@ -4,7 +4,8 @@
     android:id="@+id/hardwarePCComponentLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/halved_standard_margins">
+    android:layout_marginVertical="@dimen/halved_standard_margins"
+    android:elevation="10dp">
 
     <TextView
         android:id="@+id/componentType"
@@ -71,7 +72,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginHorizontal="@dimen/halved_standard_margins"
-        android:background="@drawable/icon_add"
+        android:background="@drawable/ic_add"
         android:contentDescription="Hardware Image"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/componentDetailBtn"
@@ -84,7 +85,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
-        android:background="@drawable/icon_remove_pcpart"
+        android:background="@drawable/ic_remove_pcpart"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/componentDetailBtn"
         app:layout_constraintTop_toTopOf="@+id/componentDetailBtn" />
@@ -95,7 +96,7 @@
         android:layout_height="40dp"
         android:layout_marginVertical="5dp"
         android:layout_marginEnd="5dp"
-        android:background="@drawable/icon_not_compatible"
+        android:background="@drawable/ic_not_compatible"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/componentDetailBtn"
         app:layout_constraintEnd_toEndOf="@+id/componentDetailBtn" />
@@ -105,7 +106,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="@dimen/halved_standard_margins"
-        android:background="@drawable/icon_part_required"
+        android:background="@drawable/ic_part_required"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/componentDetailBtn"

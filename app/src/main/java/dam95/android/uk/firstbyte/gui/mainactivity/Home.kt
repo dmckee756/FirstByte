@@ -7,20 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import kotlinx.coroutines.Dispatchers
 
 class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var recommendedListAdapter: RecommendedBuildRecyclerList
-    private lateinit var fbHardwareDB: ComponentDBAccess
+    private lateinit var fbHardwareDB: FirstByteDBAccess
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
-        fbHardwareDB = ComponentDBAccess(requireContext())
+        fbHardwareDB = FirstByteDBAccess(requireContext(), Dispatchers.Main)
         setUpRecommendedBuildList()
 
         return recyclerListBinding.root
@@ -48,10 +49,5 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
 
     override fun onRightImageClick() {
         TODO("Not yet implemented")
-    }
-
-    override fun onDestroy() {
-        fbHardwareDB.closeDatabase()
-        super.onDestroy()
     }
 }

@@ -5,14 +5,14 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import dam95.android.uk.firstbyte.datasource.util.tables.components.ComponentHandler
-import dam95.android.uk.firstbyte.datasource.util.tables.pcbuilds.PCBuildHandler
-import dam95.android.uk.firstbyte.datasource.util.FK_ON
+import dam95.android.uk.firstbyte.model.tables.FK_ON
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.tables.components.ComponentHandler
+import dam95.android.uk.firstbyte.model.tables.pcbuilds.PCBuildHandler
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val PC_ID_COLUMN = 0
@@ -22,34 +22,41 @@ const val NULL_RES = 0x00000000
 const val INTEGER_RES = 0x00000001
 const val FLOAT_RES = 0x00000002
 const val STRING_RES = 0x00000003
+private const val DATABASE_NAME = "FB_TEST_DATABASE"
 
 /**
- *
+ * This is the handler class for the in-memory database for the FirstByte app.
  */
-class ComponentDBAccess(context: Context) {
+class FirstByteDBAccess(
+    private val context: Context,
+    private val coroutineDispatcher: CoroutineDispatcher
+) {
 
     private val database: FirstByteDBHandler = FirstByteDBHandler(context)
     private val dbHandler: SQLiteDatabase = database.writableDatabase
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(coroutineDispatcher)
 
 
     private val componentQueries: ComponentHandler = ComponentHandler(dbHandler)
-    private val pcBuildQueries: PCBuildHandler = PCBuildHandler(componentQueries ,dbHandler)
+    private val pcBuildQueries: PCBuildHandler = PCBuildHandler(componentQueries, dbHandler)
 
     init {
         dbHandler.execSQL(FK_ON)
     }
 
     companion object Static {
-        private var dbController: ComponentDBAccess? = null
+        private var dbController: FirstByteDBAccess? = null
 
         /**
          *
          */
-        fun dbInstance(context: Context): ComponentDBAccess? {
+        fun dbInstance(
+            context: Context,
+            coroutineDispatcher: CoroutineDispatcher
+        ): FirstByteDBAccess? {
             when (dbController) {
                 null -> {
-                    dbController = ComponentDBAccess(context)
+                    dbController = FirstByteDBAccess(context, coroutineDispatcher)
                 }
                 else -> dbController
             }
@@ -63,6 +70,10 @@ class ComponentDBAccess(context: Context) {
      */
     fun closeDatabase() {
         dbHandler.close()
+        // Since this is actually not in memory, when we close the database on the app's exit,
+        // delete the database, this way we simulate an in-memory database without any bugs of
+        // fragments not seeing tables in the database.
+        context.deleteDatabase(DATABASE_NAME)
         Log.i("DATABASE_CLOSED", "Database closed")
         dbController = null
     }
@@ -71,7 +82,7 @@ class ComponentDBAccess(context: Context) {
      *
      */
     fun insertHardware(component: Component) {
-        coroutineScope.launch {
+        coroutineScope.launch(coroutineDispatcher) {
             componentQueries.insertHardware(component)
         }
     }
@@ -80,7 +91,7 @@ class ComponentDBAccess(context: Context) {
      * Remove hardware from the database
      */
     fun removeHardware(name: String) {
-        coroutineScope.launch {
+        coroutineScope.launch(coroutineDispatcher) {
             componentQueries.removeHardware(name)
         }
     }
@@ -88,7 +99,8 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    fun retrieveHardware(hardwareName: String, hardwareType: String): Component  = componentQueries.getHardware(hardwareName, hardwareType)
+    fun retrieveHardware(hardwareName: String, hardwareType: String): Component =
+        componentQueries.getHardware(hardwareName, hardwareType)
 
     /**
      *
@@ -123,8 +135,8 @@ class ComponentDBAccess(context: Context) {
     fun createPC(personalPC: PCBuild): Int = pcBuildQueries.createPersonalPC(personalPC)
 
     /**
-    *
-    */
+     *
+     */
     fun deletePC(pcID: Int) {
         coroutineScope.launch {
             pcBuildQueries.deletePC(pcID)
@@ -135,7 +147,7 @@ class ComponentDBAccess(context: Context) {
      *
      */
     fun savePCPart(name: String, type: String, pcID: Int) {
-        coroutineScope.launch {
+        coroutineScope.launch(coroutineDispatcher) {
             pcBuildQueries.savePCPart(name, type, pcID)
         }
     }
@@ -144,11 +156,23 @@ class ComponentDBAccess(context: Context) {
      * Moves request to pcBuildQueries, which will remove a component from the pc table or relational table.
      *
      * @param type string value which determines the type of pc part to remove.
-     * @param partName a string? value which determines the name of a relational pc part to remove.
-     * @param pcID an int? value determining which pc build in a relational table will be altered.
+     * @param pcID an int value determining which pc build will be altered.
      */
-    fun removePCPart(type: String, partName: String?, pcID: Int?) {
-        coroutineScope.launch {
+    fun removePCPart(type: String, pcID: Int) {
+        coroutineScope.launch(coroutineDispatcher) {
+            pcBuildQueries.removePCPart(type, null, pcID)
+        }
+    }
+
+    /**
+     * Moves request to pcBuildQueries, which will remove a component from the pc table or relational table.
+     *
+     * @param type string value which determines the type of pc part to remove.
+     * @param partName a string value which determines the name of a relational pc part to remove.
+     * @param pcID an int value determining which pc build in a relational table will be altered.
+     */
+    fun removeRelationalPCPart(type: String, partName: String, pcID: Int) {
+        coroutineScope.launch(coroutineDispatcher) {
             pcBuildQueries.removePCPart(type, partName, pcID)
         }
     }
@@ -156,8 +180,8 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    fun trimFanList(type: String, pcID: Int, numberOfFans: Int){
-        coroutineScope.launch {
+    fun trimFanList(type: String, pcID: Int, numberOfFans: Int) {
+        coroutineScope.launch(coroutineDispatcher) {
             pcBuildQueries.updateFansInPC(type, pcID, numberOfFans)
         }
     }
@@ -165,8 +189,8 @@ class ComponentDBAccess(context: Context) {
     /**
      *
      */
-    fun updatePCPrice(newPrice: Double, pcID: Int){
-        coroutineScope.launch {
+    fun updatePCPrice(newPrice: Double, pcID: Int) {
+        coroutineScope.launch(coroutineDispatcher) {
             pcBuildQueries.updatePCTotalPrice(newPrice, pcID)
         }
     }

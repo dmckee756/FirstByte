@@ -4,12 +4,22 @@
 
     <item
         android:id="@+id/searchCategory_fragmentID"
-        android:icon="@drawable/icon_search"
+        android:icon="@drawable/ic_search"
         android:title="@string/searchBtn"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/tipsID"
-        android:icon="@drawable/icon_tips"
-        android:title="@string/tipsBtn"
-        app:showAsAction="never" />
+        android:id="@+id/moreMenuID"
+        android:icon="@drawable/ic_baseline_more_vert_24"
+        android:title="@string/moreMenu"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/tipsID"
+                android:icon="@drawable/ic_tips"
+                android:title="@string/tips"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
 </menu>

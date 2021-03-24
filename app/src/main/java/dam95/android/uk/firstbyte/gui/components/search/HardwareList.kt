@@ -13,7 +13,7 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     private lateinit var apiViewModel: ApiViewModel
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
-    private lateinit var fbHardwareDb: ComponentDBAccess
+    private lateinit var fbHardwareDb: FirstByteDBAccess
     var categoryListLiveData: LiveData<List<SearchedHardwareItem>>? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -58,6 +58,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
+            setHasOptionsMenu(true)
             Log.i("SEARCH_CATEGORY", searchCategory!!)
 
             setUpSearch()
@@ -76,7 +77,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 false -> {
                     Log.i("OFFLINE_METHOD", "Load client database.")
                     //Load FB_Hardware_Android Instance
-                    fbHardwareDb = context?.let { ComponentDBAccess.dbInstance(it) }!!
+                    fbHardwareDb = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
                     coroutineScope.launch {
                         try {
                             searchCategory?.let {
@@ -101,6 +102,12 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         return recyclerListBinding.root
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     /**
      *
      */
@@ -120,47 +127,16 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         val displayHardwareList = recyclerListBinding.recyclerList
         //
         displayHardwareList.layoutManager = LinearLayoutManager(this.context)
-        hardwareListAdapter = HardwareListRecyclerList(context, this)
+        hardwareListAdapter = HardwareListRecyclerList(context, this, isLoadingFromServer!!)
 
         hardwareListAdapter.setDataList(res)
 
         displayHardwareList.adapter = hardwareListAdapter
     }
 
-    /**
-     *
-     */
-    private fun searchThroughDatabase(newText: String) {
-        coroutineScope.launch {
-            try {
-                //
-                if (newText != "") {
-                    categoryListLiveData =
-                        fbHardwareDb.retrieveCategorySearch(searchCategory!!, newText)!!
-                    categoryListLiveData?.observe(viewLifecycleOwner) {
-                        hardwareListAdapter.setDataList(it)
-                    }
-                    //
-                } else {
-                    categoryListLiveData =
-                        fbHardwareDb.retrieveCategory(searchCategory!!)!!
-                    categoryListLiveData?.observe(viewLifecycleOwner) {
-                        hardwareListAdapter.setDataList(it)
-                    }
-                }
-            } catch (exception: Exception) {
-            }
-        }
-    }
+    //UI Methods
 
-    /**
-     *
-     */
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
+/*
     /**
      * TO FINISH and to get working
      */
@@ -173,6 +149,9 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         }
         return super.onOptionsItemSelected(item)
     }
+*/
+
+    //Searching Through recycler list methods
 
     /**
      *
@@ -217,6 +196,34 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     /**
      *
      */
+    private fun searchThroughDatabase(newText: String) {
+        coroutineScope.launch {
+            try {
+                //
+                if (newText != "") {
+                    categoryListLiveData =
+                        fbHardwareDb.retrieveCategorySearch(searchCategory!!, newText)!!
+                    categoryListLiveData?.observe(viewLifecycleOwner) {
+                        hardwareListAdapter.setDataList(it)
+                    }
+                    //
+                } else {
+                    categoryListLiveData =
+                        fbHardwareDb.retrieveCategory(searchCategory!!)!!
+                    categoryListLiveData?.observe(viewLifecycleOwner) {
+                        hardwareListAdapter.setDataList(it)
+                    }
+                }
+            } catch (exception: Exception) {
+            }
+        }
+    }
+
+    //Recycler list event methods
+
+    /**
+     *
+     */
     override fun onHardwareClick(componentName: String, componentType: String) {
         if (pcID >= 0 && this::fbHardwareDb.isInitialized) {
             fbHardwareDb.savePCPart(componentName, componentType, pcID)
@@ -236,10 +243,5 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 nameBundle
             )
         }
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

@@ -4,8 +4,7 @@
     android:id="@+id/pcListCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/halved_standard_margins"
-    app:cardCornerRadius="5dp">
+    android:layout_marginVertical="@dimen/halved_standard_margins">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -65,7 +64,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginHorizontal="@dimen/standard_margins"
-            android:background="@drawable/icon_add"
+            android:background="@drawable/ic_add"
             android:contentDescription="PC Build image.. aka the case"
             android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"

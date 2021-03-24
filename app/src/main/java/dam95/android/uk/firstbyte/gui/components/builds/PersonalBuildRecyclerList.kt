@@ -8,21 +8,19 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayPcDetailsBinding
-import dam95.android.uk.firstbyte.datasource.ComponentDBAccess
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.components.builds.util.PersonalBuildChecks
 import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
-import java.util.*
 
 class PersonalBuildRecyclerList(
     private val context: Context?,
-    private val fbHardwareDb: ComponentDBAccess,
+    private val fbHardwareDb: FirstByteDBAccess,
     private val listener: OnItemListener,
 ) : RecyclerView.Adapter<PersonalBuildRecyclerList.ViewHolder>() {
 
@@ -85,7 +83,7 @@ class PersonalBuildRecyclerList(
         private fun addHardwareSetup(component: Component?, type: String) {
             context?.let {
                 imageView.background =
-                    ResourcesCompat.getDrawable(it.resources, R.drawable.icon_add, null)
+                    ResourcesCompat.getDrawable(it.resources, R.drawable.ic_add, null)
             }
             name.visibility = View.GONE
             partRequiredBtn.visibility = View.VISIBLE
