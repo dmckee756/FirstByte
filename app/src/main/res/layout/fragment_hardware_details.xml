@@ -17,40 +17,67 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/componentNameDisplay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/standard_margins"
-                android:text="@string/componentName"
-                android:textAlignment="center"
-                android:visibility="visible"
-                app:layout_constraintBottom_toTopOf="@+id/componentImage"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/topDetailCard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="@color/gradientColor"
+                android:elevation="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/details_recycler_list"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/componentImage"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_margin="@dimen/halved_standard_margins"
-                android:contentDescription="TODO"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/componentNameDisplay" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tempDisplayHardwareSpecs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/offlineText"
-                android:textAlignment="center"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/componentImage" />
+                    <ImageView
+                        android:id="@+id/componentImage"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_marginHorizontal="@dimen/halved_standard_margins"
+                        android:layout_marginTop="@dimen/standard_margins"
+                        android:contentDescription="@string/componentDetailsImage"
+                        android:background="@drawable/background_tint"
+                        android:paddingVertical="15dp"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/componentNameDisplay"
+                        style="@style/headlineTextFB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/background_tint"
+                        android:padding="@dimen/halved_standard_margins"
+                        android:text="@string/componentName"
+                        android:textAlignment="center"
+                        android:textSize="22sp"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/componentImage" />
+
+                    <TextView
+                        android:id="@+id/offlineText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/offlineText"
+                        android:textAlignment="center"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/componentImage" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/details_recycler_list"
@@ -61,7 +88,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/componentImage" />
+                app:layout_constraintTop_toBottomOf="@+id/topDetailCard" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

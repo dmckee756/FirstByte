@@ -9,7 +9,7 @@
         android:id="@+id/home_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.mainactivity.Home"
         android:label="@string/homeTitle"
-        tools:layout="@layout/fragment_home">
+        tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_home_fragmentID_to_searchCategory_fragmentID"
             app:destination="@id/searchCategory_fragmentID" />
@@ -30,9 +30,6 @@
         android:label="Build PCs Hardcoded"
         tools:layout="@layout/display_pclist">
         <action
-            android:id="@+id/action_buildPC_fragmentID_to_searchCategory_fragmentID"
-            app:destination="@id/searchCategory_fragmentID" />
-        <action
             android:id="@+id/action_buildPC_fragmentID_to_personalBuild_fragmentID"
             app:destination="@id/personalBuild_fragmentID">
             <argument
@@ -42,38 +39,16 @@
                 android:defaultValue="@null" />
         </action>
 
-        <action
-            android:id="@+id/action_buildPC_fragmentID_to_help_fragmentID"
-            app:destination="@id/help_fragmentID" />
-        <action
-            android:id="@+id/action_buildPC_fragmentID_to_settings_fragmentID"
-            app:destination="@id/settings_fragmentID" />
-        <action
-            android:id="@+id/action_buildPC_fragmentID_to_searchSavedComponents"
-            app:destination="@id/searchSavedComponents_fragmentID" />
-
     </fragment>
 
     <fragment
         android:id="@+id/compare_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.SelectCompare"
         android:label="Compare hardware hardcoded"
-        tools:layout="@layout/fragment_select_compare">
-        <action
-            android:id="@+id/action_compare_fragmentID_to_searchCategory_fragmentID"
-            app:destination="@id/searchCategory_fragmentID" />
+        tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_compare_fragmentID_to_compareHardware_fragmentID"
             app:destination="@id/compareHardware_fragmentID" />
-        <action
-            android:id="@+id/action_compare_fragmentID_to_help_fragmentID"
-            app:destination="@id/help_fragmentID" />
-        <action
-            android:id="@+id/action_compare_fragmentID_to_settings_fragmentID"
-            app:destination="@id/settings_fragmentID" />
-        <action
-            android:id="@+id/action_compare_fragmentID_to_searchSavedComponents_fragmentID"
-            app:destination="@id/searchSavedComponents_fragmentID" />
     </fragment>
 
     <fragment
@@ -97,7 +72,7 @@
     <fragment
         android:id="@+id/hardwareList_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.search.HardwareList"
-        android:label="Hardware Search hardcoded"
+        android:label="@string/hardwareList"
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_hardwareList_fragmentID_to_hardwareDetails_fragmentID"
@@ -116,7 +91,13 @@
     <fragment
         android:id="@+id/hardwareDetails_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails"
-        android:label="HardwareDetails" />
+        android:label="@string/hardwareDetails" >
+        <action
+            android:id="@+id/action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID"
+            app:destination="@id/webViewConnection_fragmentID" />
+        <argument android:name="URL_LINK"
+            app:argType="string"/>
+    </fragment>
 
     <fragment
         android:id="@+id/personalBuild_fragmentID"
@@ -138,6 +119,9 @@
             android:name="PC_ID"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="FROM_PC"
+            app:argType="boolean"/>
 
 
     </fragment>
@@ -175,5 +159,9 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+    <fragment
+        android:id="@+id/webViewConnection_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.components.hardware.WebViewConnection"
+        tools:layout="@layout/fragment_web_view_connection" />
 
 </navigation>

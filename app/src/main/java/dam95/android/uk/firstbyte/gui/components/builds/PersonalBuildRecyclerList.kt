@@ -8,28 +8,26 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayPcDetailsBinding
-import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.components.builds.util.PersonalBuildChecks
 import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 
 class PersonalBuildRecyclerList(
     private val context: Context?,
-    private val fbHardwareDb: FirstByteDBAccess,
-    private val listener: OnItemListener,
+    private val listener: OnItemListener
 ) : RecyclerView.Adapter<PersonalBuildRecyclerList.ViewHolder>() {
 
     private var pcDetails = mutableListOf<Pair<Component?, String>>()
+    private var firstLoad: Boolean = true
     private var totalPrice: Double = 0.00
+    private var isPCCompleted: Boolean = true
 
-    /**
-     * SET PICASSOS CACHING SIZE TODO
-     */
     inner class ViewHolder(
         itemView: View,
         private val title: TextView,
@@ -49,6 +47,7 @@ class PersonalBuildRecyclerList(
             removeComponentBtn.setOnClickListener(this)
             notCompatibleBtn.setOnClickListener(this)
             partRequiredBtn.setOnClickListener(this)
+            imageView.setOnClickListener(this)
         }
 
         /**
@@ -58,74 +57,98 @@ class PersonalBuildRecyclerList(
             //change to inform user what type of hardware they are adding
             title.text = type
             component?.let { part ->
-                totalPrice += component.rrpPrice
+
+                if (firstLoad) totalPrice += component.rrpPrice
+
                 name.visibility = View.VISIBLE
                 name.text = part.name
 
                 priceOrAddInfo.text = HumanReadableUtils.rrpPriceToCurrency(part.rrpPrice)
-                otherDetail.text = PersonalBuildChecks.otherDetail(part)
+                PersonalBuildChecks.otherDetail(context!!, part, otherDetail)
 
                 imageView.background = null
                 ConvertImageURL.convertURLtoImage(
                     part.imageLink,
                     imageView
                 )
+                addButton.isClickable = false
+                imageView.isClickable = true
 
                 partRequiredBtn.visibility = View.GONE
                 removeComponentBtn.visibility = View.VISIBLE
-                notCompatibleBtn.visibility = PersonalBuildChecks.checkCompatibility(part)
-            } ?: addHardwareSetup(component, type)
+                notCompatibleBtn.visibility =
+                    PersonalBuildChecks.checkCompatibility(adapterPosition, pcDetails)
+
+            } ?: addHardwareSetup(type)
+
+            //If there are no incompatible hardware, no missing required parts and the total price is under the user's budget then the computer is completed.
+            //and price is under budget
+            if((partRequiredBtn.visibility == View.GONE && notCompatibleBtn.visibility == View.GONE) && isPCCompleted){
+                listener.pcCompleted(true)
+                return
+            }
+            isPCCompleted = false
+            if (adapterPosition == pcDetails.lastIndex) listener.pcCompleted(false)
         }
 
         /**
          *
          */
-        private fun addHardwareSetup(component: Component?, type: String) {
+        private fun addHardwareSetup(type: String) {
+            addButton.isClickable = true
+            imageView.isClickable = false
             context?.let {
                 imageView.background =
                     ResourcesCompat.getDrawable(it.resources, R.drawable.ic_add, null)
             }
             name.visibility = View.GONE
-            partRequiredBtn.visibility = View.VISIBLE
+
+            otherDetail.visibility = View.GONE
+            partRequiredBtn.visibility =
+                PersonalBuildChecks.partRequired(adapterPosition, pcDetails)
             removeComponentBtn.visibility = View.GONE
             notCompatibleBtn.visibility = View.GONE
-
             priceOrAddInfo.text = context?.getString(R.string.addPartToBuild, type)
         }
 
         /**
-         *
+         * Onclick listener actions that interact with the Personal Build class.
+         * This method determines how the user interacts with the pc build screen.
+         * @param view the clicked on displayed details view
          */
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
-                    //
+                    //Navigate to saved hardware list to add a component to the pc
                     addButton.id -> listener.onAddButtonClick(pcDetails[adapterPosition].second)
-                    //
+                    //Remove the component from the current pc
                     removeComponentBtn.id -> pcDetails[adapterPosition].first?.let {
                         listener.removePCPart(
-                            it, adapterPosition
+                            it,
+                            adapterPosition
                         )
                     }
-                    notCompatibleBtn.id -> ""
-                    partRequiredBtn.id -> ""
-                    imageView.id -> {
-                        if (imageView.background == null) {
-                            ""
-                        }
-                    }
+                    //Component has a compatibility issue toast.
+                    notCompatibleBtn.id -> makeAToast("This component is not compatible with another.")
+                    //Component required toast.
+                    partRequiredBtn.id -> makeAToast("This component is required.")
+                    //Navigate to component hardware details if clicked
+                    imageView.id -> isImageClickable(imageView, adapterPosition)
                 }
             }
         }
     }
 
     /**
-     *
+     * Method interfaces that call back to the PersonalBuild fragment providing...
+     * ...information or a command, depending on the selected event or update.
      */
     interface OnItemListener {
         fun onAddButtonClick(addCategory: String)
         fun removePCPart(component: Component, position: Int)
         fun updateTotalPrice(totalPrice: Double)
+        fun goToHardware(componentName: String, componentType: String)
+        fun pcCompleted(isCompleted: Boolean)
     }
 
     /**
@@ -169,7 +192,13 @@ class PersonalBuildRecyclerList(
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindDataSet(pcDetails[position].first, pcDetails[position].second)
-        if (position == pcDetails.lastIndex) listener.updateTotalPrice(totalPrice)
+        if (position == pcDetails.lastIndex && firstLoad) {
+            listener.updateTotalPrice(totalPrice)
+            //Only update the price when this is loaded for the first time... but this doesn't apply...
+            //...to reloads after adding hardware or price change when removing hardware)
+            firstLoad = false
+            listener.pcCompleted(isPCCompleted)
+        }
     }
 
     /**
@@ -184,12 +213,41 @@ class PersonalBuildRecyclerList(
         pcDetails[position] = Pair(null, type)
         Log.i("PC_LIST_POS", "$position")
         notifyItemChanged(position)
+        notifyDataSetChanged()
+        Log.i("TEST_RE", isPCCompleted.toString())
     }
 
-    fun removeFans(numberOfFans: Int){
-        for (i in 0 until numberOfFans){
+    /**
+     *
+     */
+    fun removeFans(numberOfFans: Int) {
+        for (i in 0 until numberOfFans) {
             pcDetails.removeLast()
         }
         notifyDataSetChanged()
     }
+
+    private fun makeAToast(displayedTest: String) {
+        Toast.makeText(
+            context,
+            displayedTest,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    /**
+     * If the imageView (component image) is clickable,
+     * then navigate to that's component's hardware details screen
+     * @param imageView the component's image
+     * @param adapterPosition the current position in the recycler list
+     */
+    private fun isImageClickable(imageView: ImageView, adapterPosition: Int) {
+        if (imageView.isClickable) {
+            //if the component is not null, then navigate to hardware details.
+            pcDetails[adapterPosition].first?.let {
+                listener.goToHardware(it.name, it.type)
+            }
+        }
+    }
+
 }

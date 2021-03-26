@@ -65,7 +65,7 @@
             android:layout_height="80dp"
             android:layout_marginHorizontal="@dimen/standard_margins"
             android:background="@drawable/ic_add"
-            android:contentDescription="PC Build image.. aka the case"
+            android:contentDescription="@string/pcBuildListImage"
             android:elevation="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

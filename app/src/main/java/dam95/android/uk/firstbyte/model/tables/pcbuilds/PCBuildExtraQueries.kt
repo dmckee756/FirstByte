@@ -5,14 +5,38 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import dam95.android.uk.firstbyte.datasource.FLOAT_RES
-import dam95.android.uk.firstbyte.datasource.INTEGER_RES
-import dam95.android.uk.firstbyte.datasource.NULL_RES
-import dam95.android.uk.firstbyte.datasource.STRING_RES
+import dam95.android.uk.firstbyte.datasource.*
 import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
 import java.lang.IndexOutOfBoundsException
 
 class PCBuildExtraQueries {
+
+    fun insertPCDetails(personalPC: PCBuild, dbHandler: SQLiteDatabase): Long{
+        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
+        val cv = ContentValues()
+        var booleanToTinyInt: Int
+        val pcDetails = personalPC.getPrimitiveDetails()
+
+        //Input values into the correct component table.
+        for (i in currentTableColumns.indices) {
+            if (i == PC_ID_COLUMN) continue
+            //Load the correct type of variable and put it into the ContentValue Hash map.
+            when (pcDetails[i]) {
+                is String -> cv.put(currentTableColumns[i], pcDetails[i] as String)
+                is Double -> cv.put(currentTableColumns[i], pcDetails[i] as Double)
+                is Int -> cv.put(currentTableColumns[i], pcDetails[i] as Int)
+                is Boolean -> {
+                    //Convert booleans
+                    booleanToTinyInt = if (pcDetails[i] as Boolean) 1 else 0
+                    cv.put(currentTableColumns[i], booleanToTinyInt)
+                }
+            }
+            Log.i("DETAIL", pcDetails[i].toString())
+        }
+        //Add all primitive values to table
+        return dbHandler.insert("pcbuild", null, cv)
+    }
 
     /**
      *

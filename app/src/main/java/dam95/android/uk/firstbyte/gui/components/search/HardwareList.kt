@@ -13,6 +13,7 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
+import dam95.android.uk.firstbyte.databinding.HardwareListBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ const val PC_ID = "PC_ID"
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
-    private lateinit var recyclerListBinding: RecyclerListBinding
+    private lateinit var recyclerListBinding: HardwareListBinding
     private lateinit var apiViewModel: ApiViewModel
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
@@ -56,7 +57,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
         pcID = arguments?.getInt(PC_ID)!!
 
-        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
+        recyclerListBinding = HardwareListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
             setHasOptionsMenu(true)
             Log.i("SEARCH_CATEGORY", searchCategory!!)
@@ -102,19 +103,12 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         return recyclerListBinding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     /**
      *
      */
     private fun setUpSearch() {
         //Display the search view for the hardware list
         val searchView = recyclerListBinding.hardwareListSearchViewID
-        searchView.visibility = View.VISIBLE
         searchView.isSubmitButtonEnabled = true
         searchView.setOnQueryTextListener(this)
     }
@@ -124,7 +118,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      */
     private fun setUpHardwareList(res: List<SearchedHardwareItem>) {
 
-        val displayHardwareList = recyclerListBinding.recyclerList
+        val displayHardwareList = recyclerListBinding.recyclerHardwarelist
         //
         displayHardwareList.layoutManager = LinearLayoutManager(this.context)
         hardwareListAdapter = HardwareListRecyclerList(context, this, isLoadingFromServer!!)
@@ -133,23 +127,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
         displayHardwareList.adapter = hardwareListAdapter
     }
-
-    //UI Methods
-
-/*
-    /**
-     * TO FINISH and to get working
-     */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            // Bring up a sorting menu
-            R.id.sortID -> Log.i("SORT", "Sort")
-            // Bring up a filter menu
-            R.id.filterID -> Log.i("FILTER", "Filter")
-        }
-        return super.onOptionsItemSelected(item)
-    }
-*/
 
     //Searching Through recycler list methods
 
@@ -244,4 +221,31 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             )
         }
     }
+
+    //UI Methods
+
+    /**
+     *
+     */
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+
+/*
+    /**
+     * TO FINISH and to get working
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            // Bring up a sorting menu
+            R.id.sortID -> Log.i("SORT", "Sort")
+            // Bring up a filter menu
+            R.id.filterID -> Log.i("FILTER", "Filter")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+*/
 }

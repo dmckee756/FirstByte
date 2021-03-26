@@ -1,5 +1,6 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -112,12 +113,13 @@ class HomeActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
+    @SuppressLint("ResourceType")
     override fun onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+            return
         }
+        super.onBackPressed()
     }
 
     /**

@@ -16,18 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/deletePcBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginHorizontal="@dimen/halved_standard_margins"
-                android:layout_marginVertical="@dimen/halved_standard_margins"
-                android:background="@drawable/ic_delete_bin"
-                android:elevation="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:visibility="visible"/>
-
             <TextView
                 android:id="@+id/pcNameDisplay"
                 android:layout_width="wrap_content"
@@ -61,7 +49,7 @@
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_margin="@dimen/halved_standard_margins"
-                android:contentDescription="PC BUILD CASE IMAGE"
+                android:contentDescription="@string/pcBuildImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

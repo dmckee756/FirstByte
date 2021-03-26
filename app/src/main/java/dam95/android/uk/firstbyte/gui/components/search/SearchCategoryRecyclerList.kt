@@ -110,7 +110,7 @@ class SearchCategoryRecyclerList(
             ComponentsEnum.MOTHERBOARD.toString() -> R.drawable.img_motherboard_search
             ComponentsEnum.CASES.toString() -> R.drawable.img_case_search
             ComponentsEnum.HEATSINK.toString() -> R.drawable.img_heatsink_search
-            ComponentsEnum.MOTHERBOARD.toString() -> R.drawable.img_fan_search
+            ComponentsEnum.FAN.toString() -> R.drawable.img_fan_search
             else -> R.drawable.img_search_all
         }
         return context?.let { AppCompatResources.getDrawable(it, drawableID) }

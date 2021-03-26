@@ -83,6 +83,8 @@ class PcBuildRecyclerList(
                     if (pcBuild.isPcCompleted) context?.resources?.getString(R.string.buildComplete) else context?.resources?.getString(
                         R.string.buildIncomplete
                     )
+
+
                 completeOrIncomplete.text = pcStatus
 
                 //If the pc has a case assigned to it, then find the image link.

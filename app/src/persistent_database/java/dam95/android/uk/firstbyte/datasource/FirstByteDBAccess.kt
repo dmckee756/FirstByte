@@ -48,10 +48,10 @@ class FirstByteDBAccess(
         /**
          *
          */
-        fun dbInstance(context: Context, main: MainCoroutineDispatcher): FirstByteDBAccess? {
+        fun dbInstance(context: Context, coroutineDispatcher: CoroutineDispatcher): FirstByteDBAccess? {
             when (dbController) {
                 null -> {
-                    dbController = FirstByteDBAccess(context, Dispatchers.Main)
+                    dbController = FirstByteDBAccess(context, coroutineDispatcher)
                 }
                 else -> dbController
             }
@@ -140,6 +140,11 @@ class FirstByteDBAccess(
             pcBuildQueries.savePCPart(name, type, pcID)
         }
     }
+
+    /**
+     *
+     */
+    fun pcUpdateCompletedValue(pc: PCBuild) = pcBuildQueries.pcUpdateIsCompleted(pc)
 
     /**
      * Moves request to pcBuildQueries, which will remove a component from the pc table or relational table.

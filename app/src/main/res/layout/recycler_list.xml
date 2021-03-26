@@ -5,24 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/hardwareListSearchViewID"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/object_search_view"
-        android:layout_marginTop="@dimen/halved_standard_margins"
-        android:layout_marginHorizontal="@dimen/standard_margins"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:verticalScrollbarPosition="right"
-        app:layout_constraintTop_toBottomOf="@+id/hardwareListSearchViewID"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="@dimen/halved_standard_margins"
         android:layout_marginBottom="?android:actionBarSize"
         app:layout_constraintStart_toStartOf="parent"

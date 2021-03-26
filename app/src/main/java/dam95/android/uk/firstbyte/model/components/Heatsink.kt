@@ -59,26 +59,15 @@ data class Heatsink(
         context: Context,
         childDetails: MutableList<String>?
     ): List<String>? {
-        val details = mutableListOf(
-            context.resources.getString(R.string.displayFanSlots, fan_slots),
-            context.resources.getString(
-                R.string.heatsinkDisplayAMDSocketMin,
-                amd_socket_min
-            ), //CHECK IF NULL
-            context.resources.getString(
-                R.string.heatsinkDisplayAMDSocketMax,
-                amd_socket_max
-            ), //CHECK IF NULL
-            context.resources.getString(
-                R.string.heatsinkDisplayINTELSocketMin,
-                intel_socket_min
-            ), //CHECK IF NULL
-            context.resources.getString(
-                R.string.heatsinkDisplayINTELSocketMax,
-                intel_socket_max
-            ), //CHECK IF NULL
-            context.resources.getString(R.string.displayDimensions, heatsink_dimensions)
-        )
+        val details = mutableListOf<String>()
+
+        details.add(context.resources.getString(R.string.displayFanSlots, fan_slots))
+        amd_socket_min?.let{ details.add(context.resources.getString(R.string.heatsinkDisplayAMDSocketMin, it)) }
+        amd_socket_max?.let { details.add(context.resources.getString(R.string.heatsinkDisplayAMDSocketMax, it)) }
+        intel_socket_min?.let { details.add(context.resources.getString(R.string.heatsinkDisplayINTELSocketMin, it)) }
+        intel_socket_max?.let { details.add(context.resources.getString(R.string.heatsinkDisplayINTELSocketMax, it)) }
+        details.add(context.resources.getString(R.string.displayDimensions, heatsink_dimensions))
+
         return super.getDetailsForDisplay(context, details)
     }
 

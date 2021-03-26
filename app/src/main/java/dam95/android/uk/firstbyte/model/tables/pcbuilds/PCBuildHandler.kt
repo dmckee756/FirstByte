@@ -26,39 +26,15 @@ class PCBuildHandler(
      *
      */
     fun createPersonalPC(personalPC: PCBuild): Int {
-
-        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
-        //
-        val cv = ContentValues()
-        var booleanToTinyInt: Int
-        val pcDetails = personalPC.getPrimitiveDetails()
         //Input values into the correct component table.
-        for (i in currentTableColumns.indices) {
-            if (i == PC_ID_COLUMN) continue
-            //Load the correct type of variable and put it into the ContentValue Hash map.
-            when (pcDetails[i]) {
-                is String -> cv.put(currentTableColumns[i], pcDetails[i] as String)
-                is Double -> cv.put(currentTableColumns[i], pcDetails[i] as Double)
-                is Int -> cv.put(currentTableColumns[i], pcDetails[i] as Int)
-                is Boolean -> {
-                    //Convert booleans
-                    booleanToTinyInt = if (pcDetails[i] as Boolean) 1 else 0
-                    cv.put(currentTableColumns[i], booleanToTinyInt)
-                }
-            }
-            Log.i("DETAIL", pcDetails[i].toString())
-        }
-        //Add all primitive values to table
-        val result = dbHandler.insert("pcbuild", null, cv)
+        val result = pcBuildExtraExtraQueries.insertPCDetails(personalPC, dbHandler)
         //If there was an error, exit out of this insertion.
         if (result == (-1).toLong()) {
             Log.e("FAILED INSERT", result.toString())
             return -1
         } else {
             val cursor = dbHandler.rawQuery(
-                "SELECT pc_id FROM pcbuild WHERE pc_id =(SELECT MAX(pc_id) FROM pcbuild)",
-                null
-            )
+                "SELECT pc_id FROM pcbuild WHERE pc_id =(SELECT MAX(pc_id) FROM pcbuild)", null)
 
             cursor.moveToFirst()
             val mostRecentID = cursor.getInt(0)
@@ -101,12 +77,23 @@ class PCBuildHandler(
     /**
      *
      */
-    suspend fun deletePC(pcID: Int) {
+    fun deletePC(pcID: Int) {
         val result = dbHandler.delete(
             "pcbuild", "pc_id = $pcID AND deletable = 1", null)
         if (result == -1) {
             Log.e("FAILED REMOVAL", result.toString())
         }
+    }
+
+    /**
+     *
+     * @param pc the personal pc build the user just exited/paused from
+     */
+    fun pcUpdateIsCompleted(pc: PCBuild){
+        val cv = ContentValues()
+        val booleanToTinyInt = if (pc.isPcCompleted) 1 else 0
+        cv.put("is_pc_completed", booleanToTinyInt)
+        dbHandler.update("pcbuild", cv, "pc_id =?", arrayOf(pc.pcID.toString()))
     }
 
     /**

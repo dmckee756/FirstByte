@@ -29,11 +29,13 @@ interface Component {
      *
      */
     fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
-       val prettyPriceDetails = listOf(
-           context.resources.getString(R.string.displayRrpPrice, "£", rrpPrice),
-           context.resources.getString(R.string.displayAmazonPrice, "£", amazonPrice), //CHECK IF NULL
-           context.resources.getString(R.string.displayScanPrice, "£", scanPrice) //CHECK IF NULL
-       )
+       val prettyPriceDetails = mutableListOf<String>()
+
+        prettyPriceDetails.add(context.resources.getString(R.string.displayRrpPrice, "£", rrpPrice))
+        //If amazon or scan price is not null, then display it.
+        amazonPrice?.let { prettyPriceDetails.add(context.resources.getString(R.string.displayAmazonPrice, "£", it)) }
+        scanPrice?.let  { prettyPriceDetails.add(context.resources.getString(R.string.displayScanPrice, "£", it)) }
+        //Add child object details to this list and return it to the original caller.
         childDetails?.addAll(prettyPriceDetails)
         return childDetails?.toList()
     }

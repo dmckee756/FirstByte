@@ -2,10 +2,12 @@ package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
@@ -13,16 +15,19 @@ import dam95.android.uk.firstbyte.databinding.FragmentPersonalBuildBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.components.search.CATEGORY_KEY
 import dam95.android.uk.firstbyte.gui.components.search.LOCAL_OR_NETWORK_KEY
+import dam95.android.uk.firstbyte.gui.components.search.NAME_KEY
 import dam95.android.uk.firstbyte.gui.components.search.PC_ID
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 const val SELECTED_PC = "SELECTED_PC"
 private const val NUM_OF_RAM = 1
 private const val NUM_OF_STORAGE = 2
+const val FROM_PC = "FROM_PC"
 
 class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
@@ -46,7 +51,6 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
             personalPC.observe(viewLifecycleOwner) {
                 val pcParts = getPCBuildContents(it)
-                setUpButtons()
 
                 setUpPCDisplay(pcParts)
             }
@@ -145,37 +149,15 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         val displayDetails = personalBuildBinding.pcDetailsRecyclerList
         //
         displayDetails.layoutManager = LinearLayoutManager(this.context)
-        personalBuildListAdapter = PersonalBuildRecyclerList(context, fbHardwareDb, this)
+        personalBuildListAdapter = PersonalBuildRecyclerList(context, this)
 
         personalBuildListAdapter.setDataList(pcParts)
         displayDetails.adapter = personalBuildListAdapter
     }
 
-    private fun setUpButtons() {
-        personalBuildBinding.deletePcBtn.setOnClickListener {
-            personalPC.observe(viewLifecycleOwner) {
-                it.pcID?.let { id -> fbHardwareDb.deletePC(id) }
-                requireActivity().onBackPressed()
-            }
-        }
-    }
-
-    override fun onAddButtonClick(addCategory: String) {
-
-        val addToPcBundle = bundleOf(
-            CATEGORY_KEY to addCategory,
-            LOCAL_OR_NETWORK_KEY to false,
-            PC_ID to personalPC.value?.pcID
-        )
-
-        val navController =
-            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(
-            R.id.action_personalBuild_fragmentID_to_hardwareList_fragmentID,
-            addToPcBundle
-        )
-    }
-
+    /**
+     *
+     */
     override fun removePCPart(component: Component, position: Int) {
         val category = component.type
 
@@ -192,38 +174,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                 )
             }
         } else {
-
-            when (category.toUpperCase(Locale.ROOT)) {
-                ComponentsEnum.CASES.toString() -> {
-                    //If the pc part was the computer case...
-                    //remove the personal build image at the top of the screen
-                    //and remove the "overflowed" fan slots
-                    personalBuildBinding.caseImage.background = null
-                    personalBuildBinding.caseImage.visibility = View.GONE
-                    val tempComponent = component as Case
-                    personalPC.value?.pcID?.let {
-                        fbHardwareDb.trimFanList(
-                            "fan",
-                            it,
-                            tempComponent.case_fan_slots
-                        )
-                        personalBuildListAdapter.removeFans(tempComponent.case_fan_slots)
-                    }
-                }
-                ComponentsEnum.HEATSINK.toString() -> {
-                    //If the pc part was the heatsink...
-                    //remove the "overflowed" fan slots
-                    val tempComponent = component as Heatsink
-                    personalPC.value?.pcID?.let {
-                        fbHardwareDb.trimFanList(
-                            "fan",
-                            it,
-                            tempComponent.fan_slots
-                        )
-                        personalBuildListAdapter.removeFans(tempComponent.fan_slots)
-                    }
-                }
-            }
+            removeExtraFans(category, component)
             //Remove the pc part within the pcbuilds table
             fbHardwareDb.removePCPart(category.toLowerCase(Locale.ROOT), personalPC.value!!.pcID!!)
         }
@@ -231,15 +182,121 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         personalBuildListAdapter.removeDetail(position, category)
     }
 
-    override fun updateTotalPrice(totalPrice: Double) {
-        personalBuildBinding.pcTotalPrice.text =
-            resources.getString(R.string.totalPrice, "£", totalPrice)
-        personalPC.value?.pcID?.let { fbHardwareDb.updatePCPrice(totalPrice, it) }
+    /**
+     *
+     */
+    private fun removeExtraFans(category: String, component: Component) {
+        when (category.toUpperCase(Locale.ROOT)) {
+            //If the pc part was the computer case...
+            ComponentsEnum.CASES.toString() -> {
+                //remove the personal build image at the top of the screen
+                personalBuildBinding.caseImage.background = null
+                personalBuildBinding.caseImage.visibility = View.GONE
+                val tempComponent = component as Case
+                //and remove the "overflowed" fan slots
+                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.case_fan_slots)
+                personalBuildListAdapter.removeFans(tempComponent.case_fan_slots)
+            }
+            //If the pc part was the heatsink...
+            ComponentsEnum.HEATSINK.toString() -> {
+                val tempComponent = component as Heatsink
+                //remove the "overflowed" fan slots
+                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.fan_slots)
+                personalBuildListAdapter.removeFans(tempComponent.fan_slots)
+            }
+        }
     }
 
+    /**
+     *
+     */
+    override fun onAddButtonClick(addCategory: String) {
+
+        val addToPcBundle = bundleOf(
+            CATEGORY_KEY to addCategory,
+            LOCAL_OR_NETWORK_KEY to false,
+            PC_ID to personalPC.value?.pcID
+        )
+
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(
+            R.id.action_personalBuild_fragmentID_to_hardwareList_fragmentID,
+            addToPcBundle
+        )
+    }
+
+    /**
+     *
+     */
+    override fun goToHardware(componentName: String, componentType: String) {
+        //
+        val nameBundle = bundleOf(
+            NAME_KEY to componentName,
+            CATEGORY_KEY to componentType,
+            LOCAL_OR_NETWORK_KEY to false,
+            FROM_PC to true
+        )
+
+        //
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(
+            R.id.action_personalBuild_to_hardwareDetails_fragmentID,
+            nameBundle
+        )
+    }
+
+    /**
+     *
+     */
+    override fun updateTotalPrice(totalPrice: Double) {
+        personalPC.value!!.pcPrice = totalPrice
+        //Sometimes removing all hardware puts the price into a minutely small negative number,
+        //which is a ticking time bomb. Therefore if the total price is below 0.00, enforce total price to equal 0.00.
+        if (totalPrice < 0.00) personalPC.value!!.pcPrice = 0.00
+        personalBuildBinding.pcTotalPrice.text = resources.getString(R.string.totalPrice, "£", personalPC.value!!.pcPrice)
+        fbHardwareDb.updatePCPrice(personalPC.value!!.pcPrice, personalPC.value!!.pcID!!)
+    }
+
+
+    override fun pcCompleted(isCompleted: Boolean) {
+        personalPC.value!!.isPcCompleted = isCompleted
+    }
+
+    /**
+     *
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.pc_build_toolbar_items, menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    /**
+     *
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        //Otherwise execute toolbar button command.
+        when (item.itemId) {
+            // Delete the PC and back out to the pc list
+            R.id.deleteID -> personalPC.observe(viewLifecycleOwner) {
+                it.pcID?.let { id -> fbHardwareDb.deletePC(id) }
+                requireActivity().onBackPressed()
+            }
+            // Display a tip to the user
+            R.id.tipsID -> Toast.makeText(context, "Tip Displayed", Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPause() {
+        fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
+        super.onDestroy()
     }
 }

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">FirstByte</string>
 
+    <string name="hardwareList">Search %1$s</string>
+    <string name="hardwareDetails">Hardware Details</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="offlineText">You are currently offline, to see the information on this page please connect back online.</string>
 
@@ -35,7 +38,7 @@
     <!-- Home Screen -->
     <string name="homeTitle">Recommended Builds</string>
     <string name="recommendedTierTitle">Title of Tier Build</string>
-    <string name="recommendedTierPrice">Price: %1$2%2$.2f</string>
+    <string name="recommendedTierPrice">Price: %1$s%2$.2f</string>
     <string name="recommendedTierDescription">Tier Description.</string>
 
     <!-- Compare Screen -->
@@ -47,6 +50,7 @@
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
     <string name="offlineSearchAll">Search All Saved Components</string>
+    <string name="categoryImage">Image of component type that will be searched</string>
     <string-array name="categoriesDisplayText">
         <item>Search All Components</item>
         <item>Graphics Cards</item>
@@ -72,14 +76,20 @@
         <item>fan</item>
     </string-array>
 
-    <!-- PCbuildList -->
+    <!-- HardwareList -->
+    <string name="hardwareListName">Component name in hardware list</string>
+    <string name="hardwareListPrice">Component price in hardware list</string>
+    <string name="hardwareListImage">Component Image in hardware list</string>
+
+    <!-- PC BuildList -->
     <string name="createPC">Create new PC Build</string>
     <string name="pcBuildName">New-PC</string>
     <string name="totalPrice">Total Price: %1$s %2$.2f</string>
     <string name="buildIncomplete">Incomplete</string>
     <string name="buildComplete">Complete</string>
+    <string name="pcBuildListImage">An image of the PCs case, or the add icon</string>
 
-    <!-- PCdetailsList-->
+    <!-- PC Details-->
     <string name="componentPrice">Price: %1$2%2$.2f</string>
     <string name="componentOtherText">Display other text if applicable.</string>
     <string name="componentType">TYPE</string>
@@ -87,11 +97,18 @@
     <string name="partNeeded">Part Needed</string>
     <string name="addPartToBuild">Add %1$s to build.</string>
     <string name="pcPrice">Total RRP Price: %1$s%2$.2f</string>
+    <string name="pcBuildImage">PC Build Image, which is the PCs selected case</string>
+    <string name="pcbuildHardwareAddOrImage">An image showing the add hardware symbol, or the components image.</string>
 
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>
     <string name="removeHardware">Remove %1$s</string>
     <string name="componentName">Component Name</string>
+    <string name="componentDetailsImage">Image of the component</string>
+    <string name="amazonIcon">Clickable image of the Amazon icon</string>
+    <string name="scanIcon">Clickable image of the Scan.co.uk icon</string>
+    <string name="componentSpecification">One line specification of the selected component</string>
+    <string name="specificationDetail">Info about the specification</string>
 
     <!-- Shared Component values -->
     <string name="displayRrpPrice">RRP Price: %1$s%2$.2f</string>

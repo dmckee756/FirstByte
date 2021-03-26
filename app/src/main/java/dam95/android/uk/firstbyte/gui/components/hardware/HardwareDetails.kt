@@ -1,10 +1,14 @@
 package dam95.android.uk.firstbyte.gui.components.hardware
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
@@ -12,6 +16,7 @@ import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import dam95.android.uk.firstbyte.gui.components.builds.FROM_PC
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,13 +32,15 @@ private const val CATEGORY_KEY = "CATEGORY"
 private const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 private const val COMPONENT_INDEX = 0
 
-class HardwareDetails : Fragment() {
+class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
 
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
     private lateinit var componentsFirstByteDB: FirstByteDBAccess
     private lateinit var hardwareDetailsListAdapter: HardwareDetailsRecyclerList
+    private lateinit var component: Component
 
     private var isLoadingFromServer: Boolean? = null
+    private var isLoadingFromPC: Boolean = false
     private var offlineRemoveHardwareOnDestroy = false
     private var componentName: String? = null
 
@@ -47,11 +54,13 @@ class HardwareDetails : Fragment() {
         val componentName = arguments?.getString(NAME_KEY)
         val componentType = arguments?.getString(CATEGORY_KEY)
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
+        isLoadingFromPC = arguments?.getBoolean(FROM_PC) == true
 
         if (componentName != null && componentType != null) {
             setHasOptionsMenu(true)
             //Load FB_Hardware_Android Instance
-            componentsFirstByteDB = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
+            componentsFirstByteDB =
+                context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
 
             Log.i("SEARCH_CATEGORY", componentName)
             //Determine if offline load from FB_Hardware_Android Database or the online server.
@@ -90,6 +99,7 @@ class HardwareDetails : Fragment() {
             if (res.isSuccessful) {
                 //
                 if (res.body()?.get(COMPONENT_INDEX) != null) {
+                    component = res.body()!![0]
                     ConvertImageURL.convertURLtoImage(
                         res.body()!![COMPONENT_INDEX].imageLink,
                         hardwareDetailsBinding.componentImage
@@ -111,7 +121,7 @@ class HardwareDetails : Fragment() {
      */
     private fun loadSavedHardware(name: String, type: String) {
         coroutineScope.launch {
-            val component: Component =
+            component =
                 componentsFirstByteDB.retrieveHardware(name, type)
 
             ConvertImageURL.convertURLtoImage(
@@ -130,7 +140,7 @@ class HardwareDetails : Fragment() {
 
         //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons. TODO REMOVE '!' from !component.deletable when that problem is fixed
         //THIS CHECK NEEDS WORK, IT DOESN'T MAKE THE BUTTONS DISAPPEAR, BUT IT STOPS THE LISTENERS TO USERS CAN'T ADD NON EXISTENT DATA... SO OK FOR NOW I GUESS
-        if (component.name != "" || component.name != "null") {
+        if (component.name != "" || component.name != "null" || !isLoadingFromPC) {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
             val removeHardware = hardwareDetailsBinding.removeHardwareBtn
@@ -150,48 +160,50 @@ class HardwareDetails : Fragment() {
                     setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
                 }
             }
-
-            addHardware.setOnClickListener {
-                //Add the component to the database, make this button un-clickable
-                //and allow the user to click on the remove hardware button
-                if (isLoadingFromServer == true) {
-                    coroutineScope.launch {
-                        componentsFirstByteDB.insertHardware(component)
-                    }
-                } else offlineRemoveHardwareOnDestroy = false
-                setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
-            }
-            removeHardware.setOnClickListener {
-                //Remove the component from the database, make this button un-clickable
-                //and allow the user to click on the add hardware button
-                if (isLoadingFromServer == true) {
-                    coroutineScope.launch {
-                        componentsFirstByteDB.removeHardware(component.name)
-                    }
-                } else offlineRemoveHardwareOnDestroy = true
-                setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
-            }
+            buttonListeners(addHardware, removeHardware, component)
             setUpRecyclerList(component)
             //... If the component can't be deleted, then get rid of the buttons.
         } else {
-            Log.i("DOES_IT_REACH?", "HELLO????") //Bug with it not reaching this code
             hardwareDetailsBinding.addHardwareBtn.visibility = View.GONE
             hardwareDetailsBinding.removeHardwareBtn.visibility = View.GONE
             setUpRecyclerList(component)
         }
     }
 
+    private fun buttonListeners(addHardware: Button, removeHardware: Button, component: Component) {
+        addHardware.setOnClickListener {
+            //Add the component to the database, make this button un-clickable
+            //and allow the user to click on the remove hardware button
+            if (isLoadingFromServer == true) {
+                coroutineScope.launch {
+                    componentsFirstByteDB.insertHardware(component)
+                }
+            } else offlineRemoveHardwareOnDestroy = false
+            setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
+        }
+        removeHardware.setOnClickListener {
+            //Remove the component from the database, make this button un-clickable
+            //and allow the user to click on the add hardware button
+            if (isLoadingFromServer == true) {
+                coroutineScope.launch {
+                    componentsFirstByteDB.removeHardware(component.name)
+                }
+            } else offlineRemoveHardwareOnDestroy = true
+            setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
+        }
+    }
+
     /**
      *
      */
-    private fun setUpRecyclerList(component: Component){
+    private fun setUpRecyclerList(component: Component) {
 
         //Display the component's name at the top of the screen
         hardwareDetailsBinding.componentNameDisplay.text = component.name
 
         val displayHardwareDetails = hardwareDetailsBinding.detailsRecyclerList
         displayHardwareDetails.layoutManager = LinearLayoutManager(this.context)
-        hardwareDetailsListAdapter = HardwareDetailsRecyclerList(context)
+        hardwareDetailsListAdapter = HardwareDetailsRecyclerList(context, this)
 
         val details: List<String> = context?.let { component.getDetailsForDisplay(it, null) }!!
 
@@ -227,11 +239,32 @@ class HardwareDetails : Fragment() {
         //If this class is loaded from SavedSearchComponents,
         //only remove this component from the database when the fragment is destroyed
         if (offlineRemoveHardwareOnDestroy) {
-            runBlocking{
+            runBlocking {
                 componentName?.let {
                     componentsFirstByteDB.removeHardware(it)
                 }
             }
         }
+    }
+
+    /**
+     *
+     */
+    override fun onLinkClicked(clickedLink: String) {
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        val linkBundle = Bundle()
+        //
+        if (clickedLink.indexOf("Amazon Price") != -1) {
+            linkBundle.putString(URL_LINK, component.amazonLink)
+            //
+        } else if (clickedLink.indexOf("Scan.co.uk Price") != -1) {
+            linkBundle.putString(URL_LINK, component.scanLink)
+        }
+        //
+        navController?.navigate(
+            R.id.action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID,
+            linkBundle
+        )
     }
 }

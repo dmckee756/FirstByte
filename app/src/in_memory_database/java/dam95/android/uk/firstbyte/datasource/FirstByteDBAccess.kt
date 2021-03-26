@@ -153,6 +153,11 @@ class FirstByteDBAccess(
     }
 
     /**
+     *
+     */
+    fun pcUpdateCompletedValue(pc: PCBuild) = pcBuildQueries.pcUpdateIsCompleted(pc)
+
+    /**
      * Moves request to pcBuildQueries, which will remove a component from the pc table or relational table.
      *
      * @param type string value which determines the type of pc part to remove.
