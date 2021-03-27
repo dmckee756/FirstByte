@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.gui.components.builds.PersonalBuildRecyclerList
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
@@ -16,18 +17,19 @@ private const val MOTHERBOARD_SLOT = 3
 private const val CASE_SLOT = 5
 
 //Hardcoded way of dealing with ram slots
-private const val RAM_SLOT_START = 6
-private const val RAM_SLOT_END = 7
+const val RAM_SLOT_START = 6
+const val RAM_SLOT_END = 7
 private const val RAM = "ram"
 
 //Hardcoded way of dealing with storage slots
-private const val STORAGE_SLOT_START = 8
-private const val STORAGE_SLOT_END = 10
+const val STORAGE_SLOT_START = 8
+const val STORAGE_SLOT_END = 10
 private const val STORAGE = "storage"
-
 private const val NVME = "M.2 NVMe"
+private const val FAN_SLOT_START = 11
 
-object PersonalBuildChecks {
+class PersonalBuildChecks(var fanSlotEnd: Int = 0, private val recyclerList: PersonalBuildRecyclerList) {
+
 
     /**
      * Display extra detail under a pc part/component in the PC's details.
@@ -185,7 +187,7 @@ object PersonalBuildChecks {
         position: Int,
         componentsList: List<Pair<Component?, String>>
     ): Int {
-        when (componentsList[position].first?.type?.toUpperCase(Locale.ROOT)) {
+        when (componentsList[position].second.toUpperCase(Locale.ROOT)) {
             //Compare CPU and Motherboard sockets
             ComponentsEnum.CPU.toString() ->
                 return cpuCompatibility(
@@ -264,7 +266,10 @@ object PersonalBuildChecks {
      *
      */
     private fun storageCompatibility(storage: Storage?, motherboard: Motherboard?): Int =
-        if ((storage?.storage_type.equals(NVME, ignoreCase = true) && motherboard?.hasNvmeSupport == 1)
+        if ((storage?.storage_type.equals(
+                NVME,
+                ignoreCase = true
+            ) && motherboard?.hasNvmeSupport == 1)
             || !(storage?.storage_type.equals(NVME, ignoreCase = true))
         ) View.GONE else View.VISIBLE
 
@@ -291,5 +296,69 @@ object PersonalBuildChecks {
             }
         }
         return View.VISIBLE
+    }
+
+    /**
+     *
+     */
+    fun getRelativePosition(position: Int, type: String): Int {
+        when (type.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.RAM.toString() -> return convertDeletedSlotPosition(
+                position,
+                RAM_SLOT_START,
+                RAM_SLOT_END
+            )
+            ComponentsEnum.STORAGE.toString() -> return convertDeletedSlotPosition(
+                position,
+                STORAGE_SLOT_START,
+                STORAGE_SLOT_END
+            )
+            ComponentsEnum.FAN.toString() -> return convertDeletedSlotPosition(
+                position,
+                FAN_SLOT_START,
+                fanSlotEnd
+            )
+        }
+        return -1
+    }
+
+    /**
+     *
+     */
+    private fun convertDeletedSlotPosition(position: Int, minimumSlot: Int, maximumSlot: Int): Int {
+        for ((slotFound, index) in (minimumSlot until maximumSlot).withIndex()) {
+            if (index == position) return slotFound
+        }
+        return 0
+    }
+
+    /**
+     *
+     */
+    fun doSlotsNeedMoved(
+        pcDetails: MutableList<Pair<Component?, String>>,
+        pos: Int
+    ): MutableList<Pair<Component?, String>> {
+        if (pos == pcDetails.lastIndex) return pcDetails
+        when (pcDetails[pos].second.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.RAM.toString() -> return moveSlots(pos, pcDetails)
+            ComponentsEnum.STORAGE.toString() -> return moveSlots(pos, pcDetails)
+            ComponentsEnum.FAN.toString() -> return moveSlots(pos, pcDetails)
+        }
+        return pcDetails
+    }
+
+    private fun moveSlots(
+        pos: Int,
+        pcDetails: MutableList<Pair<Component?, String>>
+    ): MutableList<Pair<Component?, String>> {
+        if (pcDetails[pos].second == pcDetails[pos + 1].second && (pcDetails[pos].first == null && pcDetails[pos + 1].first != null)){
+            //Move the next slot into the current removed slot
+            pcDetails[pos] = Pair(pcDetails[pos + 1].first, pcDetails[pos+1].second.capitalize(Locale.ROOT))
+
+            //Make the next slot empty
+            pcDetails[pos+1] = Pair(null, pcDetails[pos+1].second.capitalize(Locale.ROOT))
+        }
+        return pcDetails
     }
 }

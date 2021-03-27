@@ -32,9 +32,13 @@ interface Component {
        val prettyPriceDetails = mutableListOf<String>()
 
         prettyPriceDetails.add(context.resources.getString(R.string.displayRrpPrice, "£", rrpPrice))
-        //If amazon or scan price is not null, then display it.
-        amazonPrice?.let { prettyPriceDetails.add(context.resources.getString(R.string.displayAmazonPrice, "£", it)) }
-        scanPrice?.let  { prettyPriceDetails.add(context.resources.getString(R.string.displayScanPrice, "£", it)) }
+        //If amazon or scan price is not null, then display the price.
+        amazonPrice?.let { prettyPriceDetails.add(context.resources.getString(R.string.displayAmazonPrice, "£", it.toString())) }
+            ?: amazonLink?.let { prettyPriceDetails.add(context.resources.getString(R.string.displayAmazonPrice, "£", "N/A")) }
+
+        scanPrice?.let  { prettyPriceDetails.add(context.resources.getString(R.string.displayScanPrice, "£", it.toString())) }
+            ?: scanLink?.let { prettyPriceDetails.add(context.resources.getString(R.string.displayScanPrice, "£", "N/A")) }
+
         //Add child object details to this list and return it to the original caller.
         childDetails?.addAll(prettyPriceDetails)
         return childDetails?.toList()

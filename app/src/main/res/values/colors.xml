@@ -12,6 +12,9 @@
     <color name="secondaryColor">#F4F4F4</color>
     <color name="gradientColor">#F1F1F1</color>
 
+    <!-- PCBuild colours -->
+    <color name="componentWarning">#9A1D1D</color>
+
     <!-- Category Search Colors -->
     <color name="allSearchOnline">#4B8BC6</color>
     <color name="allSearchOnlineGradient">#4E7DF6</color>

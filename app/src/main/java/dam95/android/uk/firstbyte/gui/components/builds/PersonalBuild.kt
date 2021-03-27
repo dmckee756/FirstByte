@@ -2,12 +2,13 @@ package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
@@ -21,7 +22,6 @@ import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 const val SELECTED_PC = "SELECTED_PC"
@@ -42,16 +42,30 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         savedInstanceState: Bundle?
     ): View {
         val loadedPc = arguments?.getParcelable(SELECTED_PC) as PCBuild?
+
+        //If there is no loadedPC from arguments, then skip the initialisation
         if (loadedPc != null) {
             setHasOptionsMenu(true)
             fbHardwareDb = FirstByteDBAccess(requireContext(), Dispatchers.Main)
 
+            //Load the arguments pc from the database as a MutableLiveData variable.
+            //This allows the features of live data updating etc.
             personalPC = loadedPc.pcID?.let { fbHardwareDb.retrievePC(it) }!!
             personalBuildBinding = FragmentPersonalBuildBinding.inflate(inflater, container, false)
 
+            //Allow the loaded PC build to be edited with live data updating.
             personalPC.observe(viewLifecycleOwner) {
+
+                //Load all of the PC's components
                 val pcParts = getPCBuildContents(it)
 
+                //Display the correct pc name
+                personalBuildBinding.pcNameDisplay.text = personalPC.value?.pcName
+                //Edit PC name button listener
+                personalBuildBinding.changePCName.setOnClickListener {
+                       dialogBox()
+                }
+                //Set up the recycler list with loaded PC and allow it to be edited.
                 setUpPCDisplay(pcParts)
             }
         }
@@ -158,7 +172,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     /**
      *
      */
-    override fun removePCPart(component: Component, position: Int) {
+    override fun removePCPart(component: Component, position: Int, relativePosition: Int) {
         val category = component.type
 
         //Check to determine if the pc part we want to remove is [RAM, STORAGE, FAN]
@@ -169,8 +183,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             //Remove the relational database pc part
             personalPC.value?.pcID?.let {
                 fbHardwareDb.removeRelationalPCPart(
-                    category.toLowerCase(Locale.ROOT), component.name,
-                    it
+                    category.toLowerCase(Locale.ROOT), it, relativePosition
                 )
             }
         } else {
@@ -193,18 +206,59 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                 personalBuildBinding.caseImage.background = null
                 personalBuildBinding.caseImage.visibility = View.GONE
                 val tempComponent = component as Case
-                //and remove the "overflowed" fan slots
-                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.case_fan_slots)
+                //remove fans from recycler list first and update the price...
                 personalBuildListAdapter.removeFans(tempComponent.case_fan_slots)
+                //and then remove the "overflowed" fan slots
+                fbHardwareDb.trimFanList(
+                    "fan",
+                    personalPC.value!!.pcID!!,
+                    tempComponent.case_fan_slots
+                )
+
             }
             //If the pc part was the heatsink...
             ComponentsEnum.HEATSINK.toString() -> {
                 val tempComponent = component as Heatsink
-                //remove the "overflowed" fan slots
-                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.fan_slots)
+                //remove fans from recycler list first and update the price...
                 personalBuildListAdapter.removeFans(tempComponent.fan_slots)
+                //then remove the "overflowed" fan slots
+                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.fan_slots)
             }
         }
+    }
+
+    /**
+     * Allow the user to change the name of the PC in both it's display and in the database.
+     * This will also update the name in the PC Build recycler list.
+     */
+    private fun dialogBox(){
+        //Retrieve the alert box's xml layout
+        val inflater: LayoutInflater? = activity?.layoutInflater
+        val alertBoxLayout = inflater?.inflate(R.layout.alert_box_layout, null)
+        val userInput = alertBoxLayout?.findViewById<EditText>(R.id.changePCNameEditText)
+
+        val alertBuilder =
+            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.Theme_FirstByte))
+
+        //Setup a dialog box that allows the user to change the PC's Name
+        alertBuilder.setTitle(activity?.resources?.getString(R.string.enterNewPCName))
+            .setCancelable(false)
+            .setPositiveButton(activity?.getString(R.string.ok_button)) { _, _ ->
+
+                //Change the PC Name to the user's inputted text...
+                personalPC.value?.pcName = userInput?.text.toString()
+                //Update the PC's display name...
+                personalBuildBinding.pcNameDisplay.text = personalPC.value!!.pcName
+                //Update the PC's name in the database.
+                personalPC.value?.pcName?.let { fbHardwareDb.changePCName(personalPC.value?.pcID!!, it) }
+            }
+            .setNegativeButton(activity?.resources?.getString(R.string.cancel_button)) { dialog, _ ->
+                // Don't change the PC name and dismiss the alert
+                dialog.dismiss()
+            }.setView(alertBoxLayout)
+        //Show the alert box
+        val alert = alertBuilder.create()
+        alert.show()
     }
 
     /**
@@ -255,7 +309,8 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         //Sometimes removing all hardware puts the price into a minutely small negative number,
         //which is a ticking time bomb. Therefore if the total price is below 0.00, enforce total price to equal 0.00.
         if (totalPrice < 0.00) personalPC.value!!.pcPrice = 0.00
-        personalBuildBinding.pcTotalPrice.text = resources.getString(R.string.totalPrice, "£", personalPC.value!!.pcPrice)
+        personalBuildBinding.pcTotalPrice.text =
+            resources.getString(R.string.totalPrice, "£", personalPC.value!!.pcPrice)
         fbHardwareDb.updatePCPrice(personalPC.value!!.pcPrice, personalPC.value!!.pcID!!)
     }
 

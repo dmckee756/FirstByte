@@ -142,11 +142,6 @@ class FirstByteDBAccess(
     }
 
     /**
-     *
-     */
-    fun pcUpdateCompletedValue(pc: PCBuild) = pcBuildQueries.pcUpdateIsCompleted(pc)
-
-    /**
      * Moves request to pcBuildQueries, which will remove a component from the pc table or relational table.
      *
      * @param type string value which determines the type of pc part to remove.
@@ -154,7 +149,7 @@ class FirstByteDBAccess(
      */
     fun removePCPart(type: String, pcID: Int) {
         coroutineScope.launch(coroutineDispatcher) {
-            pcBuildQueries.removePCPart(type, null, pcID)
+            pcBuildQueries.removePCPart(type, pcID)
         }
     }
 
@@ -165,12 +160,7 @@ class FirstByteDBAccess(
      * @param partName a string value which determines the name of a relational pc part to remove.
      * @param pcID an int value determining which pc build in a relational table will be altered.
      */
-    fun removeRelationalPCPart(type: String, partName: String, pcID: Int) {
-        coroutineScope.launch(coroutineDispatcher) {
-            pcBuildQueries.removePCPart(type, partName, pcID)
-        }
-    }
-
+    fun removeRelationalPCPart(type: String, pcID: Int, relativePos: Int) = pcBuildQueries.removeRelationalPCPart(type,  pcID, relativePos)
     /**
      *
      */
@@ -188,6 +178,16 @@ class FirstByteDBAccess(
             pcBuildQueries.updatePCTotalPrice(newPrice, pcID)
         }
     }
+
+    /**
+     *
+     */
+    fun changePCName(pcID: Int, pcName: String) = pcBuildQueries.updatePCName(pcID, pcName)
+
+    /**
+     *
+     */
+    fun pcUpdateCompletedValue(pc: PCBuild) = pcBuildQueries.pcUpdateIsCompleted(pc)
 
     /**
      *

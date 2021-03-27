@@ -120,28 +120,4 @@ class PCBuildExtraQueries {
         cv.put("${type}_name", name)
         dbHandler.insert("${type}_in_pc", null, cv)
     }
-
-    /**
-     * This will retrieve all pc parts in a many to many relationship table into a mutable list
-     * (depending on passed in category [Ram, Storage, Fan]) and delete the records attached to the pc builds id.
-     * After this it will remove one selected pc part from the list and then insert all the records back into the relational table.
-     *
-     * This is not an optimal solution, but rather a solution that shows the flaw of both my schema designs. This is something that would be...
-     * ...reworked if I decide to further support this project after the final year project deadline.
-     *
-     * @param name the component that will be removed.
-     * @param pcID the pc that will have the component removed from.
-     * @param dbHandler is the access to the database.
-     */
-    fun removeRelationalPart(name: String, type: String, pcID: Int, dbHandler: SQLiteDatabase){
-
-        val cursor = dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE pc_id = $pcID", null)
-        val tempList: MutableList<String> = relationalPCLoop(cursor).toMutableList()
-
-        dbHandler.delete("${type}_in_pc", "pc_id = $pcID", null)
-        cursor.close()
-        tempList.remove(name)
-
-        for (i in 0 until tempList.size) insertPCBuildRelationTables(name, type, pcID, dbHandler)
-    }
 }

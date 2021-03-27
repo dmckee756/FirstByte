@@ -6,7 +6,8 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="offlineText">You are currently offline, to see the information on this page please connect back online.</string>
-
+    <string name="ok_button">Change</string>
+    <string name="cancel_button">Cancel</string>
     <!-- Toggle Drawer -->
     <string name="openDrawer">Open Toggle Drawer Navigation</string>
     <string name="closeDrawer">Close Toggle Drawer Navigation</string>
@@ -90,6 +91,8 @@
     <string name="pcBuildListImage">An image of the PCs case, or the add icon</string>
 
     <!-- PC Details-->
+    <string name="enterNewPCName">Enter new PC name</string>
+    <string name="pcNameHint">PC name</string>
     <string name="componentPrice">Price: %1$2%2$.2f</string>
     <string name="componentOtherText">Display other text if applicable.</string>
     <string name="componentType">TYPE</string>
@@ -112,8 +115,8 @@
 
     <!-- Shared Component values -->
     <string name="displayRrpPrice">RRP Price: %1$s%2$.2f</string>
-    <string name="displayAmazonPrice">Amazon Price: %1$s%2$.2f</string>
-    <string name="displayScanPrice">Scan.co.uk Price: %1$s%2$.2f</string>
+    <string name="displayAmazonPrice">Amazon Price: %1$s%2$s</string>
+    <string name="displayScanPrice">Scan.co.uk Price: %1$s%2$s</string>
     <string name="displayWattage">Wattage Usage: %1$d watts</string>
     <string name="displayDimensions">Dimensions: %1$scm</string>
     <string name="displayProcessorSocket">Processor Socket: %1$s</string>

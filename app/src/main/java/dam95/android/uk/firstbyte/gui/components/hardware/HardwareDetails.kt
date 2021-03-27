@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -99,6 +100,9 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             if (res.isSuccessful) {
                 //
                 if (res.body()?.get(COMPONENT_INDEX) != null) {
+                    //Because deletable is not on the API or Server database,
+                    // retrofit makes it by default not deletable, therefore we must explicitly make it deletable
+                    res.body()!![0].deletable = true
                     component = res.body()!![0]
                     ConvertImageURL.convertURLtoImage(
                         res.body()!![COMPONENT_INDEX].imageLink,
@@ -138,9 +142,9 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
      */
     private fun setUpButtons(component: Component) {
 
-        //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons. TODO REMOVE '!' from !component.deletable when that problem is fixed
+        //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons.
         //THIS CHECK NEEDS WORK, IT DOESN'T MAKE THE BUTTONS DISAPPEAR, BUT IT STOPS THE LISTENERS TO USERS CAN'T ADD NON EXISTENT DATA... SO OK FOR NOW I GUESS
-        if (component.name != "" || component.name != "null" || !isLoadingFromPC) {
+        if ((component.name != "" || component.name != "null") && !isLoadingFromPC && component.deletable) {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
             val removeHardware = hardwareDetailsBinding.removeHardwareBtn
@@ -179,6 +183,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                     componentsFirstByteDB.insertHardware(component)
                 }
             } else offlineRemoveHardwareOnDestroy = false
+            Toast.makeText(context, "Component Saved", Toast.LENGTH_SHORT).show()
             setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
         }
         removeHardware.setOnClickListener {
@@ -189,6 +194,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                     componentsFirstByteDB.removeHardware(component.name)
                 }
             } else offlineRemoveHardwareOnDestroy = true
+            Toast.makeText(context, "Component Removed", Toast.LENGTH_SHORT).show()
             setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
         }
     }
@@ -229,6 +235,14 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     private fun setClickable(noInteractionBtn: Button, hasInteractionBtn: Button) {
         noInteractionBtn.isEnabled = false
         hasInteractionBtn.isEnabled = true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //If the hardware details is resumed from an online search,
+        //make this false so that the component doesn't get removed
+        //when it loads the standard button setup for offline hardware.
+        offlineRemoveHardwareOnDestroy = false
     }
 
     /**

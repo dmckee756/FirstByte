@@ -17,6 +17,7 @@ import dam95.android.uk.firstbyte.databinding.DisplayPcDetailsBinding
 import dam95.android.uk.firstbyte.gui.components.builds.util.PersonalBuildChecks
 import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
+import java.util.*
 
 class PersonalBuildRecyclerList(
     private val context: Context?,
@@ -27,6 +28,7 @@ class PersonalBuildRecyclerList(
     private var firstLoad: Boolean = true
     private var totalPrice: Double = 0.00
     private var isPCCompleted: Boolean = true
+    private val pcCheck = PersonalBuildChecks(pcDetails.size-1, this)
 
     inner class ViewHolder(
         itemView: View,
@@ -64,7 +66,7 @@ class PersonalBuildRecyclerList(
                 name.text = part.name
 
                 priceOrAddInfo.text = HumanReadableUtils.rrpPriceToCurrency(part.rrpPrice)
-                PersonalBuildChecks.otherDetail(context!!, part, otherDetail)
+                pcCheck.otherDetail(context!!, part, otherDetail)
 
                 imageView.background = null
                 ConvertImageURL.convertURLtoImage(
@@ -77,13 +79,13 @@ class PersonalBuildRecyclerList(
                 partRequiredBtn.visibility = View.GONE
                 removeComponentBtn.visibility = View.VISIBLE
                 notCompatibleBtn.visibility =
-                    PersonalBuildChecks.checkCompatibility(adapterPosition, pcDetails)
+                    pcCheck.checkCompatibility(adapterPosition, pcDetails)
 
             } ?: addHardwareSetup(type)
 
             //If there are no incompatible hardware, no missing required parts and the total price is under the user's budget then the computer is completed.
             //and price is under budget
-            if((partRequiredBtn.visibility == View.GONE && notCompatibleBtn.visibility == View.GONE) && isPCCompleted){
+            if ((partRequiredBtn.visibility == View.GONE && notCompatibleBtn.visibility == View.GONE) && isPCCompleted) {
                 listener.pcCompleted(true)
                 return
             }
@@ -97,15 +99,13 @@ class PersonalBuildRecyclerList(
         private fun addHardwareSetup(type: String) {
             addButton.isClickable = true
             imageView.isClickable = false
-            context?.let {
-                imageView.background =
-                    ResourcesCompat.getDrawable(it.resources, R.drawable.ic_add, null)
-            }
+            imageView.setImageResource(R.drawable.ic_add)
+
             name.visibility = View.GONE
 
             otherDetail.visibility = View.GONE
             partRequiredBtn.visibility =
-                PersonalBuildChecks.partRequired(adapterPosition, pcDetails)
+                pcCheck.partRequired(adapterPosition, pcDetails)
             removeComponentBtn.visibility = View.GONE
             notCompatibleBtn.visibility = View.GONE
             priceOrAddInfo.text = context?.getString(R.string.addPartToBuild, type)
@@ -123,10 +123,12 @@ class PersonalBuildRecyclerList(
                     addButton.id -> listener.onAddButtonClick(pcDetails[adapterPosition].second)
                     //Remove the component from the current pc
                     removeComponentBtn.id -> pcDetails[adapterPosition].first?.let {
-                        listener.removePCPart(
-                            it,
-                            adapterPosition
+                        val relativePosition: Int = pcCheck.getRelativePosition(
+                            adapterPosition,
+                            pcDetails[adapterPosition].first!!.type
                         )
+
+                        listener.removePCPart(it, adapterPosition, relativePosition)
                     }
                     //Component has a compatibility issue toast.
                     notCompatibleBtn.id -> makeAToast("This component is not compatible with another.")
@@ -145,7 +147,7 @@ class PersonalBuildRecyclerList(
      */
     interface OnItemListener {
         fun onAddButtonClick(addCategory: String)
-        fun removePCPart(component: Component, position: Int)
+        fun removePCPart(component: Component, position: Int, relativePosition: Int)
         fun updateTotalPrice(totalPrice: Double)
         fun goToHardware(componentName: String, componentType: String)
         fun pcCompleted(isCompleted: Boolean)
@@ -191,12 +193,14 @@ class PersonalBuildRecyclerList(
      *
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        pcDetails = pcCheck.doSlotsNeedMoved(pcDetails, position)
         holder.bindDataSet(pcDetails[position].first, pcDetails[position].second)
         if (position == pcDetails.lastIndex && firstLoad) {
-            listener.updateTotalPrice(totalPrice)
+            pcCheck.fanSlotEnd = pcDetails.size-1
             //Only update the price when this is loaded for the first time... but this doesn't apply...
             //...to reloads after adding hardware or price change when removing hardware)
             firstLoad = false
+            listener.updateTotalPrice(totalPrice)
             listener.pcCompleted(isPCCompleted)
         }
     }
@@ -210,21 +214,27 @@ class PersonalBuildRecyclerList(
             listener.updateTotalPrice(totalPrice)
             Log.i("BEFORE_REPLACE", it.name)
         }
-        pcDetails[position] = Pair(null, type)
+        pcDetails[position] = Pair(null, type.capitalize(Locale.ROOT))
         Log.i("PC_LIST_POS", "$position")
         notifyItemChanged(position)
         notifyDataSetChanged()
-        Log.i("TEST_RE", isPCCompleted.toString())
     }
 
     /**
      *
      */
     fun removeFans(numberOfFans: Int) {
-        for (i in 0 until numberOfFans) {
+        val size = (itemCount - 1)
+        val trimmedSize = (size - numberOfFans) + 1
+        for (i in size downTo trimmedSize) {
+            pcDetails[i].first?.let {
+                totalPrice -= it.rrpPrice
+            }
             pcDetails.removeLast()
         }
         notifyDataSetChanged()
+        pcCheck.fanSlotEnd = pcDetails.size-1
+        listener.updateTotalPrice(totalPrice)
     }
 
     private fun makeAToast(displayedTest: String) {
@@ -249,5 +259,4 @@ class PersonalBuildRecyclerList(
             }
         }
     }
-
 }
