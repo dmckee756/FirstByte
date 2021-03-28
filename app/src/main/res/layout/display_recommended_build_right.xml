@@ -1,46 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/recommendedPCLayout"
+    android:id="@+id/recommendedPCLayoutRight"
+    android:layout_marginVertical="10dp"
+    android:layout_marginHorizontal="@dimen/standard_margins"
     android:layout_width="match_parent"
+    android:elevation="6dp"
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/recommendedTierTitle"
+        android:id="@+id/recommendedTierTitleRight"
+        android:layout_marginTop="10dp"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:text="@string/recommendedTierTitle"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toTopOf="@+id/button" />
+        style="@style/headlineTextFB"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageBackgroundRight" />
 
     <TextView
-        android:id="@+id/recommendedTierPrice"
+        android:id="@+id/recommendedTierPriceRight"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
         android:text="@string/recommendedTierPrice"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/recommendedTierTitle" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recommendedTierTitleRight" />
 
     <TextView
-        android:id="@+id/recommendedTierDescription"
+        android:id="@+id/recommendedTierDescriptionRight"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/recommendedTierDescription"
-        app:layout_constraintStart_toEndOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/recommendedTierPrice" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recommendedTierPriceRight" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/imageBackgroundRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/secondaryColorDark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="190dp"
-        android:layout_height="190dp"
-        android:layout_margin="@dimen/halved_standard_margins"
+        android:id="@+id/imageBtnRight"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_margin="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

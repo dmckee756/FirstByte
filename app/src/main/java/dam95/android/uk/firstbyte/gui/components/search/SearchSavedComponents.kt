@@ -37,25 +37,30 @@ class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClick
      *
      */
     private fun setupSearchSelection() {
-        //
-        val categories: ArrayList<Pair<String, String>> = ArrayList()
-        val categoryHolder =
-            ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
-        categoryHolder[CATEGORY_ALL] = resources.getString(R.string.offlineSearchAll)
-        val categoryConnector =
-            ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
 
-        //
+        //Load in 2 lists of category search options for the user.
+        val categories: ArrayList<Pair<String, String>> = ArrayList()
+        val categoryHolder = ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
+        //For this offline variant, change the search all text to "Search All Saved Components" to show it's an offline search.
+        categoryHolder[CATEGORY_ALL] = resources.getString(R.string.offlineSearchAll)
+        val categoryConnector = ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
+
+        //Pair both loaded lists into their corresponding component types...
+        //Search All is paired with "all", Graphics card is paired with "gpu"
         for (i in categoryHolder.indices) {
             categories.add(Pair(categoryHolder[i], categoryConnector[i]))
             Log.i("CATEGORY", categories[i].toString())
         }
-        val displayCategories = recyclerListBinding.recyclerList
-        //
-        displayCategories.layoutManager = LinearLayoutManager(this.context)
-        displayCategories.adapter =
-            SearchCategoryRecyclerList(context, this, categories, online = false)
 
+        //Setup the the category recycler list
+        val displayCategories = recyclerListBinding.recyclerList
+
+        displayCategories.layoutManager = LinearLayoutManager(this.context)
+        val categoryListAdapter = SearchCategoryRecyclerList(context, this, online = false)
+
+        //Assign the saved category list to the recycler list adapter
+        categoryListAdapter.setDataList(categories)
+        displayCategories.adapter = categoryListAdapter
     }
 
     /**

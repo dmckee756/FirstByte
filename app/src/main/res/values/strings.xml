@@ -48,6 +48,10 @@
     <string name="compareCategory">Compare %1$s\'s</string>
     <string name="selectCompareComponentPicture">Image of the component that will have its specifications compared.</string>
 
+    <!-- Compare Hardware -->
+    <string name="compareTitle">Compare %1$s</string>
+    <string name="compareValues">Compare %1$s</string>
+
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
     <string name="offlineSearchAll">Search All Saved Components</string>

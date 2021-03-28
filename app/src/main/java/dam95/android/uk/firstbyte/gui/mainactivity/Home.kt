@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import dam95.android.uk.firstbyte.model.PCBuild
 import kotlinx.coroutines.Dispatchers
 
 class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
@@ -33,21 +34,21 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
         //
         displayDetails.layoutManager = LinearLayoutManager(this.context)
         recommendedListAdapter = RecommendedBuildRecyclerList(context, fbHardwareDB, this)
-
+        val pairList: MutableList<Pair<PCBuild, String>> = mutableListOf()
         val pcTiers = listOf("Entry-Level PC", "Budget PC", "High-End PC", "Enthusiast PC")
-        recommendedListAdapter.setDataList(pcTiers)
+        for (i in 0..3){
+            val pcBuild = PCBuild()
+            pcBuild.pcName = pcTiers[i]
+            pcBuild.pcPrice = 0.00
+
+            pairList.add(Pair(pcBuild, pcTiers[i]))
+        }
+
+        recommendedListAdapter.setDataList(pairList)
         displayDetails.adapter = recommendedListAdapter
     }
 
-    override fun onBuildButtonClick() {
-        TODO("Not yet implemented")
-    }
+    override fun onBuildButtonClick(recommendedPC: PCBuild) {
 
-    override fun onLeftImageClick() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRightImageClick() {
-        TODO("Not yet implemented")
     }
 }

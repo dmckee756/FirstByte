@@ -37,22 +37,29 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
      *
      */
     private fun setupSearchSelection() {
-        //
+        //Load in 2 lists of category search options for the user.
         val categories: ArrayList<Pair<String, String>> = ArrayList()
         val categoryHolder =
             ArrayList(listOf(*resources.getStringArray(R.array.categoriesDisplayText)))
         val categoryConnector =
             ArrayList(listOf(*resources.getStringArray(R.array.categoryConnector)))
 
-        //
+        //Pair both loaded lists into their corresponding component types...
+        //Search All is paired with "all", Graphics card is paired with "gpu"
         for (i in categoryHolder.indices) {
             categories.add(Pair(categoryHolder[i], categoryConnector[i]))
             Log.i("CATEGORY", categories[i].toString())
         }
+
+        //Setup the the category recycler list
         val displayCategories = recyclerListBinding.recyclerList
-        //
+
         displayCategories.layoutManager = LinearLayoutManager(this.context)
-        displayCategories.adapter = SearchCategoryRecyclerList(context, this, categories, online = true)
+        val categoryListAdapter = SearchCategoryRecyclerList(context, this, online = true)
+
+        //Assign the online category list to the recycler list adapter
+        categoryListAdapter.setDataList(categories)
+        displayCategories.adapter = categoryListAdapter
 
     }
 
@@ -66,7 +73,10 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
 
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(R.id.action_searchCategory_fragmentID_to_hardwareList_fragmentID, categoryBundle)
+        navController?.navigate(
+            R.id.action_searchCategory_fragmentID_to_hardwareList_fragmentID,
+            categoryBundle
+        )
     }
 
 }

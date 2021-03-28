@@ -10,10 +10,9 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
-import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
-import dam95.android.uk.firstbyte.databinding.HardwareListBinding
+import dam95.android.uk.firstbyte.databinding.FragmentHardwareListBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +32,7 @@ const val PC_ID = "PC_ID"
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
-    private lateinit var recyclerListBinding: HardwareListBinding
+    private lateinit var recyclerListBinding: FragmentHardwareListBinding
     private lateinit var apiViewModel: ApiViewModel
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
@@ -57,7 +56,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
         pcID = arguments?.getInt(PC_ID)!!
 
-        recyclerListBinding = HardwareListBinding.inflate(inflater, container, false)
+        recyclerListBinding = FragmentHardwareListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
             setHasOptionsMenu(true)
             Log.i("SEARCH_CATEGORY", searchCategory!!)

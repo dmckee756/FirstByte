@@ -3,19 +3,42 @@ package dam95.android.uk.firstbyte.gui.components.compare
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.github.mikephil.charting.charts.BarChart
 import dam95.android.uk.firstbyte.R
+import dam95.android.uk.firstbyte.databinding.FragmentCompareHardwareBinding
+import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 
 
-class CompareHardware : Fragment() {
+private const val GPU_COMPARE = "GPU_COMPARE_LIST"
+private const val CPU_COMPARE = "CPU_COMPARE_LIST"
+private const val RAM_COMPARE = "RAM_COMPARE_LIST"
 
+class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListener {
+
+    private lateinit var compareHardwareBinding: FragmentCompareHardwareBinding
+    private lateinit var fbHardwareDb: FirstByteDBAccess
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_compare_hardware, container, false)
+        compareHardwareBinding = FragmentCompareHardwareBinding.inflate(inflater, container, false)
+
+        val compareBarChart: MutableLiveData<BarChart> = MutableLiveData()
+        compareBarChart.value = compareHardwareBinding.compareBarChart
+
+
+
+
+
+        compareBarChart.observe(viewLifecycleOwner){ barChart ->
+
+        }
+
+        return compareHardwareBinding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

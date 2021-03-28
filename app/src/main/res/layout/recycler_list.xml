@@ -14,6 +14,7 @@
         android:layout_marginTop="@dimen/halved_standard_margins"
         android:layout_marginBottom="?android:actionBarSize"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

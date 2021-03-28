@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Global Colors -->
-    <color name="text_color">#040404</color>
-    <color name="text_shadow">#323232</color>
-    <color name="text_color_light">#F0F7F9</color>
-    <color name="background_tint_colour">#35C3C3C3</color>
-    <color name="btn_text_unselected">#636363</color>
+    <color name="textColor">#040404</color>
+    <color name="textShadow">#323232</color>
+    <color name="textColorLight">#F0F7F9</color>
+    <color name="backgroundTintColour">#35C3C3C3</color>
 
     <color name="primaryColor">#FFFFFF</color>
     <color name="primaryColorDark">#434343</color>
     <color name="secondaryColor">#F4F4F4</color>
-    <color name="gradientColor">#F1F1F1</color>
+    <color name="secondaryColorDark">#6F6F6F</color>
+    <color name="gradientColor">#EFEDED</color>
 
     <!-- PCBuild colours -->
     <color name="componentWarning">#9A1D1D</color>

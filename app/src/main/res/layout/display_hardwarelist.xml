@@ -1,66 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hardwareListCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="@dimen/halved_standard_margins"
-    android:elevation="10dp"
-    >
+    android:elevation="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <Button
+        android:id="@+id/hardwareBtn"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="80dp"
+        android:background="@color/categoryNormal"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/hardwareBtn"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/categoryNormal"
-            android:elevation="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/hardwareSearchName"
+        style="@style/headlineTextFB"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/halved_standard_margins"
+        android:elevation="10dp"
+        android:text="@string/hardwareListName"
+        app:layout_constraintBottom_toTopOf="@id/hardwareSearchPrice"
+        app:layout_constraintStart_toEndOf="@+id/hardwareSearchImage"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/hardwareSearchName"
-            style="@style/headlineTextFB"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/halved_standard_margins"
-            android:elevation="10dp"
-            android:text="@string/hardwareListName"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/hardwareSearchImage"
-            app:layout_constraintBottom_toTopOf="@id/hardwareSearchPrice"
-            />
+    <TextView
+        android:id="@+id/hardwareSearchPrice"
+        style="@style/headlineTextFB"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/halved_standard_margins"
+        android:elevation="10dp"
+        android:paddingBottom="@dimen/halved_standard_margins"
+        android:text="@string/hardwareListPrice"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/hardwareSearchImage"
+        app:layout_constraintTop_toBottomOf="@+id/hardwareSearchName" />
 
-        <TextView
-            android:id="@+id/hardwareSearchPrice"
-            style="@style/headlineTextFB"
-            android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/halved_standard_margins"
-            android:paddingBottom="@dimen/halved_standard_margins"
-            android:elevation="10dp"
-            android:text="@string/hardwareListPrice"
-            app:layout_constraintTop_toBottomOf="@+id/hardwareSearchName"
-            app:layout_constraintStart_toEndOf="@+id/hardwareSearchImage"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
+    <ImageView
+        android:id="@+id/hardwareSearchImage"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="@dimen/halved_standard_margins"
+        android:contentDescription="@string/hardwareListImage"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/hardwareSearchImage"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="@dimen/halved_standard_margins"
-            android:contentDescription="@string/hardwareListImage"
-            android:elevation="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

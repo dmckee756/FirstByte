@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/hardwarePCComponentLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/halved_standard_margins"
+    android:elevation="10dp">
+
+    <Button
+        android:id="@+id/addComponentCompareBtn"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/categoryNormal"
+        android:elevation="5dp"
+        android:stateListAnimator="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/componentNameOrAddCompare"
+        style="@style/headlineTextFB"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/halved_standard_margins"
+        android:elevation="10dp"
+        android:text="@string/addPartToBuild"
+        app:layout_constraintBottom_toBottomOf="@+id/addComponentCompareBtn"
+        app:layout_constraintStart_toEndOf="@+id/componentCompareImageOrAddIcon"
+        app:layout_constraintTop_toTopOf="@+id/addComponentCompareBtn" />
+
+
+    <ImageView
+        android:id="@+id/componentCompareImageOrAddIcon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginHorizontal="@dimen/halved_standard_margins"
+        android:background="@drawable/ic_add"
+        android:contentDescription="@string/pcbuildHardwareAddOrImage"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/addComponentCompareBtn"
+        app:layout_constraintStart_toStartOf="@+id/addComponentCompareBtn"
+        app:layout_constraintTop_toTopOf="@+id/addComponentCompareBtn" />
+
+    <Button
+        android:id="@+id/removeComparedComponent"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/halved_standard_margins"
+        android:background="@drawable/ic_remove_pcpart"
+        android:visibility="visible"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/addComponentCompareBtn"
+        app:layout_constraintTop_toTopOf="@+id/addComponentCompareBtn" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
