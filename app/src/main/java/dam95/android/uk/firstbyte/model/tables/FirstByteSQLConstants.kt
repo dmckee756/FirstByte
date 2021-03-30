@@ -157,6 +157,16 @@ abstract class SQLComponentConstants {
                 "$FK (${RamInPc.PC_ID}) REFERENCES ${PcBuild.TABLE} (${PcBuild.PC_ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
                 "$FK (${RamInPc.PC_RAM_NAME}) REFERENCES ${RamSticks.TABLE} (${RamSticks.RAM_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
 
+        val CREATE_COMPARE_TABLE = "CREATE TABLE ${Compare.TABLE}(" +
+                "${Compare.ID} VARCHAR $PK);"
+
+        val CREATE_COMPARE_STATS_TABLE = "CREATE TABLE ${CompareStats.TABLE}(" +
+                "${CompareStats.ID} VARCHAR $NN," +
+                "${CompareStats.COMPONENT} VARCHAR(50) UNIQUE," +
+                "$FK(${CompareStats.ID}) REFERENCES ${Compare.TABLE} (${Compare.ID}) ON UPDATE CASCADE ON DELETE CASCADE," +
+                "$FK(${CompareStats.COMPONENT}) REFERENCES ${Components.TABLE} (${Components.COMPONENT_NAME}) ON UPDATE CASCADE ON DELETE CASCADE);"
+
+
 
         val TABLE_CREATION_COMMANDS: List<String> = listOf(
             CREATE_COMPONENTS_TABLE,
@@ -172,7 +182,9 @@ abstract class SQLComponentConstants {
             CREATE_PCBUILD_TABLE,
             CREATE_FANS_IN_PC_TABLE,
             CREATE_STORAGE_IN_PC_TABLE,
-            CREATE_RAM_IN_PC_TABLE
+            CREATE_RAM_IN_PC_TABLE,
+            CREATE_COMPARE_TABLE,
+            CREATE_COMPARE_STATS_TABLE
         )
     }
 
@@ -484,6 +496,25 @@ abstract class SQLComponentConstants {
             val PC_ID: String = "pc_id"
             val PC_FAN_NAME: String = "fan_name"
             val COLUMN_LIST = listOf(PC_ID, PC_FAN_NAME)
+        }
+    }
+
+    interface Compare{
+        companion object{
+            val TABLE: String = "compare"
+
+            //Columns
+            val ID: String = "compare_id"
+        }
+    }
+
+    interface CompareStats{
+        companion object{
+            val TABLE: String = "compare_stats"
+
+            //Columns
+            val ID: String = "compare_id"
+            val COMPONENT: String = "component_name"
         }
     }
 }

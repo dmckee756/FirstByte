@@ -17,7 +17,7 @@ import dam95.android.uk.firstbyte.api.ApiRepository
 import dam95.android.uk.firstbyte.api.ApiViewModel
 import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
-import dam95.android.uk.firstbyte.gui.components.builds.FROM_PC
+import dam95.android.uk.firstbyte.gui.components.builds.NOT_FROM_SEARCH
 import dam95.android.uk.firstbyte.model.components.Component
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +55,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         val componentName = arguments?.getString(NAME_KEY)
         val componentType = arguments?.getString(CATEGORY_KEY)
         isLoadingFromServer = arguments?.getBoolean(LOCAL_OR_NETWORK_KEY)
-        isLoadingFromPC = arguments?.getBoolean(FROM_PC) == true
+        isLoadingFromPC = arguments?.getBoolean(NOT_FROM_SEARCH) == true
 
         if (componentName != null && componentType != null) {
             setHasOptionsMenu(true)
@@ -112,10 +112,12 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                     //
                 } else {
                     Log.e("NULL_COMPONENT", "Error, loaded hardware component is empty.")
+                    return@observe
                 }
                 //
             } else {
                 Log.e("HARDWARE_RES_FAIL", "FAILED LOAD")
+                return@observe
             }
         })
     }
@@ -143,7 +145,6 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     private fun setUpButtons(component: Component) {
 
         //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons.
-        //THIS CHECK NEEDS WORK, IT DOESN'T MAKE THE BUTTONS DISAPPEAR, BUT IT STOPS THE LISTENERS TO USERS CAN'T ADD NON EXISTENT DATA... SO OK FOR NOW I GUESS
         if ((component.name != "" || component.name != "null") && !isLoadingFromPC && component.deletable) {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
@@ -154,16 +155,14 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             setButtonText(addHardware, R.string.addHardware, component.type)
             setButtonText(removeHardware, R.string.removeHardware, component.type)
 
-            //If the loaded component is already stored in the Component Database...
-            //...then do not allow the user to click on addHardware
-            coroutineScope.launch {
+            //If component is in database, only allow remove button click, otherwise add button click
                 if (componentsFirstByteDB.hardwareExists(component.name) > 0) {
                     setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
                     //...then do not allow the user to click on removeHardware...
                 } else {
                     setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
                 }
-            }
+
             buttonListeners(addHardware, removeHardware, component)
             setUpRecyclerList(component)
             //... If the component can't be deleted, then get rid of the buttons.

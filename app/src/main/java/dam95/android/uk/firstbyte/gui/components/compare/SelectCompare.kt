@@ -13,6 +13,8 @@ import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.gui.components.search.CATEGORY_KEY
 import dam95.android.uk.firstbyte.gui.components.search.LOCAL_OR_NETWORK_KEY
 import dam95.android.uk.firstbyte.gui.components.search.PC_ID
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
+import java.util.*
 
 
 class SelectCompare : Fragment(), SelectCompareRecyclerList.OnItemClickListener {
@@ -29,7 +31,7 @@ class SelectCompare : Fragment(), SelectCompareRecyclerList.OnItemClickListener 
         return recyclerListBinding.root
     }
 
-    private fun setUpCompareSelectionList(){
+    private fun setUpCompareSelectionList() {
         //
         val displayCompareSelection = recyclerListBinding.recyclerList
         //
@@ -41,9 +43,36 @@ class SelectCompare : Fragment(), SelectCompareRecyclerList.OnItemClickListener 
         displayCompareSelection.adapter = compareSelectionList
     }
 
+    private fun findSetValues(type: String): ArrayList<String> {
+        val arrayList = arrayListOf<String>()
+        arrayList.add("Prices")
+        when (type.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.CPU.toString() -> {
+                arrayList.add("Core Speed")
+                arrayList.add("Core Count")
+                arrayList.add("Wattage")
+            }
+            ComponentsEnum.GPU.toString() -> {
+                arrayList.add("Clock Speed")
+                arrayList.add("Memory Size")
+                arrayList.add("Memory Speed")
+                arrayList.add("Wattage")
+            }
+            ComponentsEnum.RAM.toString() -> {
+                arrayList.add("Memory Speed")
+                arrayList.add("Memory Size")
+            }
+        }
+        return arrayList
+    }
+
     override fun onCompareBtnClick(chosenCategory: String) {
+
         val categoryBundle =
-            bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to false)
+            bundleOf(
+                COMPARE to chosenCategory.toLowerCase(Locale.ROOT),
+                COMPARED_VALUES_LIST to findSetValues(chosenCategory)
+            )
 
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }

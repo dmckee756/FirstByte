@@ -15,8 +15,7 @@ import dam95.android.uk.firstbyte.model.PCBuild
 
 class RecommendedBuildRecyclerList(
     private val context: Context?,
-    private val fbHardware: FirstByteDBAccess,
-    private val listener: OnItemClickListener,
+    private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<RecommendedBuildRecyclerList.ViewHolder>() {
 
     private var recommendedTier = emptyList<Pair<PCBuild, String>>()

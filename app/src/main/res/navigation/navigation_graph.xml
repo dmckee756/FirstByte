@@ -49,6 +49,12 @@
         <action
             android:id="@+id/action_compare_fragmentID_to_compareHardware_fragmentID"
             app:destination="@id/compareHardware_fragmentID" />
+        <argument
+            android:name="COMPARE_LIST"
+            app:argType="string"/>
+        <argument
+            android:name='"COMPARED_VALUES_LIST"'
+            app:argType="string[]" />
     </fragment>
 
     <fragment
@@ -120,7 +126,7 @@
             app:argType="integer"
             android:defaultValue="-1" />
         <argument
-            android:name="FROM_PC"
+            android:name="NOT_FROM_SEARCH"
             app:argType="boolean"/>
 
 
@@ -139,7 +145,20 @@
         android:id="@+id/compareHardware_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.CompareHardware"
         android:label="fragment_compare_hardware"
-        tools:layout="@layout/fragment_compare_hardware" />
+        tools:layout="@layout/fragment_compare_hardware" >
+        <action
+            android:id="@+id/action_compareHardware_fragmentID_to_hardwareList_fragmentID"
+            app:destination="@id/hardwareList_fragmentID" />
+        <argument
+            android:name="CATEGORY"
+            app:argType="string" />
+        <argument
+            android:name="LOADING_METHOD"
+            app:argType="boolean" />
+        <argument
+            android:name="NOT_FROM_SEARCH"
+            app:argType="string"/>
+    </fragment>
     <fragment
         android:id="@+id/searchSavedComponents_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.search.SearchSavedComponents"

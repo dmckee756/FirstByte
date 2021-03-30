@@ -1,0 +1,144 @@
+package dam95.android.uk.firstbyte.gui.components.compare.util
+
+import android.content.Context
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import dam95.android.uk.firstbyte.model.components.Component
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.reflect.KFunction2
+
+object CompareValueSpinner {
+
+    private var initialClick = true
+
+    /**
+     * Setup spinner that allows users to compare component values on the BarChart
+     */
+    fun initializeSpinner(
+        callbackFunction: KFunction2<(List<Component?>) -> List<Float>, String, Unit>,
+        listOfComparedValue: ArrayList<String>,
+        categoryType: String,
+        compareSpinner: Spinner,
+        context: Context
+    ) {
+        //Value Spinner
+        listOfComparedValue.setUpValueSpinner(compareSpinner, categoryType, context, callbackFunction)
+    }
+
+    /**
+     *
+     * @param valueSpinner the spinner component
+     */
+    private fun ArrayList<String>.setUpValueSpinner(
+        valueSpinner: Spinner,
+        categoryType: String,
+        context: Context,
+        callbackFunction: KFunction2<(List<Component?>) -> List<Float>, String, Unit>
+    ) {
+
+        //
+        val valueSelection =
+            ArrayAdapter<String>(context, android.R.layout.simple_spinner_item)
+        valueSelection.addAll(this)
+
+        valueSelection.setDropDownViewResource(android.R.layout.simple_list_item_1)
+        valueSpinner.adapter = valueSelection
+
+
+        valueSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Ignore
+            }
+
+            /**
+             *
+             */
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long,
+            ) {
+                if (initialClick){
+                    initialClick = false
+                    return
+                }
+
+                val newValueName: String = valueSelection.getItem(position).toString()
+                val newValueFunction = if (position == 0) {
+                    CompareGeneric::compareRRPPrice
+                    //Otherwise find correct value to compare
+                } else {
+                     when (categoryType.toUpperCase(Locale.ROOT)) {
+                        ComponentsEnum.CPU.toString() -> changeProcessorValue(position)
+                        ComponentsEnum.GPU.toString() -> changeGraphicsCardValue(position)
+                        ComponentsEnum.RAM.toString() -> changeRamValue(position)
+                        else -> CompareGeneric::compareRRPPrice
+                    }
+                }
+                callbackFunction(newValueFunction, newValueName)
+            }
+        }
+    }
+
+    /**
+     * "Core Speed" = Position 1
+     * "Core Count" = Position 2
+     * "Wattage" = Position 3
+     */
+    private fun changeProcessorValue(position: Int): (List<Component?>) -> List<Float> {
+        val coreSpeed = 1
+        val coreCount = 2
+        val wattage = 3
+
+        return when (position) {
+            coreSpeed -> CompareCPU::compareCoreSpeed
+            coreCount -> CompareCPU::compareCoreCount
+            wattage -> CompareCPU::compareCpuWattage
+            else -> CompareGeneric::compareRRPPrice
+        }
+    }
+
+    /**
+     *
+     * "Clock Speed" = Position 1
+     * "Memory Size" = Position 2
+     * "Memory Speed" = Position 3
+     * "Wattage" = Position 4
+     */
+    private fun changeGraphicsCardValue(position: Int): (List<Component?>) -> List<Float> {
+        val clockSpeed = 1
+        val memorySize = 2
+        val memorySpeed = 3
+        val wattage = 4
+
+        return when (position) {
+            clockSpeed -> CompareGPU::compareClockSpeed
+            memorySize -> CompareGPU::compareGpuMemorySize
+            memorySpeed -> CompareGPU::compareGpuMemorySpeed
+            wattage -> CompareGPU::compareGpuWattage
+            else -> CompareGeneric::compareRRPPrice
+        }
+    }
+
+    /**
+     *
+     * "Memory Speed" = Position 1
+     * "Memory Size" = Position 2
+     */
+    private fun changeRamValue(position: Int): (List<Component?>) -> List<Float> {
+        val memorySpeed = 1
+        val memorySize = 2
+
+        return when (position) {
+            memorySpeed -> CompareRAM::compareRamMemorySpeed
+            memorySize -> CompareRAM::compareRamMemorySize
+            else -> CompareGeneric::compareRRPPrice
+        }
+    }
+
+}

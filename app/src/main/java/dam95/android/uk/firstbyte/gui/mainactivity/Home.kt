@@ -33,7 +33,7 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
         val displayDetails = recyclerListBinding.recyclerList
         //
         displayDetails.layoutManager = LinearLayoutManager(this.context)
-        recommendedListAdapter = RecommendedBuildRecyclerList(context, fbHardwareDB, this)
+        recommendedListAdapter = RecommendedBuildRecyclerList(context, this)
         val pairList: MutableList<Pair<PCBuild, String>> = mutableListOf()
         val pcTiers = listOf("Entry-Level PC", "Budget PC", "High-End PC", "Enthusiast PC")
         for (i in 0..3){

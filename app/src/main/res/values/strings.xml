@@ -50,7 +50,9 @@
 
     <!-- Compare Hardware -->
     <string name="compareTitle">Compare %1$s</string>
-    <string name="compareValues">Compare %1$s</string>
+    <string name="compareValues">Compare Component %1$s</string>
+    <string name="compareSlot">Slot %1$d.</string>
+    <string name="addComponentToCompare">Add Component</string>
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>

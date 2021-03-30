@@ -230,4 +230,26 @@ class FirstByteDBAccess(
             componentNameList,
             numberOfComponents
         )
+
+    /**
+     * Create a new compared components list which holds up to 5 unique component references for data retrieval.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun createComparedComponents(typeID: String) = componentQueries.createComparedList(typeID)
+
+    /**
+     * Retrieve the desired compared components list from the database and return the result to the caller.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun retrieveComparedComponents(typeID: String): List<String> = componentQueries.retrieveComparedList(typeID)
+
+    /**
+     * Save the altered list to the correct compared components table.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     * @param savedComponents the altered/updated list being saved to the compared table
+     */
+    fun saveComparedComponents(typeID: String, savedComponents: List<String>)= componentQueries.updateComparedList(typeID, savedComponents)
 }

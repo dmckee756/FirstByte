@@ -43,12 +43,13 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
      */
     private fun updateFBHardware(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         //If it's the first version of the database, then initialize the database by creating relational tables
+        //Allow foreign keys in SQLite
         database?.execSQL(FK_ON)
         if (oldVersion < 1) {
             buildNewFBDatabase(database)
             //If it is not the first version of the database and a new version is requested, then update/rebuild the database
         } else if (oldVersion < newVersion) {
-            rebuildFBDatabase(database)
+            rebuildFBDatabase(database, oldVersion, newVersion)
         }
     }
 
@@ -57,11 +58,11 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
      */
     private fun buildNewFBDatabase(database: SQLiteDatabase?) {
         val creationCommands: List<String> = SQLComponentConstants.TABLE_CREATION_COMMANDS
-        //Allow foreign keys in SQLite
+
         try {
             //Create each table in Components Database
             for (createTable in (creationCommands)) database?.execSQL(createTable)
-            Log.i("DB_CREATED", "Components Database successfully created")
+            Log.i("DB_CREATED", "Database successfully created")
             //If there was an error, drop the database and exit out.
         } catch (exception: Exception) {
             database?.close()
@@ -74,7 +75,15 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     /**
      *
      */
-    private fun rebuildFBDatabase(database: SQLiteDatabase?) {
-        //We keep this empty currently as there is there will not be updates to this database
+    private fun rebuildFBDatabase(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        try {
+            //Create each table in Components Database
+            Log.i("DB_CREATED", "Database successfully updated")
+            //If there was an error, drop the database and exit out.
+        } catch (exception: Exception) {
+            database?.close()
+            Log.e("DB_CREATE_ERROR", "Creation Error: ", exception)
+            return
+        }
     }
 }

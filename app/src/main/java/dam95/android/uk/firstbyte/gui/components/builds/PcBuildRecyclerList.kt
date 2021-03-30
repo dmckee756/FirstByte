@@ -54,24 +54,19 @@ class PcBuildRecyclerList(
                 //Hide unnecessary text views
                 pcName.visibility = View.GONE
                 completeOrIncomplete.visibility = View.GONE
+                pcBtn.setBackgroundResource(R.drawable.object_add_pc)
 
                 //Set up the display with instructions to create a new PC
                 pcPriceOrCreation.text = context?.resources?.getString(R.string.createPC)
                 //Get the add "+" icon from drawable resources
-                pcCaseImageOrAdd.background =
-                    context?.let {
-                        ResourcesCompat.getDrawable(
-                            it.resources,
-                            R.drawable.ic_add,
-                            null
-                        )
-                    }
+
+                pcCaseImageOrAdd.setImageResource(R.drawable.ic_add)
             } else {
                 //Load the correct pc in the list
                 //Load a colorful background from drawable resources
-                    val test = (adapterPosition % 2)
-                    Log.i("TEST", "$test")
 
+                pcName.visibility = View.VISIBLE
+                completeOrIncomplete.visibility = View.VISIBLE
                 pcBtn.setBackgroundResource(R.drawable.object_pc_display_item)
 
                 //Setup correct information for pc selection display
@@ -84,7 +79,6 @@ class PcBuildRecyclerList(
                         R.string.buildIncomplete
                     )
 
-
                 completeOrIncomplete.text = pcStatus
 
                 //If the pc has a case assigned to it, then find the image link.
@@ -92,10 +86,7 @@ class PcBuildRecyclerList(
                     coroutineScope.launch {
                         val imageLink = fb_Hardware_DB.retrieveImageURL(it)
                         //If the case image link returns a URL then have picasso load it...
-                        ConvertImageURL.convertURLtoImage(
-                            imageLink!!,
-                            pcCaseImageOrAdd
-                        )
+                        ConvertImageURL.convertURLtoImage(imageLink!!, pcCaseImageOrAdd)
                     }
                 }
                 //At the end of display information, remove the add symbol from the display.

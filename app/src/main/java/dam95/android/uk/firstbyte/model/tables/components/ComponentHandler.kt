@@ -1,7 +1,9 @@
 package dam95.android.uk.firstbyte.model.tables.components
 
+import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
@@ -10,9 +12,14 @@ import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.lang.Exception
+import java.lang.NullPointerException
 import java.util.*
 
-class ComponentHandler(private val dbHandler: SQLiteDatabase
+const val MAX_COMPARE_SIZE = 5
+
+class ComponentHandler(
+    private val dbHandler: SQLiteDatabase
 ) {
     private val typeQueries: ComponentExtraQueries = ComponentExtraQueries()
 
@@ -88,7 +95,7 @@ class ComponentHandler(private val dbHandler: SQLiteDatabase
         return componentResult
     }
 
-    suspend fun hardwareExists(name: String): Int = withContext(Dispatchers.Main) {
+    fun hardwareExists(name: String): Int {
         val queryString =
             "SELECT component_name FROM component WHERE component_name =?"
         val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(name))
@@ -97,7 +104,7 @@ class ComponentHandler(private val dbHandler: SQLiteDatabase
         cursor.close()
         Log.i("HARDWARE_EXIST?", cursor.count.toString())
         //If 1, then true, otherwise false
-        return@withContext result
+        return result
     }
 
     /**
@@ -186,4 +193,101 @@ class ComponentHandler(private val dbHandler: SQLiteDatabase
             null
         }
     }
+
+    /**
+     * Create a new ID entry for the compared components table.
+     */
+    fun createComparedList(typeID: String) {
+        val cv = ContentValues()
+        cv.put(SQLComponentConstants.Compare.ID, typeID)
+        dbHandler.insert(SQLComponentConstants.Compare.TABLE, null, cv)
+    }
+
+    @Throws(SQLiteException::class)
+    fun doesComparedListExist(typeID: String): Int {
+
+        return try {
+            val cursor = dbHandler.rawQuery("SELECT * FROM ${SQLComponentConstants.Compare.TABLE} WHERE ${SQLComponentConstants.Compare.ID} =?",
+                arrayOf(typeID)
+            )
+            val result: Int = cursor.count
+            cursor.close()
+            Log.i("COMPARE_TABLE_EXISTS", cursor.count.toString())
+            //If 1, then true, otherwise false
+            result
+        } catch (exception: Exception){
+            //For human readability
+            val theTableDoesNotExist = 0
+            theTableDoesNotExist
+        }
+    }
+
+    /**
+     *
+     */
+    fun retrieveComparedList(typeID: String): List<String?> {
+        val loadedComponentNames = mutableListOf<String?>()
+
+        return try {
+            val cursor = dbHandler.rawQuery(
+                "SELECT ${SQLComponentConstants.CompareStats.COMPONENT} FROM ${SQLComponentConstants.CompareStats.TABLE} WHERE ${SQLComponentConstants.CompareStats.ID} =?",
+                arrayOf(typeID)
+            )
+            cursor.moveToFirst()
+            for (i in 0 until MAX_COMPARE_SIZE) {
+                Log.i("ROW_VALUE", cursor.getString(0))
+                loadedComponentNames.add(cursor.getString(0))
+                cursor.moveToNext()
+            }
+            cursor.close()
+            //Return the loaded list
+            loadedComponentNames
+        } catch (exception: Exception) {
+            //Return null
+            for (i in loadedComponentNames.size until MAX_COMPARE_SIZE) loadedComponentNames.add(null)
+            loadedComponentNames
+        }
+    }
+
+    @Throws(SQLiteException::class)
+    fun isComponentInComparedTable(componentName: String): Int {
+        return try {
+            val cursor = dbHandler.rawQuery("SELECT ${SQLComponentConstants.CompareStats.COMPONENT} FROM ${SQLComponentConstants.CompareStats.TABLE} WHERE ${SQLComponentConstants.CompareStats.COMPONENT} =?",
+                arrayOf(componentName)
+            )
+            val result: Int = cursor.count
+            cursor.close()
+            Log.i("COMPONENT_IN_TABLE?", cursor.count.toString())
+            //If 1, then true, otherwise false
+            result
+        } catch (exception: Exception){
+            //For human readability
+            val theComponentIsNotInTheList = 0
+            theComponentIsNotInTheList
+        }
+    }
+
+    /**
+     * Insert the compared component table by saving/updating the newly added component into a dynamic slot that the user has chosen.
+     *
+     * @param typeID
+     * @param savedComponent
+     */
+    fun saveComparedComponent(typeID: String, savedComponent: String) {
+
+        val cv = ContentValues()
+        cv.put(SQLComponentConstants.CompareStats.ID, typeID)
+        cv.put(SQLComponentConstants.CompareStats.COMPONENT, savedComponent)
+        dbHandler.insert(SQLComponentConstants.CompareStats.TABLE, null, cv)
+    }
+
+    /**
+     * Remove the compared stats row that has the removed component name.
+     *
+     * @param componentName
+     */
+    fun deleteComparedComponent(componentName: String) =
+        dbHandler.delete(SQLComponentConstants.CompareStats.TABLE, "${SQLComponentConstants.CompareStats.COMPONENT} =?",
+            arrayOf(componentName)
+        )
 }

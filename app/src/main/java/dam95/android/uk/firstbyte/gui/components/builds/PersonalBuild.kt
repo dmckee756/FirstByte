@@ -27,7 +27,7 @@ import java.util.*
 const val SELECTED_PC = "SELECTED_PC"
 private const val NUM_OF_RAM = 1
 private const val NUM_OF_STORAGE = 2
-const val FROM_PC = "FROM_PC"
+const val NOT_FROM_SEARCH = "FROM_PC"
 
 class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
@@ -63,7 +63,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                 personalBuildBinding.pcNameDisplay.text = personalPC.value?.pcName
                 //Edit PC name button listener
                 personalBuildBinding.changePCName.setOnClickListener {
-                       dialogBox()
+                    dialogBox()
                 }
                 //Set up the recycler list with loaded PC and allow it to be edited.
                 setUpPCDisplay(pcParts)
@@ -75,9 +75,9 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     /**
      *
      */
-    private fun getPCBuildContents(personalPC: PCBuild): List<Pair<Component?, String>> {
+    private fun getPCBuildContents(loadedPC: PCBuild): List<Pair<Component?, String>> {
         val pcParts: MutableList<Pair<Component?, String>> = mutableListOf()
-        val pcSingularParts: List<Pair<String?, String>> = personalPC.pcPartsSearchConfig()
+        val pcSingularParts: List<Pair<String?, String>> = loadedPC.pcPartsSearchConfig()
 
         var numberOfFans = 0
 
@@ -113,34 +113,32 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             }
 
         }
+        getRelationalParts(pcParts, loadedPC, numberOfFans)
+        return pcParts
+    }
 
+    private fun getRelationalParts(
+        pcParts: MutableList<Pair<Component?, String>>,
+        loadedPC: PCBuild,
+        numberOfFans: Int
+    ) {
         //Load Ram
-        pcParts.addAll(
-            fbHardwareDb.retrievePCComponents(
-                personalPC.pcID!!, ComponentsEnum.RAM.toString()
-                    .toLowerCase(Locale.ROOT), personalPC.ramList, NUM_OF_RAM
-            )
-        )
-        personalPC.ramList = attachedToPC(pcParts, NUM_OF_RAM)
+        pcParts.addAll(fbHardwareDb.retrievePCComponents(
+                loadedPC.pcID!!, ComponentsEnum.RAM.toString()
+                    .toLowerCase(Locale.ROOT),loadedPC.ramList, NUM_OF_RAM))
+        loadedPC.ramList = attachedToPC(pcParts, NUM_OF_RAM)
 
         //Load Storage
-        pcParts.addAll(
-            fbHardwareDb.retrievePCComponents(
-                personalPC.pcID!!, ComponentsEnum.STORAGE.toString()
-                    .toLowerCase(Locale.ROOT), personalPC.storageList, NUM_OF_STORAGE
-            )
-        )
-        personalPC.storageList = attachedToPC(pcParts, NUM_OF_STORAGE)
+        pcParts.addAll(fbHardwareDb.retrievePCComponents(
+            loadedPC.pcID!!, ComponentsEnum.STORAGE.toString()
+                .toLowerCase(Locale.ROOT), loadedPC.storageList, NUM_OF_STORAGE))
+        loadedPC.storageList = attachedToPC(pcParts, NUM_OF_STORAGE)
 
         //Load Fans
-        pcParts.addAll(
-            fbHardwareDb.retrievePCComponents(
-                personalPC.pcID!!, ComponentsEnum.FAN.toString()
-                    .toLowerCase(Locale.ROOT), personalPC.fanList, numberOfFans - 1
-            )
-        )
-        personalPC.fanList = attachedToPC(pcParts, numberOfFans - 1)
-        return pcParts
+        pcParts.addAll(fbHardwareDb.retrievePCComponents(
+                loadedPC.pcID!!, ComponentsEnum.FAN.toString()
+                    .toLowerCase(Locale.ROOT), loadedPC.fanList, numberOfFans - 1))
+        loadedPC.fanList = attachedToPC(pcParts, numberOfFans - 1)
     }
 
     /**
@@ -201,37 +199,38 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     private fun removeExtraFans(category: String, component: Component) {
         when (category.toUpperCase(Locale.ROOT)) {
             //If the pc part was the computer case...
-            ComponentsEnum.CASES.toString() -> {
-                //remove the personal build image at the top of the screen
-                personalBuildBinding.caseImage.background = null
-                personalBuildBinding.caseImage.visibility = View.GONE
-                val tempComponent = component as Case
-                //remove fans from recycler list first and update the price...
-                personalBuildListAdapter.removeFans(tempComponent.case_fan_slots)
-                //and then remove the "overflowed" fan slots
-                fbHardwareDb.trimFanList(
-                    "fan",
-                    personalPC.value!!.pcID!!,
-                    tempComponent.case_fan_slots
-                )
-
-            }
+            ComponentsEnum.CASES.toString() -> removeCaseFans(component as Case)
             //If the pc part was the heatsink...
-            ComponentsEnum.HEATSINK.toString() -> {
-                val tempComponent = component as Heatsink
-                //remove fans from recycler list first and update the price...
-                personalBuildListAdapter.removeFans(tempComponent.fan_slots)
-                //then remove the "overflowed" fan slots
-                fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, tempComponent.fan_slots)
-            }
+            ComponentsEnum.HEATSINK.toString() -> removeHeatsinkFans(component as Heatsink)
         }
+    }
+
+    private fun removeCaseFans(component: Case) {
+        //remove the personal build image at the top of the screen
+        personalBuildBinding.caseImage.background = null
+        personalBuildBinding.caseImage.visibility = View.GONE
+        //remove fans from recycler list first and update the price...
+        personalBuildListAdapter.removeFans(component.case_fan_slots)
+        //and then remove the "overflowed" fan slots
+        fbHardwareDb.trimFanList(
+            "fan",
+            personalPC.value!!.pcID!!,
+            component.case_fan_slots
+        )
+    }
+
+    private fun removeHeatsinkFans(component: Heatsink){
+        //remove fans from recycler list first and update the price...
+        personalBuildListAdapter.removeFans(component.fan_slots)
+        //then remove the "overflowed" fan slots
+        fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, component.fan_slots)
     }
 
     /**
      * Allow the user to change the name of the PC in both it's display and in the database.
      * This will also update the name in the PC Build recycler list.
      */
-    private fun dialogBox(){
+    private fun dialogBox() {
         //Retrieve the alert box's xml layout
         val inflater: LayoutInflater? = activity?.layoutInflater
         val alertBoxLayout = inflater?.inflate(R.layout.alert_box_layout, null)
@@ -250,7 +249,12 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
                 //Update the PC's display name...
                 personalBuildBinding.pcNameDisplay.text = personalPC.value!!.pcName
                 //Update the PC's name in the database.
-                personalPC.value?.pcName?.let { fbHardwareDb.changePCName(personalPC.value?.pcID!!, it) }
+                personalPC.value?.pcName?.let {
+                    fbHardwareDb.changePCName(
+                        personalPC.value?.pcID!!,
+                        it
+                    )
+                }
             }
             .setNegativeButton(activity?.resources?.getString(R.string.cancel_button)) { dialog, _ ->
                 // Don't change the PC name and dismiss the alert
@@ -289,7 +293,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             NAME_KEY to componentName,
             CATEGORY_KEY to componentType,
             LOCAL_OR_NETWORK_KEY to false,
-            FROM_PC to true
+            NOT_FROM_SEARCH to true
         )
 
         //

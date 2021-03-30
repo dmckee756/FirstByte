@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.model.tables.components.ComponentHandler
 import dam95.android.uk.firstbyte.model.tables.pcbuilds.PCBuildHandler
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.PCBuild
@@ -100,7 +99,7 @@ class FirstByteDBAccess(
     /**
      *
      */
-    suspend fun hardwareExists(name: String): Int = componentQueries.hardwareExists(name)
+    fun hardwareExists(name: String): Int = componentQueries.hardwareExists(name)
 
     /**
      *
@@ -214,4 +213,39 @@ class FirstByteDBAccess(
             componentNameList,
             numberOfComponents
         )
+
+    /**
+     * Create a new compared components list which holds up to 5 unique component references for data retrieval.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun createComparedComponents(typeID: String) = componentQueries.createComparedList(typeID)
+
+    /**
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun checkIfComparedTableExists(typeID: String): Int = componentQueries.doesComparedListExist(typeID)
+
+    /**
+     * Retrieve the desired compared components list from the database and return the result to the caller.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun retrieveComparedComponents(typeID: String): List<String?> = componentQueries.retrieveComparedList(typeID)
+
+    fun checkIfComponentIsInComparedTable(componentName: String) : Int = componentQueries.isComponentInComparedTable(componentName)
+
+    /**
+     * Save the altered list to the correct compared components table.
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     * @param savedComponent a reference name of the component that will be compared.
+     */
+    fun saveComparedComponent(typeID: String, savedComponent: String) = componentQueries.saveComparedComponent(typeID, savedComponent)
+
+    /**
+     *
+     */
+    fun removeComparedComponent(componentName: String) = componentQueries.deleteComparedComponent(componentName)
 }
