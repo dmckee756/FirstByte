@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/pcNameHint"
+        android:textColor="@color/textColor"
+        android:textColorHint="@color/layoutOutline"
         android:imeOptions="actionSend"
         android:importantForAutofill="no"
         android:layout_marginHorizontal="20dp"

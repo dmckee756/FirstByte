@@ -11,6 +11,7 @@ import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.tables.FK_ON
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import kotlinx.coroutines.*
 
 const val PC_ID_COLUMN = 0
@@ -80,7 +81,7 @@ class FirstByteDBAccess(
     /**
      * Remove hardware from the database
      */
-    suspend fun removeHardware(name: String) {
+    fun removeHardware(name: String) {
         componentQueries.removeHardware(name)
     }
 
@@ -116,6 +117,15 @@ class FirstByteDBAccess(
     suspend fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>>? =
         componentQueries.getCategory(category)
 
+    /**
+     *
+     */
+    fun checkIfComponentIsAnyPC(componentName: String, categoryType: String): Int = pcBuildQueries.isHardwareInBuilds(componentName, categoryType)
+
+    /**
+     *
+     */
+    fun removeComponentFromAllPCs(componentName: String, categoryType: String, rrpPrice: Double) = pcBuildQueries.removeHardwareFromBuilds(componentName, categoryType, rrpPrice)
 
     /**
      *
@@ -248,4 +258,12 @@ class FirstByteDBAccess(
      *
      */
     fun removeComparedComponent(componentName: String) = componentQueries.deleteComparedComponent(componentName)
+
+    /**
+     * Delete all records from the database, used as a factory data reset.
+     */
+    fun resetDatabase(){
+        dbHandler.delete(FirstByteSQLConstants.Components.TABLE, "${FirstByteSQLConstants.Components.IS_DELETABLE} =0", null)
+        dbHandler.delete(FirstByteSQLConstants.PcBuild.TABLE,"${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} =0", null)
+    }
 }

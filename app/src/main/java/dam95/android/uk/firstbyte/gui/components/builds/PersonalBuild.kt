@@ -237,15 +237,20 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         val userInput = alertBoxLayout?.findViewById<EditText>(R.id.changePCNameEditText)
 
         val alertBuilder =
-            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.Theme_FirstByte))
+            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.myAlertDialogTheme))
 
         //Setup a dialog box that allows the user to change the PC's Name
         alertBuilder.setTitle(activity?.resources?.getString(R.string.enterNewPCName))
             .setCancelable(false)
             .setPositiveButton(activity?.getString(R.string.ok_button)) { _, _ ->
 
-                //Change the PC Name to the user's inputted text...
-                personalPC.value?.pcName = userInput?.text.toString()
+                if (userInput?.text.toString().isBlank()){
+                    //If the user changes the pc to a blank name, then set the default name
+                    personalPC.value?.pcName = "New-PC"
+                } else{
+                    //Change the PC Name to the user's inputted text...
+                    personalPC.value?.pcName = userInput?.text.toString()
+                }
                 //Update the PC's display name...
                 personalBuildBinding.pcNameDisplay.text = personalPC.value!!.pcName
                 //Update the PC's name in the database.
@@ -350,12 +355,13 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     override fun onPause() {
-        fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
+        
+        if (this::fbHardwareDb.isInitialized) fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
         super.onPause()
     }
 
     override fun onDestroy() {
-        fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
+        if (this::fbHardwareDb.isInitialized) fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
         super.onDestroy()
     }
 }

@@ -7,13 +7,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.datasource.*
 import dam95.android.uk.firstbyte.model.PCBuild
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import java.lang.IndexOutOfBoundsException
 
-class PCBuildExtraQueries {
+class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
 
-    fun insertPCDetails(personalPC: PCBuild, dbHandler: SQLiteDatabase): Long{
-        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
+    fun insertPCDetails(personalPC: PCBuild): Long{
+        val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val cv = ContentValues()
         var booleanToTinyInt: Int
         val pcDetails = personalPC.getPrimitiveDetails()
@@ -43,8 +43,7 @@ class PCBuildExtraQueries {
      */
     fun getPCDetails(
         currentTableColumns: List<String>,
-        cursor: Cursor,
-        dbHandler: SQLiteDatabase
+        cursor: Cursor
     ): MutableLiveData<PCBuild> {
         val listDetail = mutableListOf<Any?>()
         val mutableLiveData: MutableLiveData<PCBuild> = MutableLiveData()
@@ -59,7 +58,7 @@ class PCBuildExtraQueries {
             }
         }
         loadPC.setPrimitiveDetails(listDetail)
-        getPcRelationalData(loadPC, dbHandler)
+        getPcRelationalData(loadPC)
         mutableLiveData.value = loadPC
         return mutableLiveData
     }
@@ -67,7 +66,7 @@ class PCBuildExtraQueries {
     /**
      *
      */
-    fun getPcRelationalData(loadPC: PCBuild, dbHandler: SQLiteDatabase) {
+    fun getPcRelationalData(loadPC: PCBuild) {
         Log.i("PC_ID", "${loadPC.pcID}")
         //Load Names of Ram in the PC
         var reusableCursor: Cursor = dbHandler.rawQuery(
@@ -112,12 +111,53 @@ class PCBuildExtraQueries {
     fun insertPCBuildRelationTables(
         name: String,
         type: String,
-        pcID: Int,
-        dbHandler: SQLiteDatabase
+        pcID: Int
     ) {
         val cv = ContentValues()
         cv.put("pc_id", pcID)
         cv.put("${type}_name", name)
         dbHandler.insert("${type}_in_pc", null, cv)
+    }
+
+    fun removeComponentPriceFromPCs(
+        cursor: Cursor,
+        categoryType: String,
+        rrpPrice: Double,
+        singlePart: Boolean
+    ) {
+        var totalPrice: Double
+        var pcID: Int
+        var relationalCursor: Cursor
+        var numberOfSlots = 1
+        val cv = ContentValues()
+        cursor.moveToFirst()
+        //Update the total price in all pc's that has the component
+        for (index in 0 until cursor.count){
+            //Get pc ID
+            pcID = cursor.getInt(0)
+            totalPrice = cursor.getDouble(1)
+
+            //If this is a relational part, then get the number of this components in the PC
+            if (!singlePart){
+               relationalCursor = dbHandler.rawQuery("SELECT pc_id FROM ${categoryType}_in_pc WHERE pc_id =?",
+                    arrayOf(pcID.toString())
+                )
+                numberOfSlots = relationalCursor.count
+                relationalCursor.close()
+            }
+
+            for (slots in 0 until numberOfSlots) {
+                //Remove the component's rrp price from the pc
+                totalPrice -= rrpPrice
+            }
+            //Update the pc
+            cv.put(FirstByteSQLConstants.PcBuild.PC_RRP_PRICE, totalPrice)
+            dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} =?",
+                arrayOf(pcID.toString()))
+            //Prepare for next iteration
+            cv.clear()
+            cursor.moveToNext()
+        }
+        cursor.close()
     }
 }

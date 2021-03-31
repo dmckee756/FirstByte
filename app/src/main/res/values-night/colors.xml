@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night Mode -->
+    <!-- Global Colors -->
+    <color name="textColor">#BFBFBF</color>
+    <color name="textShadow">#DCDCDC</color>
+    <color name="textColorLight">#BFBFBF</color>
+    <color name="backgroundTintColour">#35474747</color>
+    <color name="iconColor">#AAAAAA</color>
+    <color name="iconColorDarker">#7A7A7A</color>
+
+    <color name="primaryColor">#212121</color>
+    <color name="primaryColorDark">#434343</color>
+    <color name="secondaryColor">#1e1e1e</color>
+    <color name="secondaryColorDark">#393939</color>
+    <color name="gradientColor">#212121</color>
+    <color name="layoutOutline">#676767</color>
+
+    <!-- PCBuild colours -->
+    <color name="componentWarning">#B82D2D</color>
+
+    <!-- Category Search Colors -->
+    <color name="holoBlue">#00305C</color>
+    <color name="allSearchOnline">#234B70</color>
+    <color name="allSearchOnlineGradient">#233C7A</color>
+    <color name="categoryOnlineDisplay">#375775</color>
+
+    <color name="holoGreen">#005503</color>
+    <color name="allSearchSaved">#175E1A</color>
+    <color name="allSearchSavedGradient">#15611D</color>
+    <color name="categoryOfflineDisplay">#2E7031</color>
+
+    <color name="categoryNormal">#373737</color>
+
+    <!-- PC List Colors -->
+    <color name="holoRed">#710009</color>
+    <color name="redPCGradient">#7C2929</color>
+    <color name="redPCCentreGradient">#803030</color>
+
+    <color name="categoryPCListDisplay">#752727</color>
+
+    <array name="myGraphColors">
+        <item>#00AE59</item>
+        <item>#006B9F</item>
+        <item>#CABA2D</item>
+        <item>#B82C29</item>
+        <item>#009782</item>
+    </array>
+
+</resources>

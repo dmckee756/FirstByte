@@ -9,6 +9,7 @@ import dam95.android.uk.firstbyte.model.tables.FK_ON
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.tables.components.ComponentHandler
 import dam95.android.uk.firstbyte.model.tables.pcbuilds.PCBuildHandler
 import kotlinx.coroutines.CoroutineDispatcher
@@ -91,9 +92,7 @@ class FirstByteDBAccess(
      * Remove hardware from the database
      */
     fun removeHardware(name: String) {
-        coroutineScope.launch(coroutineDispatcher) {
-            componentQueries.removeHardware(name)
-        }
+        componentQueries.removeHardware(name)
     }
 
     /**
@@ -111,7 +110,7 @@ class FirstByteDBAccess(
     /**
      *
      */
-    suspend fun hardwareExists(name: String): Int = componentQueries.hardwareExists(name)
+    fun hardwareExists(name: String): Int = componentQueries.hardwareExists(name)
 
     /**
      *
@@ -128,6 +127,15 @@ class FirstByteDBAccess(
     suspend fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>>? =
         componentQueries.getCategory(category)
 
+    /**
+     *
+     */
+    fun checkIfComponentIsAnyPC(componentName: String, categoryType: String): Int = pcBuildQueries.isHardwareInBuilds(componentName, categoryType)
+
+    /**
+     *
+     */
+    fun removeComponentFromAllPCs(componentName: String, categoryType: String, rrpPrice: Double) = pcBuildQueries.removeHardwareFromBuilds(componentName, categoryType, rrpPrice)
 
     /**
      *
@@ -138,7 +146,7 @@ class FirstByteDBAccess(
      *
      */
     fun deletePC(pcID: Int) {
-        coroutineScope.launch {
+        coroutineScope.launch(coroutineDispatcher) {
             pcBuildQueries.deletePC(pcID)
         }
     }
@@ -171,12 +179,7 @@ class FirstByteDBAccess(
      * @param partName a string value which determines the name of a relational pc part to remove.
      * @param pcID an int value determining which pc build in a relational table will be altered.
      */
-    fun removeRelationalPCPart(type: String, pcID: Int, relativePos: Int) {
-        coroutineScope.launch(coroutineDispatcher) {
-            pcBuildQueries.removeRelationalPCPart(type, pcID, relativePos)
-        }
-    }
-
+    fun removeRelationalPCPart(type: String, pcID: Int, relativePos: Int) = pcBuildQueries.removeRelationalPCPart(type,  pcID, relativePos)
     /**
      *
      */
@@ -239,17 +242,38 @@ class FirstByteDBAccess(
     fun createComparedComponents(typeID: String) = componentQueries.createComparedList(typeID)
 
     /**
+     *
+     * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
+     */
+    fun checkIfComparedTableExists(typeID: String): Int = componentQueries.doesComparedListExist(typeID)
+
+    /**
      * Retrieve the desired compared components list from the database and return the result to the caller.
      *
      * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
      */
-    fun retrieveComparedComponents(typeID: String): List<String> = componentQueries.retrieveComparedList(typeID)
+    fun retrieveComparedComponents(typeID: String): List<String?> = componentQueries.retrieveComparedList(typeID)
+
+    fun checkIfComponentIsInComparedTable(componentName: String) : Int = componentQueries.isComponentInComparedTable(componentName)
 
     /**
      * Save the altered list to the correct compared components table.
      *
      * @param typeID the unique name given to the compared table, indicating what type of component references are stored in it.
-     * @param savedComponents the altered/updated list being saved to the compared table
+     * @param savedComponent a reference name of the component that will be compared.
      */
-    fun saveComparedComponents(typeID: String, savedComponents: List<String>)= componentQueries.updateComparedList(typeID, savedComponents)
+    fun saveComparedComponent(typeID: String, savedComponent: String) = componentQueries.saveComparedComponent(typeID, savedComponent)
+
+    /**
+     *
+     */
+    fun removeComparedComponent(componentName: String) = componentQueries.deleteComparedComponent(componentName)
+
+    /**
+     * Delete all records from the database, used as a factory data reset.
+     */
+    fun resetDatabase(){
+        dbHandler.delete(FirstByteSQLConstants.Components.TABLE, "${FirstByteSQLConstants.Components.IS_DELETABLE} =0", null)
+        dbHandler.delete(FirstByteSQLConstants.PcBuild.TABLE,"${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} =0", null)
+    }
 }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Help Screen -->
+    <PreferenceCategory
+        android:title="@string/helpContact"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:key="REPORT"
+            android:title="@string/reportProblem"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="CONTACT"
+            android:title="@string/getInContact"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:allowDividerBelow="false" />
+
+    <PreferenceCategory
+        android:title="@string/aboutSection"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:key="VERSION"
+            android:title="@string/appVersion"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false"
+            android:selectable="false"/>
+
+        <Preference
+            android:key="LICENSES"
+            android:title="@string/licenses"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:allowDividerBelow="false" />
+
+</androidx.preference.PreferenceScreen>

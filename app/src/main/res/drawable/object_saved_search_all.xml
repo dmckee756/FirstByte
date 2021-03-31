@@ -22,7 +22,7 @@ This has been altered to my own version, as the original was both too clustered.
             android:type="sweep"
             android:centerX="0.3"
             android:centerY="0.5"
-            android:startColor="@android:color/holo_green_dark"
+            android:startColor="@color/holoGreen"
             android:centerColor="@android:color/transparent"
             android:endColor="@android:color/transparent"/>
     </shape></rotate></item>

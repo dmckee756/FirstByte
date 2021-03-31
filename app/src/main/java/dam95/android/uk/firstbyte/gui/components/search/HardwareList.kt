@@ -65,7 +65,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         recyclerListBinding = FragmentHardwareListBinding.inflate(inflater, container, false)
         if (searchCategory != null) {
             setHasOptionsMenu(true)
-            Log.i("SEARCH_CATEGORY", searchCategory!!)
 
             setUpSearch()
             when (isLoadingFromServer) {

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="gpuCompareDetails">Clock speeds: MHz\n\nSize of Memory: GB\n\nMemory Speed in Mhz\n\nWattage Usage\n\nPrices</string>
+
+    <string name="cpuCompareDetails">CPU speed in GHz\n\nNumber of Cores\n\nWattage Usage\n\nPrices</string>
+
+    <string name="ramCompareDetails">RAM speed in MHz\n\nSize of Memory: GB\n\nPrices</string>
+
 </resources>

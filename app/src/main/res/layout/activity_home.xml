@@ -61,8 +61,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/toggle_drawer_header"
-        app:itemIconTint="?colorPrimaryDark"
-        app:itemTextColor="?android:textColorPrimary"
+        app:itemIconTint="@color/iconColor"
+        app:itemTextColor="@color/textColor"
         app:menu="@menu/drawer_nav_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

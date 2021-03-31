@@ -29,6 +29,7 @@ object HandleComponent {
     ) {
         //If this fragment was loaded from the comparison screen, then add the clicked component to the compared list.
         if (fbHardwareDb.checkIfComponentIsInComparedTable(componentName) == 0) {
+
             val comparedID = "${componentType.toUpperCase(Locale.ROOT)}$FINISH_ID"
             //Save component to compared list
             fbHardwareDb.saveComparedComponent(comparedID, componentName)

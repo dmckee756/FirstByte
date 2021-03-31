@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">FirstByte</string>
 
-    <string name="hardwareList">Search %1$s</string>
+    <string name="appVersion">App Version: 0.5a</string>
+    <string name="fbLogo">First Byte Logo</string>
+
+    <!-- Fragment Labels-->
+    <string name="hardwareList">Components List</string>
     <string name="hardwareDetails">Hardware Details</string>
+    <string name="pcBuildList">PC Build List</string>
+    <string name="personalBuild">Personal Build</string>
+    <string name="compareHardware">Compare Components</string>
+    <string name="searchCategory">Search PC Parts</string>
+    <string name="settingsLabel">Settings</string>
+    <string name="helpLabel">Help</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="offlineText">You are currently offline, to see the information on this page please connect back online.</string>
@@ -98,7 +108,7 @@
 
     <!-- PC Details-->
     <string name="enterNewPCName">Enter new PC name</string>
-    <string name="pcNameHint">PC name</string>
+    <string name="pcNameHint">Enter PC name</string>
     <string name="componentPrice">Price: %1$2%2$.2f</string>
     <string name="componentOtherText">Display other text if applicable.</string>
     <string name="componentType">TYPE</string>
@@ -167,5 +177,21 @@
     <!-- Fan Display Text -->
     <string name="fanDisplayFanSize">Fan Size: %1$dmm</string>
     <string name="fanDisplayFanSpeed">Fan Speed: %1$dRPM</string>
+
+    <!-- Settings Text -->
+    <string name="displaySettings">Display Settings</string>
+    <string name="settingsRecommendedBuildListText">Recommended builds</string>
+    <string name="nightMode">Night Mode</string>
+    <string name="factorySettings">FactorySettings</string>
+    <string name="resetDataText">Reset Data</string>
+
+    <!-- Help Text -->
+    <string name="helpContact">Help &amp; Contact</string>
+    <string name="reportProblem">Report a problem</string>
+    <string name="getInContact">Get in contact</string>
+    <string name="helpTips">Help Tips</string>
+    <string name="aboutSection">About</string>
+    <string name="licenses">Licences</string>
+
 
 </resources>

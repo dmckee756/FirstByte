@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.*
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.io.IOException
 import java.util.*
 
@@ -45,25 +46,38 @@ class SelectCompareRecyclerList(
         fun bindDataSet(componentType: String) {
 
 
-                //Dynamically load the hardware images in drawable from assets folder.
-                try{
-                    val inputStream = context!!.assets.open("compare_${componentType.toLowerCase(Locale.ROOT)}.png")
-                    //Convert loaded image into drawable...
-                    val image = Drawable.createFromStream(inputStream, null)
-                    //Assign the drawable to image view if it exists
-                    image?.let { imageView.setImageDrawable(it) }
-                } catch (exception: Exception){
-                    exception.printStackTrace()
-                }
+            //Dynamically load the hardware images in drawable from assets folder.
+            try {
+                val inputStream =
+                    context!!.assets.open("compare_${componentType.toLowerCase(Locale.ROOT)}.png")
+                //Convert loaded image into drawable...
+                val image = Drawable.createFromStream(inputStream, null)
+                //Assign the drawable to image view if it exists
+                image?.let { imageView.setImageDrawable(it) }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+            }
 
             compareTitle.text =
                 context!!.resources?.getString(R.string.hardwareCompareTitle, componentType)
 
             goCompareBtn.text =
                 context.resources?.getString(R.string.compareCategory, componentType)
-            //Take of the 's off of "COMPARE RAM'S", because it looks weird.
-            if (componentType == "RAM")goCompareBtn.text = goCompareBtn.text.dropLast(2)
 
+            when (componentType) {
+                ComponentsEnum.GPU.toString() -> {
+                    compareDescription.text = context.resources.getString(R.string.gpuCompareDetails)
+                }
+                ComponentsEnum.CPU.toString() -> {
+                    compareDescription.text = context.resources.getString(R.string.cpuCompareDetails)
+                }
+                ComponentsEnum.RAM.toString() -> {
+                    compareDescription.text = context.resources.getString(R.string.ramCompareDetails)
+                    //Take of the 's off of "COMPARE RAM'S", because it looks weird.
+                    goCompareBtn.text = goCompareBtn.text.dropLast(2)
+
+                }
+            }
         }
 
         /**
@@ -72,8 +86,11 @@ class SelectCompareRecyclerList(
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
-                    this.goCompareBtn.id -> listener.onCompareBtnClick(comparisonSelection[adapterPosition].toLowerCase(
-                        Locale.ROOT))
+                    this.goCompareBtn.id -> listener.onCompareBtnClick(
+                        comparisonSelection[adapterPosition].toLowerCase(
+                            Locale.ROOT
+                        )
+                    )
                 }
             }
         }
@@ -114,7 +131,7 @@ class SelectCompareRecyclerList(
         val compareImage: ImageView
         val goCompareButton: Button
 
-        if (tierPosition % 2 == 1 ){
+        if (tierPosition % 2 == 1) {
             val selectCompareLeftBinding = DisplayChooseCompareLeftBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
@@ -126,7 +143,7 @@ class SelectCompareRecyclerList(
             compareImage = selectCompareLeftBinding.componentCompareImageLeft
             goCompareButton = selectCompareLeftBinding.enterComparisonBtnLeft
         } else {
-            val  selectCompareRightBinding = DisplayChooseCompareRightBinding.inflate(
+            val selectCompareRightBinding = DisplayChooseCompareRightBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
                 false

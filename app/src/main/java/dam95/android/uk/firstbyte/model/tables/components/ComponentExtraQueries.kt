@@ -12,12 +12,12 @@ import dam95.android.uk.firstbyte.datasource.NULL_RES
 import dam95.android.uk.firstbyte.datasource.STRING_RES
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.*
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.util.DataClassTemplate
 
 class ComponentExtraQueries {
 
-    private val componentsTableSize = SQLComponentConstants.Components.COLUMN_LIST.size - 1
+    private val componentsTableSize = FirstByteSQLConstants.Components.COLUMN_LIST.size - 1
 
     /**
      *
@@ -30,7 +30,7 @@ class ComponentExtraQueries {
         //First add details to the components table, if all values are added successfully,
         //then it will switch over to specific components.
         val currentTableColumns: List<String> =
-            SQLComponentConstants.Components.COLUMN_LIST + tableColumns
+            FirstByteSQLConstants.Components.COLUMN_LIST + tableColumns
 
         //When the loop skips the duplicate name, make this value minus 1
         // meaning that none of details being inserted into the database from the component will be skipped
@@ -73,7 +73,7 @@ class ComponentExtraQueries {
             //Once this hits the end of the components table, switch over to the specific hardware details such as the gpu or cpu etc.
             if (i == componentsTableSize) {
                 result =
-                    dbHandler.insert(SQLComponentConstants.Components.TABLE, null, cv)
+                    dbHandler.insert(FirstByteSQLConstants.Components.TABLE, null, cv)
                 //If there was an error, exit out of this insertion.
                 if (result == (-1).toLong()) {
                     Log.e("FAILED INSERT", result.toString())
@@ -102,7 +102,7 @@ class ComponentExtraQueries {
         //Load default values for a component
         val component = DataClassTemplate.createTemplateObject(type)
         val currentTableColumns: List<String> =
-            SQLComponentConstants.Components.COLUMN_LIST + tableColumns
+            FirstByteSQLConstants.Components.COLUMN_LIST + tableColumns
 
         cursor.moveToFirst()
         /*

@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Day Mode -->
     <!-- Global Colors -->
-    <color name="textColor">#040404</color>
+    <color name="textColor">#1E1E1E</color>
     <color name="textShadow">#323232</color>
     <color name="textColorLight">#F0F7F9</color>
     <color name="backgroundTintColour">#35C3C3C3</color>
+    <color name="iconColor">#040404</color>
+    <color name="iconColorDarker">#040404</color>
 
     <color name="primaryColor">#FFFFFF</color>
     <color name="primaryColorDark">#434343</color>
     <color name="secondaryColor">#F4F4F4</color>
     <color name="secondaryColorDark">#6F6F6F</color>
     <color name="gradientColor">#EFEDED</color>
+    <color name="layoutOutline">#CDCDCD</color>
 
     <!-- PCBuild colours -->
     <color name="componentWarning">#9A1D1D</color>
 
     <!-- Category Search Colors -->
+    <color name="holoBlue">@android:color/holo_blue_dark</color>
     <color name="allSearchOnline">#4B8BC6</color>
     <color name="allSearchOnlineGradient">#4E7DF6</color>
     <color name="categoryOnlineDisplay">#6698C6</color>
 
+    <color name="holoGreen">@android:color/holo_green_dark</color>
     <color name="allSearchSaved">#45CB4B</color>
     <color name="allSearchSavedGradient">#29AC36</color>
     <color name="categoryOfflineDisplay">#6ED172</color>
 
     <color name="categoryNormal">#E8E8E8</color>
 
-    <!-- Graph Colors -->
-    <color name="graph_color">#80B8EC</color>
-
     <!-- PC List Colors -->
+    <color name="holoRed">@android:color/holo_red_dark</color>
     <color name="redPCGradient">#D36363</color>
     <color name="redPCCentreGradient">#DD8888</color>
 
     <color name="categoryPCListDisplay">#DA6E6E</color>
+
+    <array name="myGraphColors">
+        <item>#00E676</item>
+        <item>#039BE5</item>
+        <item>#FFEB3B</item>
+        <item>#E53935</item>
+        <item>#00BFA5</item>
+    </array>
 
 </resources>

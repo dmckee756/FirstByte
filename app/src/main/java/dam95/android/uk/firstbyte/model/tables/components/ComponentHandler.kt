@@ -6,14 +6,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.lang.Exception
-import java.lang.NullPointerException
 import java.util.*
 
 const val MAX_COMPARE_SIZE = 5
@@ -29,15 +28,15 @@ class ComponentHandler(
      */
     fun insertHardware(component: Component) {
         val loadColumns: List<String> = when (component.type.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> SQLComponentConstants.GraphicsCards.COLUMN_LIST
-            ComponentsEnum.CPU.toString() -> SQLComponentConstants.Processors.COLUMN_LIST
-            ComponentsEnum.RAM.toString() -> SQLComponentConstants.RamSticks.COLUMN_LIST
-            ComponentsEnum.PSU.toString() -> SQLComponentConstants.PowerSupplys.COLUMN_LIST
-            ComponentsEnum.STORAGE.toString() -> SQLComponentConstants.StorageList.COLUMN_LIST
-            ComponentsEnum.MOTHERBOARD.toString() -> SQLComponentConstants.Motherboards.COLUMN_LIST
-            ComponentsEnum.CASES.toString() -> SQLComponentConstants.Cases.COLUMN_LIST
-            ComponentsEnum.HEATSINK.toString() -> SQLComponentConstants.Heatsinks.COLUMN_LIST
-            ComponentsEnum.FAN.toString() -> SQLComponentConstants.Fans.COLUMN_LIST
+            ComponentsEnum.GPU.toString() -> FirstByteSQLConstants.GraphicsCards.COLUMN_LIST
+            ComponentsEnum.CPU.toString() -> FirstByteSQLConstants.Processors.COLUMN_LIST
+            ComponentsEnum.RAM.toString() -> FirstByteSQLConstants.RamSticks.COLUMN_LIST
+            ComponentsEnum.PSU.toString() -> FirstByteSQLConstants.PowerSupplys.COLUMN_LIST
+            ComponentsEnum.STORAGE.toString() -> FirstByteSQLConstants.StorageList.COLUMN_LIST
+            ComponentsEnum.MOTHERBOARD.toString() -> FirstByteSQLConstants.Motherboards.COLUMN_LIST
+            ComponentsEnum.CASES.toString() -> FirstByteSQLConstants.Cases.COLUMN_LIST
+            ComponentsEnum.HEATSINK.toString() -> FirstByteSQLConstants.Heatsinks.COLUMN_LIST
+            ComponentsEnum.FAN.toString() -> FirstByteSQLConstants.Fans.COLUMN_LIST
             else -> return
         }
         typeQueries.batchValueInsert(component, loadColumns, dbHandler)
@@ -50,9 +49,9 @@ class ComponentHandler(
     fun removeHardware(name: String) {
         //Find the hardware's name in Components Table and delete it,
         //which initiates cascade delete to any created Foreign Keys
-        val whereClause = "${SQLComponentConstants.Components.COMPONENT_NAME} =?"
+        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =?"
         val result = dbHandler.delete(
-            SQLComponentConstants.Components.TABLE, whereClause,
+            FirstByteSQLConstants.Components.TABLE, whereClause,
             arrayOf(name)
         )
         if (result == -1) {
@@ -75,15 +74,15 @@ class ComponentHandler(
                     "WHERE component_name =?"
 
         val loadColumns: List<String> = when (hardwareType.toUpperCase(Locale.ROOT)) {
-            ComponentsEnum.GPU.toString() -> SQLComponentConstants.GraphicsCards.COLUMN_LIST
-            ComponentsEnum.CPU.toString() -> SQLComponentConstants.Processors.COLUMN_LIST
-            ComponentsEnum.RAM.toString() -> SQLComponentConstants.RamSticks.COLUMN_LIST
-            ComponentsEnum.PSU.toString() -> SQLComponentConstants.PowerSupplys.COLUMN_LIST
-            ComponentsEnum.STORAGE.toString() -> SQLComponentConstants.StorageList.COLUMN_LIST
-            ComponentsEnum.MOTHERBOARD.toString() -> SQLComponentConstants.Motherboards.COLUMN_LIST
-            ComponentsEnum.CASES.toString() -> SQLComponentConstants.Cases.COLUMN_LIST
-            ComponentsEnum.HEATSINK.toString() -> SQLComponentConstants.Heatsinks.COLUMN_LIST
-            ComponentsEnum.FAN.toString() -> SQLComponentConstants.Fans.COLUMN_LIST
+            ComponentsEnum.GPU.toString() -> FirstByteSQLConstants.GraphicsCards.COLUMN_LIST
+            ComponentsEnum.CPU.toString() -> FirstByteSQLConstants.Processors.COLUMN_LIST
+            ComponentsEnum.RAM.toString() -> FirstByteSQLConstants.RamSticks.COLUMN_LIST
+            ComponentsEnum.PSU.toString() -> FirstByteSQLConstants.PowerSupplys.COLUMN_LIST
+            ComponentsEnum.STORAGE.toString() -> FirstByteSQLConstants.StorageList.COLUMN_LIST
+            ComponentsEnum.MOTHERBOARD.toString() -> FirstByteSQLConstants.Motherboards.COLUMN_LIST
+            ComponentsEnum.CASES.toString() -> FirstByteSQLConstants.Cases.COLUMN_LIST
+            ComponentsEnum.HEATSINK.toString() -> FirstByteSQLConstants.Heatsinks.COLUMN_LIST
+            ComponentsEnum.FAN.toString() -> FirstByteSQLConstants.Fans.COLUMN_LIST
             else -> emptyList()
         }
 
@@ -199,15 +198,15 @@ class ComponentHandler(
      */
     fun createComparedList(typeID: String) {
         val cv = ContentValues()
-        cv.put(SQLComponentConstants.Compare.ID, typeID)
-        dbHandler.insert(SQLComponentConstants.Compare.TABLE, null, cv)
+        cv.put(FirstByteSQLConstants.Compare.ID, typeID)
+        dbHandler.insert(FirstByteSQLConstants.Compare.TABLE, null, cv)
     }
 
     @Throws(SQLiteException::class)
     fun doesComparedListExist(typeID: String): Int {
 
         return try {
-            val cursor = dbHandler.rawQuery("SELECT * FROM ${SQLComponentConstants.Compare.TABLE} WHERE ${SQLComponentConstants.Compare.ID} =?",
+            val cursor = dbHandler.rawQuery("SELECT * FROM ${FirstByteSQLConstants.Compare.TABLE} WHERE ${FirstByteSQLConstants.Compare.ID} =?",
                 arrayOf(typeID)
             )
             val result: Int = cursor.count
@@ -230,7 +229,7 @@ class ComponentHandler(
 
         return try {
             val cursor = dbHandler.rawQuery(
-                "SELECT ${SQLComponentConstants.CompareStats.COMPONENT} FROM ${SQLComponentConstants.CompareStats.TABLE} WHERE ${SQLComponentConstants.CompareStats.ID} =?",
+                "SELECT ${FirstByteSQLConstants.CompareStats.COMPONENT} FROM ${FirstByteSQLConstants.CompareStats.TABLE} WHERE ${FirstByteSQLConstants.CompareStats.ID} =?",
                 arrayOf(typeID)
             )
             cursor.moveToFirst()
@@ -252,7 +251,7 @@ class ComponentHandler(
     @Throws(SQLiteException::class)
     fun isComponentInComparedTable(componentName: String): Int {
         return try {
-            val cursor = dbHandler.rawQuery("SELECT ${SQLComponentConstants.CompareStats.COMPONENT} FROM ${SQLComponentConstants.CompareStats.TABLE} WHERE ${SQLComponentConstants.CompareStats.COMPONENT} =?",
+            val cursor = dbHandler.rawQuery("SELECT ${FirstByteSQLConstants.CompareStats.COMPONENT} FROM ${FirstByteSQLConstants.CompareStats.TABLE} WHERE ${FirstByteSQLConstants.CompareStats.COMPONENT} =?",
                 arrayOf(componentName)
             )
             val result: Int = cursor.count
@@ -276,9 +275,9 @@ class ComponentHandler(
     fun saveComparedComponent(typeID: String, savedComponent: String) {
 
         val cv = ContentValues()
-        cv.put(SQLComponentConstants.CompareStats.ID, typeID)
-        cv.put(SQLComponentConstants.CompareStats.COMPONENT, savedComponent)
-        dbHandler.insert(SQLComponentConstants.CompareStats.TABLE, null, cv)
+        cv.put(FirstByteSQLConstants.CompareStats.ID, typeID)
+        cv.put(FirstByteSQLConstants.CompareStats.COMPONENT, savedComponent)
+        dbHandler.insert(FirstByteSQLConstants.CompareStats.TABLE, null, cv)
     }
 
     /**
@@ -287,7 +286,7 @@ class ComponentHandler(
      * @param componentName
      */
     fun deleteComparedComponent(componentName: String) =
-        dbHandler.delete(SQLComponentConstants.CompareStats.TABLE, "${SQLComponentConstants.CompareStats.COMPONENT} =?",
+        dbHandler.delete(FirstByteSQLConstants.CompareStats.TABLE, "${FirstByteSQLConstants.CompareStats.COMPONENT} =?",
             arrayOf(componentName)
         )
 }

@@ -10,7 +10,7 @@ const val FK_ON = "PRAGMA foreign_keys=1"
  * It's a long class filled with SQL that will only be executed once when creating the database.
  * It is not meant to be pretty, but rather a storage compartment for constant value commands
  */
-abstract class SQLComponentConstants {
+abstract class FirstByteSQLConstants {
 
     /**
      * companion object to hold constant value SQL commands that creates the...

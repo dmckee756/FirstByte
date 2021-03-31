@@ -3,6 +3,7 @@ package dam95.android.uk.firstbyte.gui.components.compare
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -13,7 +14,6 @@ import com.github.mikephil.charting.components.LegendEntry
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.utils.ColorTemplate
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.FragmentCompareHardwareBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
@@ -189,11 +189,13 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     private fun updateBarChart() {
         val barEntry: MutableList<BarEntry> = mutableListOf()
         val legendEntries = mutableListOf<LegendEntry>()
-        val colorScheme = ColorTemplate.MATERIAL_COLORS.toMutableList()
+        val colorScheme = requireContext().resources.obtainTypedArray(R.array.myGraphColors)
+        val colorMutableList = mutableListOf<Int>()
+
         val valueList = currentComparedValueFunction(mutableLiveComponentList.value!!)
         //Load the slots that have components and add the comparing value to the barEntry mutable list
         for (position in valueList.indices) {
-
+        colorMutableList.add(colorScheme.getColor(position, 0))
             Log.i("VALUE", valueList[position].toString())
             barEntry.add(
                 BarEntry(
@@ -206,12 +208,12 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
             val legendEntry = LegendEntry()
             legendEntry.label = "Slot ${position + 1}."
             legendEntry.formSize = 12F
-            legendEntry.formColor = colorScheme[position]
+            legendEntry.formColor = colorMutableList[position]
             legendEntries.add(legendEntry)
 
         }
-
-        finaliseBarChart(barEntry, legendEntries, colorScheme)
+        colorScheme.recycle()
+        finaliseBarChart(barEntry, legendEntries, colorMutableList)
         //Update the BarChart view
         compareBarChart.invalidate()
     }
@@ -219,8 +221,8 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     private fun finaliseBarChart(
         barEntry: MutableList<BarEntry>,
         legendEntries: MutableList<LegendEntry>,
-        colorScheme: MutableList<Int>
-    ) {
+        colorScheme: MutableList<Int>,
+        ) {
         //Assign DataSet to the BarChart
         barDataSet = BarDataSet(barEntry, currentComparison.first)
         compareBarChart.data = BarData(barDataSet)
@@ -231,11 +233,14 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
         //Set legend colours and size
         compareBarChart.legend.setCustom(legendEntries)
         compareBarChart.legend.textSize = 12F
+        compareBarChart.legend.textColor = ResourcesCompat.getColor(requireContext().resources, R.color.textColor, null)
         //Set data colours, text size and human readable formatting
+        barDataSet.valueTextColor = ResourcesCompat.getColor(requireContext().resources, R.color.textColor, null)
         barDataSet.colors = colorScheme
         barDataSet.valueTextSize = 16F
         //Dynamic human readable formatting
         compareBarChart.axisLeft.valueFormatter = myBarChartFormatting
+        compareBarChart.axisLeft.textColor = ResourcesCompat.getColor(requireContext().resources, R.color.textColor, null)
         barDataSet.valueFormatter = myBarChartFormatting
     }
 

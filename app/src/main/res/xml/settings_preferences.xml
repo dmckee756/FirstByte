@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Settings Screen -->
+
+    <PreferenceCategory
+        android:title="@string/displaySettings"
+        app:iconSpaceReserved="false">
+        <ListPreference
+            android:entries="@array/recommendedBuildOptions"
+            android:entryValues="@array/recommendedBuildOptions"
+            android:key="RECOMMENDED_LIST"
+            android:summary="Click to change the recommended build options."
+            android:title="@string/settingsRecommendedBuildListText"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="NIGHT_MODE"
+            android:title="@string/nightMode"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:allowDividerBelow="false" />
+
+    <PreferenceCategory
+        android:title="@string/factorySettings"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:key="RESET_DATA"
+            android:summary="Click to reset all saved data."
+            android:title="@string/resetDataText"
+            app:allowDividerAbove="true"
+            app:allowDividerBelow="true"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:allowDividerBelow="false" />
+
+</androidx.preference.PreferenceScreen>

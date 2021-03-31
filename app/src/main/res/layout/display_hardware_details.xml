@@ -8,19 +8,21 @@
 
     <TextView
         android:id="@+id/textDetail"
-        android:layout_width="wrap_content"
+        style="@style/headlineTextFB"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/halved_standard_margins"
         android:text="@string/componentSpecification"
-        style="@style/headlineTextFB"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/expand_display_buttonID"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/expand_display_buttonID"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="@dimen/halved_standard_margins"
         android:background="@drawable/ic_dropdown"
         app:layout_constraintStart_toStartOf="parent"

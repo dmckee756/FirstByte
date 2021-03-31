@@ -3,12 +3,13 @@ package dam95.android.uk.firstbyte.gui.components.compare.util
 import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.components.Cpu
 
+@Suppress("UNCHECKED_CAST")
 object CompareCPU {
-
 
     fun compareCoreSpeed(_componentList: List<Component?>): List<Float>{
         val cpuCoreSpeed = mutableListOf<Float>()
-        val componentList: List<Cpu?> = _componentList as List<Cpu?>
+
+        val componentList =  _componentList as List<Cpu?>
 
         for (index in _componentList.indices) {
             componentList[index]?.core_speed_ghz?.toFloat()?.let {
@@ -19,7 +20,8 @@ object CompareCPU {
 
     fun compareCoreCount(_componentList: List<Component?>): List<Float>{
         val cpuCores = mutableListOf<Float>()
-        val componentList: List<Cpu?> = _componentList as List<Cpu?>
+
+        val componentList = _componentList as List<Cpu?>
 
         for (index in _componentList.indices) {
             componentList[index]?.core_count?.toFloat()?.let {
@@ -30,7 +32,8 @@ object CompareCPU {
 
     fun compareCpuWattage(_componentList: List<Component?>): List<Float>{
         val cpuWattage = mutableListOf<Float>()
-        val componentList: List<Cpu?> = _componentList as List<Cpu?>
+
+        val componentList = _componentList as List<Cpu?>
 
         for (index in _componentList.indices) {
             componentList[index]?.cpu_wattage?.toFloat()?.let {

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.model.tables.FK_ON
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import java.lang.Exception
 
 private const val DATABASE_NAME = "AndroidFB_Hardware"
@@ -57,7 +57,7 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
      *
      */
     private fun buildNewFBDatabase(database: SQLiteDatabase?) {
-        val creationCommands: List<String> = SQLComponentConstants.TABLE_CREATION_COMMANDS
+        val creationCommands: List<String> = FirstByteSQLConstants.TABLE_CREATION_COMMANDS
 
         try {
             //Create each table in Components Database

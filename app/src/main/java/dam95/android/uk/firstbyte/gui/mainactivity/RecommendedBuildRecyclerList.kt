@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplayRecommendedBuildLeftBinding
@@ -41,10 +42,10 @@ class RecommendedBuildRecyclerList(
             tierTitle.text = pcAndDetails.second
             tierPrice.text = context!!.resources.getString(R.string.recommendedTierPrice, "£", pcAndDetails.first.pcPrice)
             if (tierPosition % 2 == 0){
-                itemView.setBackgroundColor(context.resources.getColor(R.color.secondaryColorDark))
-                tierTitle.setTextColor(context.resources.getColor(R.color.textColorLight))
-                tierPrice.setTextColor(context.resources.getColor(R.color.textColorLight))
-                tierDescription.setTextColor(context.resources.getColor(R.color.textColorLight))
+                itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.secondaryColorDark))
+                tierTitle.setTextColor(ContextCompat.getColor(context, R.color.textColorLight))
+                tierPrice.setTextColor(ContextCompat.getColor(context, R.color.textColorLight))
+                tierDescription.setTextColor(ContextCompat.getColor(context, R.color.textColorLight))
             }
         }
 

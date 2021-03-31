@@ -1,14 +1,11 @@
 package dam95.android.uk.firstbyte.gui.components.hardware
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
@@ -36,7 +33,7 @@ private const val COMPONENT_INDEX = 0
 class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
 
     private lateinit var hardwareDetailsBinding: FragmentHardwareDetailsBinding
-    private lateinit var componentsFirstByteDB: FirstByteDBAccess
+    private lateinit var fbHardwareDb: FirstByteDBAccess
     private lateinit var hardwareDetailsListAdapter: HardwareDetailsRecyclerList
     private lateinit var component: Component
 
@@ -60,7 +57,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         if (componentName != null && componentType != null) {
             setHasOptionsMenu(true)
             //Load FB_Hardware_Android Instance
-            componentsFirstByteDB =
+            fbHardwareDb =
                 context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
 
             Log.i("SEARCH_CATEGORY", componentName)
@@ -128,7 +125,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     private fun loadSavedHardware(name: String, type: String) {
         coroutineScope.launch {
             component =
-                componentsFirstByteDB.retrieveHardware(name, type)
+                fbHardwareDb.retrieveHardware(name, type)
 
             ConvertImageURL.convertURLtoImage(
                 component.imageLink,
@@ -156,7 +153,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             setButtonText(removeHardware, R.string.removeHardware, component.type)
 
             //If component is in database, only allow remove button click, otherwise add button click
-                if (componentsFirstByteDB.hardwareExists(component.name) > 0) {
+                if (fbHardwareDb.hardwareExists(component.name) > 0) {
                     setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
                     //...then do not allow the user to click on removeHardware...
                 } else {
@@ -179,7 +176,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             //and allow the user to click on the remove hardware button
             if (isLoadingFromServer == true) {
                 coroutineScope.launch {
-                    componentsFirstByteDB.insertHardware(component)
+                    fbHardwareDb.insertHardware(component)
                 }
             } else offlineRemoveHardwareOnDestroy = false
             Toast.makeText(context, "Component Saved", Toast.LENGTH_SHORT).show()
@@ -190,11 +187,21 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             //and allow the user to click on the add hardware button
             if (isLoadingFromServer == true) {
                 coroutineScope.launch {
-                    componentsFirstByteDB.removeHardware(component.name)
+                    fbHardwareDb.removeHardware(component.name)
                 }
             } else offlineRemoveHardwareOnDestroy = true
             Toast.makeText(context, "Component Removed", Toast.LENGTH_SHORT).show()
             setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
+        }
+    }
+
+    private fun pcAndCompareListChecks(component: Component){
+
+        if (fbHardwareDb.checkIfComponentIsInComparedTable(component.name) > 0){
+            fbHardwareDb.removeComparedComponent(component.name)
+        }
+        if (fbHardwareDb.checkIfComponentIsAnyPC(component.name, component.type) > 0){
+            fbHardwareDb.removeComponentFromAllPCs(component.name, component.type, component.rrpPrice)
         }
     }
 
@@ -252,9 +259,10 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         //If this class is loaded from SavedSearchComponents,
         //only remove this component from the database when the fragment is destroyed
         if (offlineRemoveHardwareOnDestroy) {
+            pcAndCompareListChecks(component)
             runBlocking {
                 componentName?.let {
-                    componentsFirstByteDB.removeHardware(it)
+                    fbHardwareDb.removeHardware(it)
                 }
             }
         }

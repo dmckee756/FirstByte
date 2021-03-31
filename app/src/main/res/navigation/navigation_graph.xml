@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/buildPC_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList"
-        android:label="Build PCs Hardcoded"
+        android:label="@string/pcBuildList"
         tools:layout="@layout/display_pclist">
         <action
             android:id="@+id/action_buildPC_fragmentID_to_personalBuild_fragmentID"
@@ -44,7 +44,7 @@
     <fragment
         android:id="@+id/compare_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.SelectCompare"
-        android:label="Compare hardware hardcoded"
+        android:label="@string/compareHardware"
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_compare_fragmentID_to_compareHardware_fragmentID"
@@ -60,7 +60,7 @@
     <fragment
         android:id="@+id/searchCategory_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.search.SearchComponents"
-        android:label="Search category hardcoded"
+        android:label="@string/searchCategory"
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_searchCategory_fragmentID_to_hardwareList_fragmentID"
@@ -108,7 +108,7 @@
     <fragment
         android:id="@+id/personalBuild_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.builds.PersonalBuild"
-        android:label="PersonalBuild">
+        android:label="@string/personalBuild">
         <action
             android:id="@+id/action_personalBuild_to_hardwareDetails_fragmentID"
             app:destination="@id/hardwareDetails_fragmentID" />
@@ -134,17 +134,17 @@
     <fragment
         android:id="@+id/settings_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.configuration.Settings"
-        android:label="fragment_settings"
+        android:label="@string/settingsLabel"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/help_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.configuration.Help"
-        android:label="fragment_help"
+        android:label="@string/helpLabel"
         tools:layout="@layout/fragment_help" />
     <fragment
         android:id="@+id/compareHardware_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.CompareHardware"
-        android:label="fragment_compare_hardware"
+        android:label="@string/compareHardware"
         tools:layout="@layout/fragment_compare_hardware" >
         <action
             android:id="@+id/action_compareHardware_fragmentID_to_hardwareList_fragmentID"
@@ -162,7 +162,7 @@
     <fragment
         android:id="@+id/searchSavedComponents_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.search.SearchSavedComponents"
-        android:label="fragment_search_saved_components"
+        android:label="@string/searchCategory"
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_searchSavedComponents_fragmentID_to_hardwareList_fragmentID"
@@ -181,6 +181,7 @@
     <fragment
         android:id="@+id/webViewConnection_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.hardware.WebViewConnection"
+        android:label="@string/hardwareDetails"
         tools:layout="@layout/fragment_web_view_connection" />
 
 </navigation>

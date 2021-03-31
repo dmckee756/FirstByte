@@ -1,21 +1,25 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
+import androidx.preference.PreferenceManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import dam95.android.uk.firstbyte.gui.configuration.NIGHT_MODE
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -37,6 +41,17 @@ class HomeActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
+        val nightModeOn: Boolean = sharedPreferences.getBoolean(NIGHT_MODE, false)
+
+        // If user put app into night mode, load it, otherwise load light mode
+        if (nightModeOn) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
 
         //Create recommended builds and build databases
         fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)

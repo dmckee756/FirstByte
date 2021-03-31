@@ -1,17 +1,20 @@
 package dam95.android.uk.firstbyte.model.tables.pcbuilds
 
 import android.content.ContentValues
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dam95.android.uk.firstbyte.model.tables.components.ComponentHandler
 import dam95.android.uk.firstbyte.datasource.MAX_PC_LIST_SIZE
-import dam95.android.uk.firstbyte.datasource.PC_ID_COLUMN
 import dam95.android.uk.firstbyte.datasource.WRITABLE_DATA
-import dam95.android.uk.firstbyte.model.tables.SQLComponentConstants
+import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.PCBuild
+import dam95.android.uk.firstbyte.model.components.Case
 import dam95.android.uk.firstbyte.model.components.Component
+import dam95.android.uk.firstbyte.model.components.Heatsink
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.util.*
 
@@ -20,14 +23,14 @@ class PCBuildHandler(
     private val dbHandler: SQLiteDatabase
 ) {
 
-    private val pcBuildExtraExtraQueries: PCBuildExtraQueries = PCBuildExtraQueries()
+    private val pcBuildExtraExtraQueries: PCBuildExtraQueries = PCBuildExtraQueries(dbHandler)
 
     /**
      *
      */
     fun createPersonalPC(personalPC: PCBuild): Int {
         //Input values into the correct component table.
-        val result = pcBuildExtraExtraQueries.insertPCDetails(personalPC, dbHandler)
+        val result = pcBuildExtraExtraQueries.insertPCDetails(personalPC)
         //If there was an error, exit out of this insertion.
         if (result == (-1).toLong()) {
             Log.e("FAILED INSERT", result.toString())
@@ -45,8 +48,7 @@ class PCBuildHandler(
                     pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.RAM.toString().toLowerCase(Locale.ROOT),
-                        mostRecentID,
-                        dbHandler
+                        mostRecentID
                     )
                 }
             }
@@ -55,8 +57,7 @@ class PCBuildHandler(
                     pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.STORAGE.toString().toLowerCase(Locale.ROOT),
-                        mostRecentID,
-                        dbHandler
+                        mostRecentID
                     )
                 }
             }
@@ -65,8 +66,7 @@ class PCBuildHandler(
                     pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.FAN.toString().toLowerCase(Locale.ROOT),
-                        mostRecentID,
-                        dbHandler
+                        mostRecentID
                     )
                 }
             }
@@ -106,20 +106,17 @@ class PCBuildHandler(
             ComponentsEnum.RAM.toString() -> pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                 name,
                 type,
-                pcID,
-                dbHandler
+                pcID
             )
             ComponentsEnum.STORAGE.toString() -> pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                 name,
                 type,
-                pcID,
-                dbHandler
+                pcID
             )
             ComponentsEnum.FAN.toString() -> pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                 name,
                 type,
-                pcID,
-                dbHandler
+                pcID
             )
             else -> {
                 val cv = ContentValues()
@@ -159,19 +156,24 @@ class PCBuildHandler(
      *
      * @param name the component that will be removed.
      * @param pcID the pc that will have the component removed from.
-     * @param dbHandler is the access to the database.
      */
     @Throws(NoSuchElementException::class)
     fun removeRelationalPCPart(type: String, pcID: Int, relativePos: Int) {
 
-        val cursor = dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE pc_id = $pcID", null)
-        val tempList: MutableList<String> = pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
+        val cursor =
+            dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE pc_id = $pcID", null)
+        val tempList: MutableList<String> =
+            pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
 
         dbHandler.delete("${type}_in_pc", "pc_id = $pcID", null)
         cursor.close()
         tempList.removeAt(relativePos)
 
-        for (i in 0 until tempList.size) pcBuildExtraExtraQueries.insertPCBuildRelationTables(tempList[i], type, pcID, dbHandler)
+        for (i in 0 until tempList.size) pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+            tempList[i],
+            type,
+            pcID
+        )
     }
 
     /**
@@ -194,12 +196,11 @@ class PCBuildHandler(
                 for (i in 0 until tempList.size) pcBuildExtraExtraQueries.insertPCBuildRelationTables(
                     tempList[i],
                     type,
-                    pcID,
-                    dbHandler
+                    pcID
                 )
             }
         } catch (exception: Exception) {
-        //Ignore
+            //Ignore
         }
     }
 
@@ -209,7 +210,7 @@ class PCBuildHandler(
         dbHandler.update("pcbuild", cv, "pc_id = $pcID", null)
     }
 
-    fun updatePCName(pcID: Int, pcName: String){
+    fun updatePCName(pcID: Int, pcName: String) {
         val cv = ContentValues()
         cv.put("pc_name", pcName)
         dbHandler.update("pcbuild", cv, "pc_id = $pcID", null)
@@ -219,13 +220,13 @@ class PCBuildHandler(
      *
      */
     fun loadPersonalPC(pcID: Int): MutableLiveData<PCBuild> {
-        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
+        val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val queryString =
             "SELECT * FROM pcbuild WHERE pc_id = $pcID"
         val cursor = dbHandler.rawQuery(queryString, null)
         Log.i("GET_PC", pcID.toString())
         cursor.moveToFirst()
-        val loadPC = pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor, dbHandler)
+        val loadPC = pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor)
         cursor.close()
         return loadPC
     }
@@ -237,7 +238,7 @@ class PCBuildHandler(
     @Throws(ArrayIndexOutOfBoundsException::class)
     fun loadPersonalPCList(): LiveData<List<PCBuild?>> {
 
-        val currentTableColumns: List<String> = SQLComponentConstants.PcBuild.COLUMN_LIST
+        val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val pcDisplayList = mutableListOf<PCBuild?>()
         val liveData = MutableLiveData<List<PCBuild?>>()
 
@@ -254,7 +255,7 @@ class PCBuildHandler(
             // full the slots in for nulls to allow users to create a new pc build in the future.
             if (cursor.count > i) {
                 val mutableLiveData =
-                    pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor, dbHandler)
+                    pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor)
                 pcDisplayList.add(mutableLiveData.value)
             } else {
                 pcDisplayList.add(null)
@@ -299,5 +300,155 @@ class PCBuildHandler(
         }
         cursor.close()
         return relationalComponentList
+    }
+
+    @Throws(SQLiteException::class)
+    fun isHardwareInBuilds(componentName: String, categoryType: String): Int {
+
+        val desiredTable = when (categoryType.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.RAM.toString() -> "${categoryType}_in_pc"
+            ComponentsEnum.STORAGE.toString() -> "${categoryType}_in_pc"
+            ComponentsEnum.FAN.toString() -> "${categoryType}_in_pc"
+            else -> FirstByteSQLConstants.PcBuild.TABLE
+        }
+        val cursor = dbHandler.rawQuery(
+            "SELECT ${categoryType}_name FROM $desiredTable WHERE ${categoryType}_name =?",
+            arrayOf(componentName)
+        )
+        val result = cursor.count
+        cursor.close()
+        return result
+    }
+
+
+    fun removeHardwareFromBuilds(componentName: String, categoryType: String, rrpPrice: Double) {
+        var component: Component? = null
+        val singlePart = when (categoryType.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.RAM.toString() -> false
+            ComponentsEnum.STORAGE.toString() -> false
+            ComponentsEnum.FAN.toString() -> false
+            ComponentsEnum.HEATSINK.toString() -> {
+                component = componentQueries.getHardware(componentName, categoryType)
+                true
+            }
+            ComponentsEnum.CASES.toString() -> {
+                component = componentQueries.getHardware(componentName, categoryType)
+                true
+            }
+            else -> {
+                true
+            }
+        }
+        if (component != null) trimOffFans(component)
+
+        val cursor = if (!singlePart) {
+            //Get all unique PC's that contain the relational part
+            dbHandler.rawQuery(
+                "SELECT DISTINCT ${FirstByteSQLConstants.PcBuild.TABLE}.pc_id ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} JOIN ${categoryType}_in_pc ON ${categoryType}_in_pc.pc_id WHERE ${categoryType}_name =?",
+                arrayOf(componentName)
+            )
+        } else {
+            dbHandler.rawQuery(
+                "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID} ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${categoryType}_name =?",
+                arrayOf(componentName)
+            )
+        }
+
+        //update pc prices
+        pcBuildExtraExtraQueries.removeComponentPriceFromPCs(
+            cursor,
+            categoryType,
+            rrpPrice,
+            singlePart
+        )
+
+        //Remove the component from all pc's
+        val cv = ContentValues()
+        if (!singlePart) {
+            dbHandler.delete(
+                "${categoryType}_in_pc", "${categoryType}_name =?",
+                arrayOf(componentName)
+            )
+        } else {
+            cv.clear()
+            cv.putNull("${categoryType}_name")
+            dbHandler.update(
+                FirstByteSQLConstants.PcBuild.TABLE,
+                cv,
+                "${categoryType}_name =?",
+                arrayOf(componentName)
+            )
+        }
+    }
+
+    private fun trimOffFans(component: Component) {
+        var pcID: Int
+        val cursor = dbHandler.rawQuery(
+            "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID}, ${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
+                    "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${component.type}_name =?",
+            arrayOf(component.name)
+        )
+
+        cursor.moveToFirst()
+        for (i in 0 until cursor.count) {
+
+            pcID = cursor.getInt(0)
+
+            //Get all unique PC's that contain the relational part
+            val fanCursor = dbHandler.rawQuery(
+                "SELECT DISTINCT pcbuild.pc_id, fan_in_pc.fan_name, pcbuild.pc_price FROM pcbuild JOIN fan_in_pc ON fan_in_pc.pc_id WHERE fan_in_pc.pc_id =$pcID AND pcbuild.pc_id =$pcID",
+                null
+            )
+
+            correctFanRemovalPrices(fanCursor, pcID)
+
+
+            if (component.type.toUpperCase(Locale.ROOT) == ComponentsEnum.HEATSINK.toString()) {
+                component as Heatsink
+                updateFansInPC("fan", pcID, component.fan_slots)
+            } else {
+                component as Case
+                updateFansInPC("fan", pcID, component.case_fan_slots)
+            }
+            cursor.moveToNext()
+        }
+        cursor.close()
+    }
+
+    private fun correctFanRemovalPrices(
+        cursor: Cursor,
+        pcID: Int
+    ) {
+
+        val cv = ContentValues()
+        cursor.moveToFirst()
+        if (cursor.count > 0) {
+            val fanNameIndex = 1
+            val pcPriceIndex = 2
+
+            //Get PC's current total price
+            var totalPrice = cursor.getDouble(pcPriceIndex)
+
+            //Update the total price in all pc's that has the component
+            for (index in 0 until cursor.count) {
+                val fan = componentQueries.getHardware(cursor.getString(fanNameIndex), "fan")
+                //Remove the fan's rrp price from the pc
+                totalPrice -= fan.rrpPrice
+                //Prepare for next iteration
+                cursor.moveToNext()
+            }
+
+            //Update the pc
+            cv.put(FirstByteSQLConstants.PcBuild.PC_RRP_PRICE, totalPrice)
+            dbHandler.update(
+                FirstByteSQLConstants.PcBuild.TABLE,
+                cv,
+                "${FirstByteSQLConstants.PcBuild.PC_ID} =?",
+                arrayOf(pcID.toString())
+            )
+        }
+        cursor.close()
     }
 }
