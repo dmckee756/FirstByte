@@ -251,30 +251,31 @@ override fun onHardwareClick(componentName: String, componentType: String) {
     }
 }
 
-//UI Methods
+    //UI Methods
 
-/**
- *
- */
-override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-    menu.clear()
-    inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
-    super.onCreateOptionsMenu(menu, inflater)
-}
-
-
-/*
     /**
-     * TO FINISH and to get working
+     *
+     */
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.hardwarelist_toolbar_items, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    /**
+     *
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             // Bring up a sorting menu
-            R.id.sortID -> Log.i("SORT", "Sort")
+            R.id.alphabeticalAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+            R.id.alphabeticalDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+            R.id.priceAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+            R.id.priceDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
             // Bring up a filter menu
             R.id.filterID -> Log.i("FILTER", "Filter")
         }
         return super.onOptionsItemSelected(item)
     }
-*/
+
 }

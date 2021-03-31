@@ -7,7 +7,7 @@
     <color name="textColorLight">#BFBFBF</color>
     <color name="backgroundTintColour">#35474747</color>
     <color name="iconColor">#AAAAAA</color>
-    <color name="iconColorDarker">#7A7A7A</color>
+    <color name="iconColorDarker">#AAAAAA</color>
 
     <color name="primaryColor">#212121</color>
     <color name="primaryColorDark">#434343</color>

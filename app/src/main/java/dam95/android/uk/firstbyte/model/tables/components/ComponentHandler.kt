@@ -44,12 +44,11 @@ class ComponentHandler(
 
     /**
      * Remove hardware from the database
-     * TODO(Add that only components with "deletable" = 1 can be deleted) and figure out why all hardware is being set to 0
      */
     fun removeHardware(name: String) {
         //Find the hardware's name in Components Table and delete it,
         //which initiates cascade delete to any created Foreign Keys
-        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =?"
+        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =? AND ${FirstByteSQLConstants.Components.IS_DELETABLE} =1"
         val result = dbHandler.delete(
             FirstByteSQLConstants.Components.TABLE, whereClause,
             arrayOf(name)

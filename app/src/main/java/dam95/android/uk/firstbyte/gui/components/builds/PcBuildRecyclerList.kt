@@ -1,14 +1,12 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
@@ -60,7 +58,7 @@ class PcBuildRecyclerList(
                 pcPriceOrCreation.text = context?.resources?.getString(R.string.createPC)
                 //Get the add "+" icon from drawable resources
 
-                pcCaseImageOrAdd.setImageResource(R.drawable.ic_add)
+                pcCaseImageOrAdd.setImageResource(R.drawable.ic_create_pc)
             } else {
                 //Load the correct pc in the list
                 //Load a colorful background from drawable resources

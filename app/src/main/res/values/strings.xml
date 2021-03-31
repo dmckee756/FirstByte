@@ -41,6 +41,11 @@
     <string name="sortList">Sort list</string>
     <string name="filterSearch">Filter Search Results</string>
 
+    <string name="sortListAscending">Alphabetical Ascending</string>
+    <string name="sortListDescending">Alphabetical Descending</string>
+    <string name="sortListPriceAscending">Price Low-High</string>
+    <string name="sortListPriceDescending">Price High-Low</string>
+
     <!-- Bottom Navigation -->
     <string name="homeBtn">Home</string>
     <string name="pcBuildBtn">PC Builds</string>
@@ -184,6 +189,9 @@
     <string name="nightMode">Night Mode</string>
     <string name="factorySettings">FactorySettings</string>
     <string name="resetDataText">Reset Data</string>
+    <string name="yesButton">Yes</string>
+    <string name="noButton">No</string>
+    <string name="alertResetData">Are you sure you want to remove all saved data?</string>
 
     <!-- Help Text -->
     <string name="helpContact">Help &amp; Contact</string>

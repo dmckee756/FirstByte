@@ -1,7 +1,6 @@
 package dam95.android.uk.firstbyte.gui.components.compare
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayComparedComponentBinding
 import dam95.android.uk.firstbyte.model.components.Component
-import java.util.*
 
 class CompareHardwareRecyclerList(
     private val context: Context?,
@@ -62,7 +60,7 @@ class CompareHardwareRecyclerList(
 
         private fun addComponentSetup() {
             slotText.visibility = View.GONE
-            componentCompareImageOrAddIcon.setImageResource(R.drawable.ic_add)
+            componentCompareImageOrAddIcon.setImageResource(R.drawable.ic_add_component)
             componentNameOrAddCompare.text = context!!.resources.getString(R.string.addComponentToCompare)
             removeComparedComponent.visibility = View.GONE
             addComponentCompareBtn.isClickable = true

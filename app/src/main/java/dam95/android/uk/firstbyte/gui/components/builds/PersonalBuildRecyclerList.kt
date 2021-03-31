@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.api.util.ConvertImageURL
@@ -99,7 +98,7 @@ class PersonalBuildRecyclerList(
         private fun addHardwareSetup(type: String) {
             addButton.isClickable = true
             imageView.isClickable = false
-            imageView.setImageResource(R.drawable.ic_add)
+            imageView.setImageResource(R.drawable.ic_add_component)
 
             name.visibility = View.GONE
 

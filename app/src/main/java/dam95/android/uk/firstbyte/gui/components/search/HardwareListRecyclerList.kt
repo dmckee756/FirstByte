@@ -12,6 +12,7 @@ import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.DisplayHardwarelistBinding
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
+import java.util.*
 
 /**
  *
@@ -22,7 +23,9 @@ class HardwareListRecyclerList(
     private val isLoadingFromServer: Boolean,
 ) : RecyclerView.Adapter<HardwareListRecyclerList.ViewHolder>() {
 
-    private var hardwareListFull = emptyList<SearchedHardwareItem>()
+    private var hardwareListFull = listOf<SearchedHardwareItem>()
+    private var hardwareListUsed = listOf<SearchedHardwareItem>()
+
 
     /**
      *
@@ -44,14 +47,12 @@ class HardwareListRecyclerList(
          *
          */
         fun bindDataSet(displayedComponent: SearchedHardwareItem) {
-            if (isLoadingFromServer){
+            if (isLoadingFromServer) {
                 hardwareBtn.setBackgroundResource(R.drawable.object_online_display)
-            } else{
+            } else {
                 hardwareBtn.setBackgroundResource(R.drawable.object_offline_display)
             }
 
-            Log.i("LIST_HARDWARE_NAME", displayedComponent.name)
-            Log.i("LIST_HARDWARE_LINK", displayedComponent.image_link)
             ConvertImageURL.convertURLtoImage(
                 displayedComponent.image_link,
                 componentImage
@@ -67,8 +68,8 @@ class HardwareListRecyclerList(
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
                     hardwareBtn.id -> listener.onHardwareClick(
-                        hardwareListFull[adapterPosition].name,
-                        hardwareListFull[adapterPosition].category
+                        hardwareListUsed[adapterPosition].name,
+                        hardwareListUsed[adapterPosition].category
                     )
                 }
             }
@@ -88,6 +89,7 @@ class HardwareListRecyclerList(
      */
     fun setDataList(newList: List<SearchedHardwareItem>) {
         hardwareListFull = newList
+        hardwareListUsed = newList
         notifyDataSetChanged()
     }
 
@@ -119,6 +121,18 @@ class HardwareListRecyclerList(
      *
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindDataSet(hardwareListFull[position])
+        holder.bindDataSet(hardwareListUsed[position])
+    }
+
+    fun sortDataSet(buttonID: Int) {
+        val sortedList: List<SearchedHardwareItem> = when (buttonID) {
+            R.id.alphabeticalAscendingID -> hardwareListUsed.sortedBy { it.name.capitalize(Locale.ROOT)}
+            R.id.alphabeticalDescendingID -> hardwareListUsed.sortedByDescending { it.name.capitalize(Locale.ROOT)}
+            R.id.priceAscendingID -> hardwareListUsed.sortedBy { it.rrpPrice.toString() }
+            R.id.priceDescendingID -> hardwareListUsed.sortedByDescending { it.rrpPrice.toString() }
+            else -> hardwareListFull
+        }
+        hardwareListUsed = sortedList
+        notifyDataSetChanged()
     }
 }

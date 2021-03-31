@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="@dimen/halved_standard_margins"
-    android:elevation="10dp"
-    android:paddingBottom="4dp">
+    android:elevation="10dp">
 
     <Button
         android:id="@+id/pcListBtn"
@@ -25,12 +24,13 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
+        android:layout_marginBottom="5dp"
         android:elevation="10dp"
         android:padding="2dp"
         android:text="@string/pcBuildName"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/pcCaseImageOrAdd" />
+        app:layout_constraintBottom_toTopOf="@+id/pcPriceOrCreation"
+        app:layout_constraintStart_toStartOf="@id/pcListBtn" />
 
     <TextView
         android:id="@+id/pcPriceOrCreation"
@@ -51,22 +51,26 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="5dp"
         android:elevation="10dp"
         android:padding="2dp"
         android:text="@string/buildIncomplete"
-        app:layout_constraintBottom_toBottomOf="@+id/pcCaseImageOrAdd"
-        app:layout_constraintStart_toStartOf="@+id/pcListBtn" />
+        app:layout_constraintStart_toStartOf="@+id/pcListBtn"
+        app:layout_constraintTop_toBottomOf="@+id/pcPriceOrCreation" />
 
     <ImageView
         android:id="@+id/pcCaseImageOrAdd"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margins"
-        android:background="@drawable/ic_add"
+        android:adjustViewBounds="true"
+        android:background="@drawable/ic_create_pc"
         android:contentDescription="@string/pcBuildListImage"
         android:elevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:maxWidth="70dp"
+        android:maxHeight="70dp"
+        app:layout_constraintBottom_toBottomOf="@id/pcListBtn"
+        app:layout_constraintEnd_toEndOf="@id/pcListBtn"
+        app:layout_constraintTop_toTopOf="@id/pcListBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
