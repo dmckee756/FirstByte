@@ -2,7 +2,6 @@ package dam95.android.uk.firstbyte.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import dam95.android.uk.firstbyte.model.components.Component
 
 
 /**

@@ -94,7 +94,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/addHardwareBtn"
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -106,12 +106,14 @@
         android:paddingHorizontal="@dimen/halved_standard_margins"
         android:singleLine="false"
         android:text="@string/addHardware"
+        android:textAppearance="@style/headlineTextFB"
+        android:textColor="@color/textColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/removeHardwareBtn"
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/removeHardwareBtn"
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -123,6 +125,8 @@
         android:paddingHorizontal="@dimen/halved_standard_margins"
         android:singleLine="false"
         android:text="@string/removeHardware"
+        android:textAppearance="@style/headlineTextFB"
+        android:textColor="@color/textColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addHardwareBtn" />

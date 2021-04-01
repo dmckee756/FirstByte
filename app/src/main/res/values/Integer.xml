@@ -3,4 +3,8 @@
     <integer name="AndroidFB_HardwareVersion">1</integer>
     <integer name="PC_Build_DBVersion">1</integer>
     <integer name="Recommended_PC_DBVersion">1</integer>
+
+    <integer name="priceFilterIntervals">20</integer>
+    <integer name="minFilterPriceSize">0</integer>
+    <integer name="maxFilterPriceSize">2000</integer>
 </resources>

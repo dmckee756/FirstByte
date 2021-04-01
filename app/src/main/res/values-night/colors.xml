@@ -2,19 +2,23 @@
 <resources>
     <!-- Night Mode -->
     <!-- Global Colors -->
-    <color name="textColor">#BFBFBF</color>
-    <color name="textShadow">#DCDCDC</color>
+    <color name="textColor">#B3B3B3</color>
+    <color name="textShadow">#AAAAAA</color>
     <color name="textColorLight">#BFBFBF</color>
     <color name="backgroundTintColour">#35474747</color>
     <color name="iconColor">#AAAAAA</color>
     <color name="iconColorDarker">#AAAAAA</color>
+    <color name="androidsColor">#101010</color>
+    <color name="appBarColor">#171717</color>
+    <color name="bottomNavigationBarColor">@color/appBarColor</color>
+    <color name="bottomNavButtonsClicked">#E3E3E3</color>
 
     <color name="primaryColor">#212121</color>
     <color name="primaryColorDark">#434343</color>
     <color name="secondaryColor">#1e1e1e</color>
     <color name="secondaryColorDark">#393939</color>
     <color name="gradientColor">#212121</color>
-    <color name="layoutOutline">#676767</color>
+    <color name="layoutOutline">#494949</color>
 
     <!-- PCBuild colours -->
     <color name="componentWarning">#B82D2D</color>
@@ -30,7 +34,7 @@
     <color name="allSearchSavedGradient">#15611D</color>
     <color name="categoryOfflineDisplay">#2E7031</color>
 
-    <color name="categoryNormal">#373737</color>
+    <color name="categoryNormal">#2C2C2C</color>
 
     <!-- PC List Colors -->
     <color name="holoRed">#710009</color>

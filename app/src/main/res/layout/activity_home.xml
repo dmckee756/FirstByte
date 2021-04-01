@@ -16,7 +16,7 @@
             android:id="@+id/fb_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primaryColor"
+            android:background="@color/appBarColor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -32,7 +32,7 @@
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/primaryColor"
+            android:background="@color/bottomNavigationBarColor"
             app:menu="@menu/bottom_navigation"
             app:elevation="10dp"
             app:labelVisibilityMode="labeled"

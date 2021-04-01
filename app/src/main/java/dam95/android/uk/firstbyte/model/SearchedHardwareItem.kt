@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * The retrieved data from the Node API for the HardwareList fragment recycler list
  */
+
 data class SearchedHardwareItem(
     @SerializedName("component_name")
     var name: String,

@@ -7,7 +7,7 @@
     android:layout_marginVertical="@dimen/halved_standard_margins"
     android:elevation="10dp">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/hardwareBtn"
         android:layout_width="match_parent"
         android:layout_height="80dp"

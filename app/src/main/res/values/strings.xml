@@ -18,6 +18,7 @@
     <string name="offlineText">You are currently offline, to see the information on this page please connect back online.</string>
     <string name="ok_button">Change</string>
     <string name="cancel_button">Cancel</string>
+
     <!-- Toggle Drawer -->
     <string name="openDrawer">Open Toggle Drawer Navigation</string>
     <string name="closeDrawer">Close Toggle Drawer Navigation</string>
@@ -39,7 +40,15 @@
     <string name="toPDF">To PDF</string>
     <string name="deletePC">Delete PC</string>
     <string name="sortList">Sort list</string>
+
+    <string name="filterPriceSearch">Filter Price Range</string>
     <string name="filterSearch">Filter Search Results</string>
+
+    <string name="minPriceTitle">Minimum Price</string>
+    <string name="maxPriceTitle">Maximum Price</string>
+
+    <string name="applyButton">Apply Filter</string>
+    <string name="resetFilterButton">Reset Filter</string>
 
     <string name="sortListAscending">Alphabetical Ascending</string>
     <string name="sortListDescending">Alphabetical Descending</string>
@@ -68,6 +77,7 @@
     <string name="compareValues">Compare Component %1$s</string>
     <string name="compareSlot">Slot %1$d.</string>
     <string name="addComponentToCompare">Add Component</string>
+    <string name="iconForCompareSpinner">Expand compare values selection</string>
 
     <!-- Category Search -->
     <string name="categoryText">Search Category Text</string>
@@ -85,6 +95,7 @@
         <item>CPU Heatsinks</item>
         <item>Fans</item>
     </string-array>
+
     <string-array name="categoryConnector">
         <item>all</item>
         <item>gpu</item>
@@ -102,6 +113,11 @@
     <string name="hardwareListName">Component name in hardware list</string>
     <string name="hardwareListPrice">Component price in hardware list</string>
     <string name="hardwareListImage">Component Image in hardware list</string>
+
+    <string-array name="filterPriceValues">
+        <item>@integer/minFilterPriceSize</item>
+        <item>@integer/maxFilterPriceSize</item>
+    </string-array>
 
     <!-- PC BuildList -->
     <string name="createPC">Create new PC Build</string>

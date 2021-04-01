@@ -19,7 +19,7 @@
         app:layout_constraintStart_toEndOf="@+id/expand_display_buttonID"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/expand_display_buttonID"
         android:layout_width="40dp"
         android:layout_height="40dp"

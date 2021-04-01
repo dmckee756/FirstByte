@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/componentDetailBtn"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -87,7 +87,7 @@
         app:layout_constraintStart_toStartOf="@+id/componentDetailBtn"
         app:layout_constraintTop_toTopOf="@+id/componentDetailBtn" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/removeFromPC"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -98,7 +98,7 @@
         app:layout_constraintEnd_toEndOf="@+id/componentDetailBtn"
         app:layout_constraintTop_toTopOf="@+id/componentDetailBtn" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/componentCompatible"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -109,7 +109,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/componentDetailBtn"
         app:layout_constraintEnd_toEndOf="@+id/componentDetailBtn" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/requiredPCpart"
         android:layout_width="40dp"
         android:layout_height="40dp"

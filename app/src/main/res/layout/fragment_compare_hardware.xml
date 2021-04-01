@@ -41,7 +41,8 @@
             android:src="@drawable/ic_baseline_arrow_drop_down_24"
             app:layout_constraintEnd_toEndOf="@+id/compareValuesSpinner"
             app:layout_constraintTop_toTopOf="@+id/compareValuesSpinner"
-            app:layout_constraintBottom_toBottomOf="@+id/compareValuesSpinner"/>
+            app:layout_constraintBottom_toBottomOf="@+id/compareValuesSpinner"
+            android:contentDescription="@string/iconForCompareSpinner" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/compareBarChart"

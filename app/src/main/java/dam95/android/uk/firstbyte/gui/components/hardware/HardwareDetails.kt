@@ -226,12 +226,12 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
 
     /**
      * Add text to the "add hardware" button depending on component's category.
-     * e.g. Add button text = "Add GPU". Remove button text = "Remove GPU"
+     * e.g. Add button text = "Add Gpu". Remove button text = "Remove Gpu"
      */
     private fun setButtonText(button: Button, stringID: Int, type: String) {
         button.text = context?.resources?.getString(
             stringID,
-            type.toUpperCase(Locale.ROOT)
+            type.capitalize(Locale.ROOT)
         )
     }
 

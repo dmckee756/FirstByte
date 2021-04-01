@@ -1,32 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false">
+    android:clipToPadding="false"
+    android:orientation="vertical">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/hardwareListSearchViewID"
+    <LinearLayout
+        android:id="@+id/searchViewLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/object_search_view"
-        android:layout_marginTop="@dimen/halved_standard_margins"
-        android:layout_marginHorizontal="@dimen/standard_margins"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/secondaryColor"
+        android:elevation="10dp"
+        android:paddingBottom="10dp">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/hardwareListSearchViewID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/standard_margins"
+            android:layout_marginTop="@dimen/halved_standard_margins"
+            android:background="@drawable/object_search_view"
+            android:elevation="10dp" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filterViewID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:background="@color/secondaryColor"
+        android:elevation="10dp"
+        android:paddingVertical="5dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/searchViewLayout">
+
+        <TextView
+            android:id="@+id/filterPriceTitle"
+            style="@style/headlineTextFB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/filterPriceSearch"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/priceSliderRangeBar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/minPriceTitle"
+            style="@style/headlineTextFB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:layout_marginStart="10dp"
+            android:text="@string/minPriceTitle"
+            app:layout_constraintStart_toStartOf="@+id/priceSliderRangeBar"
+            app:layout_constraintTop_toBottomOf="@+id/filterPriceTitle" />
+
+        <TextView
+            android:id="@+id/maxPriceTitle"
+            style="@style/headlineTextFB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/maxPriceTitle"
+            app:layout_constraintEnd_toEndOf="@+id/priceSliderRangeBar"
+            app:layout_constraintTop_toBottomOf="@+id/filterPriceTitle" />
+
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/priceSliderRangeBar"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginHorizontal="@dimen/double_standard_margins"
+            android:stepSize="10"
+            android:valueFrom="@integer/minFilterPriceSize"
+            android:valueTo="@integer/maxFilterPriceSize"
+            app:haloColor="@color/allSearchOnlineGradient"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/minPriceTitle"
+            app:thumbColor="@android:color/holo_blue_dark"
+            app:trackColor="@color/allSearchOnline"
+            app:values="@array/filterPriceValues" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/applyFilterBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/object_save_remove_hardware"
+            android:paddingHorizontal="20dp"
+            android:text="@string/applyButton"
+            android:textAppearance="@style/headlineTextFB"
+            android:textColor="@color/textColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/resetFilterBtn"
+            app:layout_constraintTop_toBottomOf="@+id/priceSliderRangeBar" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/resetFilterBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/object_save_remove_hardware"
+            android:fontFamily="@font/roboto"
+            android:paddingHorizontal="20dp"
+            android:text="@string/resetFilterButton"
+            android:textAppearance="@style/headlineTextFB"
+            android:textColor="@color/textColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/applyFilterBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/priceSliderRangeBar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_hardwarelist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:verticalScrollbarPosition="right"
-        app:layout_constraintTop_toBottomOf="@+id/hardwareListSearchViewID"
-        android:layout_marginTop="@dimen/halved_standard_margins"
-        android:layout_marginBottom="?android:actionBarSize"
-        android:paddingBottom="?android:actionBarSize"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:verticalScrollbarPosition="right"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

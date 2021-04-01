@@ -42,7 +42,7 @@
         app:strokeColor="@color/textColor"
         app:strokeWidth="1dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/enterComparisonBtnLeft"
         android:layout_width="0dp"
         android:layout_height="30dp"
