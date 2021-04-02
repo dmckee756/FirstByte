@@ -226,8 +226,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             //
             if (newText != "") {
                 //
-                val searchList =
-                    if (hardwareListAdapter.isListFiltered()) hardwareListAdapter.getUsedList() else hardwareListAdapter.getFullSortedList()
+                val searchList = hardwareListAdapter.getFullSortedList()
 
                 val updatedList = mutableListOf<SearchedHardwareItem>()
                 for (i in searchList.indices) {

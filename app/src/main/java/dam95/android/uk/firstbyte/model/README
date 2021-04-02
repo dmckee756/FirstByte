@@ -1,0 +1,167 @@
+Json structure of Read Only Components:
+Look at Component object classes when adding/updating JSON
+
+NOTE: Some Intel CPU sockets will say S 1200, Ignore the S and Replace it with LGA and no space in between the LGA and it's number.
+They are the same socket but some people name the socket differently for some odd reason.
+E.g. S 1200 -> LGA1200
+
+{
+    "component_type": "gpu",
+    "image_link": "",
+    "gpu_name": "",
+    "core_speed_mhz": ,
+    "memory_size_gb": ,
+    "memory_speed_mhz": ,
+    "wattage": ,
+    "dimensions": "",
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "cpu",
+    "image_link": "",
+    "cpu_name": "",
+    "core_speed_ghz": ,
+    "core_count": ,
+    "multi_threading": ,
+    "cpu_socket": "",
+    "cpu_wattage": ,
+    "default_heatsink": ,
+    "rrp_price": ,
+    "amazon_price": null,
+    "amazon_link": null,
+    "scan_price": null,
+    "scan_link": null,
+    "deletable": false
+}
+{
+    "component_type": "ram",
+    "image_link": "",
+    "ram_name": "",
+    "ram_memory_speed_mhz": ,
+    "ram_memory_size_gb": ,
+    "ram_ddr": "",
+    "num_of_sticks": ,
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "psu",
+    "image_link": "",
+    "psu_name": "",
+    "psu_wattage": ,
+    "rating": "",
+    "modular": ,
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "storage",
+    "image_link": "",
+    "storage_name": "",
+    "storage_type": "",
+    "external_storage": ,
+    "storage_capacity_gb": ,
+    "storage_speed_mbps": ,
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "motherboard",
+    "image_link": "",
+    "board_name": "",
+    "board_type": "",
+    "board_dimensions": "",
+    "processor_socket": "",
+    "ddr_sdram": "",
+    "usb3": ,
+    "wifi": ,
+    "pci_e": ,
+    "nvme_support": ,
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "cases",
+    "image_link": "",
+    "case_name": "",
+    "case_fan_slots": ,
+    "case_fan_sizes_mm": ,
+    "case_motherboard": "",
+    "case_dimensions": "",
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "heatsink",
+    "image_link": "",
+    "heatsink_name": "",
+    "fan_slots": ,
+    "amd_socket_min": "",
+    "amd_socket_max": "",
+    "intel_socket_min": "",
+    "intel_socket_max": "",
+    "heatsink_dimensions": "",
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+{
+    "component_type": "fan",
+    "image_link": "",
+    "fan_name": "",
+    "fan_size_mm": ,
+    "fan_rpm": ,
+    "rrp_price": ,
+    "amazon_price": ,
+    "amazon_link": "",
+    "scan_price": ,
+    "scan_link": "",
+    "deletable": false
+}
+
+Json structure of Read Only PC Builds
+
+{
+    "pcID": null,
+    "pcName": "New-PC",
+    "pcPrice": 0.00,
+    "isPCCompleted": false,
+    "gpuName": null,
+    "cpuName": null,
+    "ramList": [null, null],
+    "psuName": null,
+    "motherboardName":null,
+    "storageList": [null, null, null],
+    "heatsinkName": "",
+    "caseName": null,
+    "fanList": null,
+    "deletable": false
+},

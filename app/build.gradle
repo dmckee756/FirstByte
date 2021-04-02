@@ -89,10 +89,10 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
 
-    //Load URL Images
+    // Load URL Images
     implementation 'com.squareup.picasso:picasso:2.8'
 
-    //MPAndroidChart
+    // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // Junit testing dependencies

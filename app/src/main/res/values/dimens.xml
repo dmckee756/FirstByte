@@ -6,6 +6,7 @@
     <dimen name="double_standard_margins">40dp</dimen>
 
     <!-- Text Sizes -->
+    <dimen name="appBarTextsSze">18sp</dimen>
     <dimen name="nav_text_size">16sp</dimen>
     <dimen name="search_text_Size">14sp</dimen>
     <dimen name="layoutSectionTextSize">12sp</dimen>

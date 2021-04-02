@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/categorySearchTxt"
-            style="@style/headlineTextFB"
+            android:textAppearance="@style/headlineTextFB"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/standard_margins"

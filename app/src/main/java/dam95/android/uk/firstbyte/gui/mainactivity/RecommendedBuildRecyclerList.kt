@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplayRecommendedBuildLeftBinding
 import dam95.android.uk.firstbyte.databinding.DisplayRecommendedBuildRightBinding
@@ -20,6 +21,7 @@ class RecommendedBuildRecyclerList(
 ) : RecyclerView.Adapter<RecommendedBuildRecyclerList.ViewHolder>() {
 
     private var recommendedTier = emptyList<Pair<PCBuild, String>>()
+    private lateinit var viewPager2: ViewPager2
     private var tierPosition: Int = 1
 
     /**
@@ -29,8 +31,7 @@ class RecommendedBuildRecyclerList(
         itemView: View,
         private val tierTitle: TextView,
         private val tierPrice: TextView,
-        private val tierDescription: TextView,
-        private val tierButton: Button
+        private val tierDescription: TextView
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
@@ -55,7 +56,7 @@ class RecommendedBuildRecyclerList(
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id){
-                    this.tierButton.id -> listener.onBuildButtonClick(recommendedTier[adapterPosition].first)
+
                 }
 
             }
@@ -95,7 +96,6 @@ class RecommendedBuildRecyclerList(
         val tierTitle: TextView
         val tierPrice: TextView
         val tierDescription: TextView
-        val tierButton: Button
 
         if (tierPosition == 1 || tierPosition == 2) {
             val homeLeftBinding = DisplayRecommendedBuildLeftBinding.inflate(
@@ -107,7 +107,6 @@ class RecommendedBuildRecyclerList(
             tierTitle = homeLeftBinding.recommendedTierTitleLeft
             tierPrice = homeLeftBinding.recommendedTierPriceLeft
             tierDescription = homeLeftBinding.recommendedTierDescriptionLeft
-            tierButton = homeLeftBinding.imageBtnLeft
         } else {
             val homeRightBinding = DisplayRecommendedBuildRightBinding.inflate(
                 LayoutInflater.from(context),
@@ -118,15 +117,13 @@ class RecommendedBuildRecyclerList(
             tierTitle = homeRightBinding.recommendedTierTitleRight
             tierPrice = homeRightBinding.recommendedTierPriceRight
             tierDescription = homeRightBinding.recommendedTierDescriptionRight
-            tierButton = homeRightBinding.imageBtnRight
         }
 
         return ViewHolder(
             cardView,
             tierTitle,
             tierPrice,
-            tierDescription,
-            tierButton
+            tierDescription
         )
     }
 

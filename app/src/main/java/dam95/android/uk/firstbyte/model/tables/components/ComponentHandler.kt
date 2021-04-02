@@ -16,7 +16,7 @@ import java.lang.Exception
 import java.util.*
 
 const val MAX_COMPARE_SIZE = 5
-
+private const val IS_DELETABLE = 1
 class ComponentHandler(
     private val dbHandler: SQLiteDatabase
 ) {
@@ -48,7 +48,7 @@ class ComponentHandler(
     fun removeHardware(name: String) {
         //Find the hardware's name in Components Table and delete it,
         //which initiates cascade delete to any created Foreign Keys
-        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =? AND ${FirstByteSQLConstants.Components.IS_DELETABLE} =1"
+        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =? AND ${FirstByteSQLConstants.Components.IS_DELETABLE} =$IS_DELETABLE"
         val result = dbHandler.delete(
             FirstByteSQLConstants.Components.TABLE, whereClause,
             arrayOf(name)
@@ -68,9 +68,9 @@ class ComponentHandler(
 
         //Full details query
         val queryString =
-            "SELECT component.*, $hardwareType.* FROM component INNER JOIN $hardwareType " +
-                    "ON component.component_name = $hardwareType.${hardwareType}_name " +
-                    "WHERE component_name =?"
+            "SELECT ${FirstByteSQLConstants.Components.TABLE}.*, $hardwareType.* FROM ${FirstByteSQLConstants.Components.TABLE} INNER JOIN $hardwareType " +
+                    "ON ${FirstByteSQLConstants.Components.TABLE}.${FirstByteSQLConstants.Components.COMPONENT_NAME} = $hardwareType.${hardwareType}_name " +
+                    "WHERE ${FirstByteSQLConstants.Components.COMPONENT_NAME} =?"
 
         val loadColumns: List<String> = when (hardwareType.toUpperCase(Locale.ROOT)) {
             ComponentsEnum.GPU.toString() -> FirstByteSQLConstants.GraphicsCards.COLUMN_LIST
@@ -97,10 +97,8 @@ class ComponentHandler(
         val queryString =
             "SELECT component_name FROM component WHERE component_name =?"
         val cursor: Cursor = dbHandler.rawQuery(queryString, arrayOf(name))
-        //Implement error check
         val result: Int = cursor.count
         cursor.close()
-        Log.i("HARDWARE_EXIST?", cursor.count.toString())
         //If 1, then true, otherwise false
         return result
     }
@@ -115,16 +113,16 @@ class ComponentHandler(
 
 //Retrieve components search details
         var queryString =
-            "SELECT component.component_name, component.component_type, " +
-                    "component.image_link, component.rrp_price FROM component"
+            "SELECT ${FirstByteSQLConstants.Components.COMPONENT_NAME}, ${FirstByteSQLConstants.Components.COMPONENT_TYPE}, " +
+                    "${FirstByteSQLConstants.Components.COMPONENT_IMAGE}, ${FirstByteSQLConstants.Components.RRP_PRICE} FROM ${FirstByteSQLConstants.Components.TABLE}"
 
 
         //If a specific category is being searched, append the specific category onto the MySQL query
         queryString += if (category != "all") {
-            " WHERE component_type LIKE '$category' " +
-                    "AND component_name LIKE '%$searchQuery%'"
+            " WHERE ${FirstByteSQLConstants.Components.COMPONENT_TYPE} LIKE '$category' " +
+                    "AND ${FirstByteSQLConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
         } else {
-            " WHERE component_name LIKE '%$searchQuery%'"
+            " WHERE ${FirstByteSQLConstants.Components.COMPONENT_NAME} LIKE '%$searchQuery%'"
         }
 
         val cursor = dbHandler.rawQuery(queryString, null)
@@ -148,13 +146,13 @@ class ComponentHandler(
 
             //Retrieve components search details
             var queryString =
-                "SELECT component.component_name, component.component_type," +
-                        "component.image_link, component.rrp_price FROM component"
+                "SELECT ${FirstByteSQLConstants.Components.COMPONENT_NAME}, ${FirstByteSQLConstants.Components.COMPONENT_TYPE}," +
+                        "${FirstByteSQLConstants.Components.COMPONENT_IMAGE}, ${FirstByteSQLConstants.Components.RRP_PRICE} FROM ${FirstByteSQLConstants.Components.TABLE}"
 
             val cursor: Cursor
             //If a specific category is being searched, append the specific category onto the MySQL query
             if (category != "all") {
-                queryString += " WHERE component_type =?"
+                queryString += " WHERE ${FirstByteSQLConstants.Components.COMPONENT_TYPE} =?"
                 cursor = dbHandler.rawQuery(queryString, arrayOf(category))
             } else {
                 cursor = dbHandler.rawQuery(queryString, null)

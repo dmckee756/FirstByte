@@ -17,7 +17,7 @@ import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.components.Heatsink
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.util.*
-
+private const val IS_DELETABLE = 1
 class PCBuildHandler(
     private val componentQueries: ComponentHandler,
     private val dbHandler: SQLiteDatabase
@@ -37,7 +37,9 @@ class PCBuildHandler(
             return -1
         } else {
             val cursor = dbHandler.rawQuery(
-                "SELECT pc_id FROM pcbuild WHERE pc_id =(SELECT MAX(pc_id) FROM pcbuild)", null
+                "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID} FROM ${FirstByteSQLConstants.PcBuild.TABLE} " +
+                        "WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} =(SELECT MAX(${FirstByteSQLConstants.PcBuild.PC_ID}) " +
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE})", null
             )
 
             cursor.moveToFirst()
@@ -80,7 +82,7 @@ class PCBuildHandler(
      */
     fun deletePC(pcID: Int) {
         val result = dbHandler.delete(
-            "pcbuild", "pc_id = $pcID AND deletable = 1", null
+            FirstByteSQLConstants.PcBuild.TABLE, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID AND ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $IS_DELETABLE", null
         )
         if (result == -1) {
             Log.e("FAILED REMOVAL", result.toString())
@@ -95,7 +97,7 @@ class PCBuildHandler(
         val cv = ContentValues()
         val booleanToTinyInt = if (pc.isPcCompleted) 1 else 0
         cv.put("is_pc_completed", booleanToTinyInt)
-        dbHandler.update("pcbuild", cv, "pc_id =?", arrayOf(pc.pcID.toString()))
+        dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} =?", arrayOf(pc.pcID.toString()))
     }
 
     /**
@@ -121,7 +123,7 @@ class PCBuildHandler(
             else -> {
                 val cv = ContentValues()
                 cv.put("${type}_name", name)
-                dbHandler.update("pcbuild", cv, "pc_id =?", arrayOf(pcID.toString()))
+                dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} =?", arrayOf(pcID.toString()))
             }
         }
     }
@@ -137,7 +139,7 @@ class PCBuildHandler(
         cv.putNull("${type}_name")
 
         //Update the pc part to hold null, removing the component reference but keeping a slot for further insertion/updating,
-        val result = dbHandler.update("pcbuild", cv, "pc_id = $pcID", null)
+        val result = dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
         //If unsuccessful, Log an error
         if (result == -1) {
             Log.e("FAILED REMOVAL", result.toString())
@@ -154,18 +156,17 @@ class PCBuildHandler(
      * This is not an optimal solution, but rather a solution that shows the flaw of both my schema designs. This is something that would be...
      * ...reworked if I decide to further support this project after the final year project deadline.
      *
-     * @param name the component that will be removed.
      * @param pcID the pc that will have the component removed from.
      */
     @Throws(NoSuchElementException::class)
     fun removeRelationalPCPart(type: String, pcID: Int, relativePos: Int) {
 
         val cursor =
-            dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE pc_id = $pcID", null)
+            dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
         val tempList: MutableList<String> =
             pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
 
-        dbHandler.delete("${type}_in_pc", "pc_id = $pcID", null)
+        dbHandler.delete("${type}_in_pc", "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
         cursor.close()
         tempList.removeAt(relativePos)
 
@@ -183,11 +184,11 @@ class PCBuildHandler(
     fun updateFansInPC(type: String, pcID: Int, numberOfFans: Int) {
 
         val cursor =
-            dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE pc_id = $pcID", null)
+            dbHandler.rawQuery("SELECT ${type}_name FROM ${type}_in_pc WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
         val tempList: MutableList<String> =
             pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
 
-        dbHandler.delete("${type}_in_pc", "pc_id = $pcID", null)
+        dbHandler.delete("${type}_in_pc", "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
         cursor.close()
         try {
             for (i in 0 until numberOfFans) tempList.removeLast()
@@ -206,14 +207,14 @@ class PCBuildHandler(
 
     fun updatePCTotalPrice(newPrice: Double, pcID: Int) {
         val cv = ContentValues()
-        cv.put("pc_price", newPrice)
-        dbHandler.update("pcbuild", cv, "pc_id = $pcID", null)
+        cv.put(FirstByteSQLConstants.PcBuild.PC_RRP_PRICE, newPrice)
+        dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
     }
 
     fun updatePCName(pcID: Int, pcName: String) {
         val cv = ContentValues()
-        cv.put("pc_name", pcName)
-        dbHandler.update("pcbuild", cv, "pc_id = $pcID", null)
+        cv.put(FirstByteSQLConstants.PcBuild.PC_NAME, pcName)
+        dbHandler.update(FirstByteSQLConstants.PcBuild.TABLE, cv, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
     }
 
     /**
@@ -222,7 +223,7 @@ class PCBuildHandler(
     fun loadPersonalPC(pcID: Int): MutableLiveData<PCBuild> {
         val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val queryString =
-            "SELECT * FROM pcbuild WHERE pc_id = $pcID"
+            "SELECT * FROM FirstByteSQLConstants.PcBuild.TABLE WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID"
         val cursor = dbHandler.rawQuery(queryString, null)
         Log.i("GET_PC", pcID.toString())
         cursor.moveToFirst()
@@ -243,7 +244,7 @@ class PCBuildHandler(
         val liveData = MutableLiveData<List<PCBuild?>>()
 
         val queryString =
-            "SELECT * FROM pcbuild WHERE deletable = $WRITABLE_DATA"
+            "SELECT * FROM FirstByteSQLConstants.PcBuild.TABLE WHERE ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA"
         val cursor = dbHandler.rawQuery(queryString, null)
 
         cursor.moveToFirst()
@@ -279,7 +280,7 @@ class PCBuildHandler(
     ): List<Pair<Component?, String>> {
 
         val cursor = dbHandler.rawQuery(
-            "SELECT ${componentType}_name FROM ${componentType}_in_pc WHERE pc_id =?",
+            "SELECT ${componentType}_name FROM ${componentType}_in_pc WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} =?",
             arrayOf(pcID.toString())
         )
         val relationalComponentList = mutableListOf<Pair<Component?, String>>()
@@ -344,8 +345,9 @@ class PCBuildHandler(
         val cursor = if (!singlePart) {
             //Get all unique PC's that contain the relational part
             dbHandler.rawQuery(
-                "SELECT DISTINCT ${FirstByteSQLConstants.PcBuild.TABLE}.pc_id ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
-                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} JOIN ${categoryType}_in_pc ON ${categoryType}_in_pc.pc_id WHERE ${categoryType}_name =?",
+                "SELECT DISTINCT ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} JOIN ${categoryType}_in_pc ON ${categoryType}_in_pc.${FirstByteSQLConstants.PcBuild.PC_ID} " +
+                        "WHERE ${categoryType}_name =?",
                 arrayOf(componentName)
             )
         } else {
@@ -396,9 +398,25 @@ class PCBuildHandler(
 
             pcID = cursor.getInt(0)
 
+            /*
+            The below SQL Query in human readable format. The bonus of having it done below, is that if the referenced variable is "updated"/changed,
+            then this query will also be updated/changed with it.
+
+            SELECT DISTINCT pcbuild.pc_id, fan_in_pc.fan_name, pcbuild.pc_price
+            FROM pcbuild JOIN fan_in_pc ON fan_in_pc.pc_id
+            WHERE fan_in_pc.pc_id = $pcID AND pcbuild.pc_id = $pcID
+             */
+
             //Get all unique PC's that contain the relational part
             val fanCursor = dbHandler.rawQuery(
-                "SELECT DISTINCT pcbuild.pc_id, fan_in_pc.fan_name, pcbuild.pc_price FROM pcbuild JOIN fan_in_pc ON fan_in_pc.pc_id WHERE fan_in_pc.pc_id =$pcID AND pcbuild.pc_id =$pcID",
+                "SELECT DISTINCT ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID}, " +
+                        "${FirstByteSQLConstants.FansInPc.TABLE}.${FirstByteSQLConstants.FansInPc.PC_FAN_NAME}, " +
+                        "${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} " +
+                        "JOIN ${FirstByteSQLConstants.FansInPc.TABLE} " +
+                        "ON ${FirstByteSQLConstants.FansInPc.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} " +
+                        "WHERE ${FirstByteSQLConstants.FansInPc.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} =$pcID " +
+                        "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} =$pcID",
                 null
             )
 

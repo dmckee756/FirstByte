@@ -24,7 +24,8 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/HomeAct_TopBar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                app:titleTextAppearance="@style/appBarTextFB"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

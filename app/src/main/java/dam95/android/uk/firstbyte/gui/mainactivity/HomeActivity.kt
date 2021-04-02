@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding

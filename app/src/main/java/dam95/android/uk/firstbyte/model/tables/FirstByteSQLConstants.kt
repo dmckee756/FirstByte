@@ -467,7 +467,6 @@ abstract class FirstByteSQLConstants {
             //Columns
             val PC_ID: String = "pc_id"
             val PC_RAM_NAME: String = "ram_name"
-            val COLUMN_LIST = listOf(PC_ID, PC_RAM_NAME)
         }
     }
 
@@ -481,7 +480,6 @@ abstract class FirstByteSQLConstants {
             //Columns
             val PC_ID: String = "pc_id"
             val PC_STORAGE_NAME: String = "storage_name"
-            val COLUMN_LIST = listOf(PC_ID, PC_STORAGE_NAME)
         }
     }
 
@@ -495,7 +493,6 @@ abstract class FirstByteSQLConstants {
             //Columns
             val PC_ID: String = "pc_id"
             val PC_FAN_NAME: String = "fan_name"
-            val COLUMN_LIST = listOf(PC_ID, PC_FAN_NAME)
         }
     }
 

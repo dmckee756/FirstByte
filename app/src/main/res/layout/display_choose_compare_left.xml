@@ -11,7 +11,7 @@
 
     <TextView
         android:id="@+id/hardwareToCompareLeft"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:text="@string/hardwareCompareTitle"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/compareDescriptionLeft"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/hardwareCompareDescription"

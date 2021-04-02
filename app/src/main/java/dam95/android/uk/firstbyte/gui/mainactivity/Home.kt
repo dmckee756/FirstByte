@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.PCBuild
@@ -16,6 +17,7 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var recommendedListAdapter: RecommendedBuildRecyclerList
     private lateinit var fbHardwareDB: FirstByteDBAccess
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

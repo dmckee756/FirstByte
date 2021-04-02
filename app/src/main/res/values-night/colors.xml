@@ -8,16 +8,16 @@
     <color name="backgroundTintColour">#35474747</color>
     <color name="iconColor">#AAAAAA</color>
     <color name="iconColorDarker">#AAAAAA</color>
-    <color name="androidsColor">#101010</color>
-    <color name="appBarColor">#171717</color>
+    <color name="androidsColor">#171717</color>
+    <color name="appBarColor">#232323</color>
     <color name="bottomNavigationBarColor">@color/appBarColor</color>
     <color name="bottomNavButtonsClicked">#E3E3E3</color>
 
-    <color name="primaryColor">#212121</color>
+    <color name="primaryColor">#292929</color>
     <color name="primaryColorDark">#434343</color>
-    <color name="secondaryColor">#1e1e1e</color>
+    <color name="secondaryColor">#2B2B2B</color>
     <color name="secondaryColorDark">#393939</color>
-    <color name="gradientColor">#212121</color>
+    <color name="gradientColor">#292929</color>
     <color name="layoutOutline">#494949</color>
 
     <!-- PCBuild colours -->

@@ -33,14 +33,14 @@
         android:background="@color/secondaryColor"
         android:elevation="10dp"
         android:paddingVertical="5dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchViewLayout">
 
         <TextView
             android:id="@+id/filterPriceTitle"
-            style="@style/headlineTextFB"
+            android:textAppearance="@style/headlineTextFB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
@@ -52,7 +52,7 @@
 
         <TextView
             android:id="@+id/minPriceTitle"
-            style="@style/headlineTextFB"
+            android:textAppearance="@style/headlineTextFB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
@@ -63,7 +63,7 @@
 
         <TextView
             android:id="@+id/maxPriceTitle"
-            style="@style/headlineTextFB"
+            android:textAppearance="@style/headlineTextFB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
@@ -86,6 +86,7 @@
             app:layout_constraintTop_toBottomOf="@+id/minPriceTitle"
             app:thumbColor="@android:color/holo_blue_dark"
             app:trackColor="@color/allSearchOnline"
+            app:labelBehavior="withinBounds"
             app:values="@array/filterPriceValues" />
 
         <androidx.appcompat.widget.AppCompatButton
