@@ -749,6 +749,23 @@
     "deletable": false
   },
   {
+    "component_type": "heatsink",
+    "image_link": "https://images-na.ssl-images-amazon.com/images/I/91S1RIgugwL._AC_SL1500_.jpg",
+    "heatsink_name": "Noctua NH-U12S",
+    "fan_slots": 2,
+    "amd_socket_min": "FM2",
+    "amd_socket_max": "AM4",
+    "intel_socket_min": "LGA1150",
+    "intel_socket_max": "LGA2066",
+    "heatsink_dimensions": "15.8x4.5x12.5cm",
+    "rrp_price": 52.45,
+    "amazon_price": 53.79,
+    "amazon_link": "https://www.amazon.co.uk/Noctua-NH-U12S-Premium-Cooler-NF-F12/dp/B00C9EYVGY/ref=sr_1_4?dchild=1&keywords=Noctua+NH-U12S&qid=1617372258&sr=8-4",
+    "scan_price": 56.99,
+    "scan_link": "https://www.scan.co.uk/products/noctua-nh-u12s-se-am4-ultra-quiet-slim-cpu-cooler-with-nf-f12-fan",
+    "deletable": false
+  },
+  {
     "component_type": "fan",
     "image_link": "https://www.scan.co.uk/images/products/super/3019775-l-a.jpg",
     "fan_name": "be quiet! Shadow Wings 2",
