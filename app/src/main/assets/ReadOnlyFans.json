@@ -1,0 +1,27 @@
+[
+  {
+    "component_type": "fan",
+    "image_link": "https://www.scan.co.uk/images/products/super/3019775-l-a.jpg",
+    "fan_name": "be quiet! Shadow Wings 2",
+    "fan_size_mm": 120,
+    "fan_rpm": 1100,
+    "rrp_price": 17.37,
+    "amazon_price": 17.37,
+    "amazon_link": "https://www.amazon.co.uk/Shadow-Computer-Operation-Designed-Germany/dp/B07MCHLGC5/ref=sr_1_2?dchild=1&keywords=be+quiet&qid=1613169555&s=computers&sr=1-2",
+    "scan_price": 13.99,
+    "scan_link": "https://www.scan.co.uk/products/120mm-be-quiet!-shadow-wings-2-silent-7-blade-upto-1100rpm-upto-385cfm-airflow-157db-max-pwm"
+  },
+  {
+    "component_type": "fan",
+    "image_link": "https://images-na.ssl-images-amazon.com/images/I/71vZOlO5qRL._AC_SL1128_.jpg",
+    "fan_name": "Corsair iCUE SP120 RGB PRO",
+    "fan_size_mm": 120,
+    "fan_rpm": 1400,
+    "rrp_price": 11.09,
+    "amazon_price": 12.99,
+    "amazon_link": "https://www.amazon.co.uk/Corsair-Low-Noise-Airflow-Cooling-Single/dp/B07VGJMQLB/ref=sr_1_8?dchild=1&keywords=pc+fans&qid=1617331584&sr=8-8",
+    "scan_price": 13.99,
+    "scan_link": "https://www.scan.co.uk/products/120mm-corsair-icue-sp120-rgb-pro-9-blade-8-led-addressable-hydraulic-bearing-single-fan-expansion-pa",
+    "deletable": false
+  }
+]

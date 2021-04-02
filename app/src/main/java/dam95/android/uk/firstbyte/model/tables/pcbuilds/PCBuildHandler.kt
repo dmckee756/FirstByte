@@ -17,7 +17,7 @@ import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.components.Heatsink
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.util.*
-private const val IS_DELETABLE = 1
+
 class PCBuildHandler(
     private val componentQueries: ComponentHandler,
     private val dbHandler: SQLiteDatabase
@@ -82,7 +82,7 @@ class PCBuildHandler(
      */
     fun deletePC(pcID: Int) {
         val result = dbHandler.delete(
-            FirstByteSQLConstants.PcBuild.TABLE, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID AND ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $IS_DELETABLE", null
+            FirstByteSQLConstants.PcBuild.TABLE, "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID AND ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA", null
         )
         if (result == -1) {
             Log.e("FAILED REMOVAL", result.toString())
@@ -223,7 +223,7 @@ class PCBuildHandler(
     fun loadPersonalPC(pcID: Int): MutableLiveData<PCBuild> {
         val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val queryString =
-            "SELECT * FROM FirstByteSQLConstants.PcBuild.TABLE WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID"
+            "SELECT * FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID"
         val cursor = dbHandler.rawQuery(queryString, null)
         Log.i("GET_PC", pcID.toString())
         cursor.moveToFirst()
@@ -244,7 +244,7 @@ class PCBuildHandler(
         val liveData = MutableLiveData<List<PCBuild?>>()
 
         val queryString =
-            "SELECT * FROM FirstByteSQLConstants.PcBuild.TABLE WHERE ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA"
+            "SELECT * FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} =$WRITABLE_DATA"
         val cursor = dbHandler.rawQuery(queryString, null)
 
         cursor.moveToFirst()

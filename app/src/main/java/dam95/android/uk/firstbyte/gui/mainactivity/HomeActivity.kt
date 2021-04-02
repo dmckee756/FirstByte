@@ -21,11 +21,13 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.configuration.NIGHT_MODE
+import dam95.android.uk.firstbyte.model.SetupReadOnlyData
 import kotlinx.coroutines.Dispatchers
 
 /**
  *
  */
+private const val FIRST_TIME_SETUP = "FIRST_TIME_SETUP"
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var fbHardwareDB: FirstByteDBAccess
@@ -42,8 +44,19 @@ class HomeActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(homeActivityBinding.root)
+
+        //Create recommended builds and build databases
+        fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
+        navController = findNavController(R.id.nav_fragment)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
+        if (sharedPreferences.getBoolean(FIRST_TIME_SETUP, true)){
+            SetupReadOnlyData(application, applicationContext).loadReadOnlyValues()
+            sharedPreferences.edit().putBoolean(FIRST_TIME_SETUP, false).apply()
+        }
 
         val nightModeOn: Boolean = sharedPreferences.getBoolean(NIGHT_MODE, false)
 
@@ -54,18 +67,12 @@ class HomeActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
 
-        //Create recommended builds and build databases
-        fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
-
-        homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(homeActivityBinding.root)
-
         //
         val topAppBar = homeActivityBinding.HomeActTopBar
         setSupportActionBar(topAppBar)
 
         drawerLayout = homeActivityBinding.actMainDrawer
-        navController = findNavController(R.id.nav_fragment)
+
         setUpNavigation()
     }
 

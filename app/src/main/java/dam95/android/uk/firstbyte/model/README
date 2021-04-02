@@ -153,7 +153,7 @@ Json structure of Read Only PC Builds
     "pcID": null,
     "pcName": "New-PC",
     "pcPrice": 0.00,
-    "isPCCompleted": false,
+    "isPcCompleted": false,
     "gpuName": null,
     "cpuName": null,
     "ramList": [null, null],

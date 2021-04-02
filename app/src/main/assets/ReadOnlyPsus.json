@@ -1,0 +1,72 @@
+[
+  {
+    "component_type": "psu",
+    "image_link": "https://www.scan.co.uk/images/products/xlarge/3176853-xl-a.jpg",
+    "psu_name": "EVGA 600 W2",
+    "psu_wattage": 600,
+    "rating": "80+",
+    "modular": 0,
+    "rrp_price": 44.99,
+    "amazon_price": 45.39,
+    "amazon_link": "https://www.amazon.co.uk/EVGA-WHITE-Power-Supply-100-W1-0600-K3/dp/B01127D0MY/ref=sr_1_3?dchild=1&keywords=psu%2B600%2BWatt%2C%2BCopper&qid=1617327119&sr=8-3&th=1",
+    "scan_price": 34.99,
+    "scan_link": "https://www.scan.co.uk/products/600w-evga-w2-80plus-fully-wired-single-rail-49a-plus-12v-1x-120mm-sleeve-bearing-fan-atx-psu",
+    "deletable": false
+  },
+  {
+    "component_type": "psu",
+    "image_link": "https://images-na.ssl-images-amazon.com/images/I/61TH7UujUeL._AC_SL1000_.jpg",
+    "psu_name": "be quiet! System Power 9 600W",
+    "psu_wattage": 600,
+    "rating": "Bronze",
+    "modular": 0,
+    "rrp_price": 53.51,
+    "amazon_price": 51.94,
+    "amazon_link": "https://www.amazon.co.uk/QUIET-System-Power-Supply-Unit/dp/B079K5YY31/ref=sr_1_3?dchild=1&keywords=psu+600+Watt%2C+Bronze&qid=1617327375&sr=8-3",
+    "scan_price": 59.99,
+    "scan_link": "https://www.scan.co.uk/products/600w-be-quiet!-system-power-9-80plus-bronze-atx-psu",
+    "deletable": false
+  },
+  {
+    "component_type": "psu",
+    "image_link": "https://www.scan.co.uk/images/products/super/2567355-l-a.jpg",
+    "psu_name": "Corsair RMi Series RM750i",
+    "psu_wattage": 750,
+    "rating": "Gold",
+    "modular": 1,
+    "rrp_price": 155.49,
+    "amazon_price": 144.03,
+    "amazon_link": "https://www.amazon.co.uk/Corsair-RM750i-Fully-Modular-Supply/dp/B00YPQN8GS/ref=sr_1_1?dchild=1&keywords=Corsair+RMi+Series+750W+Fully+Modular+80%2B+GOLD+Power+Supply&qid=1617327620&sr=8-1",
+    "scan_price": 159.98,
+    "scan_link": "https://www.scan.co.uk/products/750w-corsair-rm750i-series-fully-modular-psu-80plus-gold-certified-135mm-fan-atx",
+    "deletable": false
+  },
+  {
+    "component_type": "psu",
+    "image_link": "https://www.scan.co.uk/images/products/super/2567357-l-a.jpg",
+    "psu_name": "Corsair RMi Series RM650i",
+    "psu_wattage": 650,
+    "rating": "Gold",
+    "modular": 1,
+    "rrp_price": 108.30,
+    "amazon_price": 89.13,
+    "amazon_link": "https://www.amazon.co.uk/Corsair-RM750i-Fully-Modular-Supply/dp/B00YPQN59S/ref=sr_1_1?dchild=1&keywords=Corsair%2BRMi%2BSeries%2B750W%2BFully%2BModular%2B80%2B%2BGOLD%2BPower%2BSupply&qid=1617327620&sr=8-1&th=1",
+    "scan_price": 109.99,
+    "scan_link": "https://www.scan.co.uk/products/650w-corsair-rmi-series-rm650i-80plus-gold-full-modular-sli-crossfire-single-rail-54a-plus12v-1x135m",
+    "deletable": false
+  },
+  {
+    "component_type": "psu",
+    "image_link": "https://images-na.ssl-images-amazon.com/images/I/81miMjZK3DL._AC_SL1500_.jpg",
+    "psu_name": "Corsair HX850",
+    "psu_wattage": 850,
+    "rating": "Platinum",
+    "modular": 1,
+    "rrp_price": 172.06,
+    "amazon_price": 192.42,
+    "amazon_link": "https://www.amazon.co.uk/Corsair-Platinum-Certified-Modular-Supply/dp/B01NARQ2QU/ref=sr_1_7?dchild=1&keywords=psu+850%2B+platinum&qid=1617327895&sr=8-7",
+    "scan_price": 184.99,
+    "scan_link": "https://www.scan.co.uk/products/850w-corsair-hx-series-hx850-80-plus-platinum-full-modular-sli-crossfire-single-rail-708a-plus12v-1x",
+    "deletable": false
+  }
+]

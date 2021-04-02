@@ -21,7 +21,6 @@ const val NULL_RES = 0x00000000
 const val INTEGER_RES = 0x00000001
 const val FLOAT_RES = 0x00000002
 const val STRING_RES = 0x00000003
-private const val IS_DELETABLE = 1
 /**
  *
  */
@@ -263,7 +262,7 @@ class FirstByteDBAccess(
      * Delete all records from the database, used as a factory data reset.
      */
     fun resetDatabase(){
-        dbHandler.delete(FirstByteSQLConstants.Components.TABLE, "${FirstByteSQLConstants.Components.IS_DELETABLE} =$IS_DELETABLE", null)
-        dbHandler.delete(FirstByteSQLConstants.PcBuild.TABLE,"${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} =$IS_DELETABLE", null)
+        dbHandler.delete(FirstByteSQLConstants.Components.TABLE, "${FirstByteSQLConstants.Components.IS_DELETABLE} =$WRITABLE_DATA", null)
+        dbHandler.delete(FirstByteSQLConstants.PcBuild.TABLE,"${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} =$WRITABLE_DATA", null)
     }
 }

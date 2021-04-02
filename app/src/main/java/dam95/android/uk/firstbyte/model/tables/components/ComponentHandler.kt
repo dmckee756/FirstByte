@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
+import dam95.android.uk.firstbyte.datasource.WRITABLE_DATA
 import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import dam95.android.uk.firstbyte.model.components.Component
@@ -16,7 +17,6 @@ import java.lang.Exception
 import java.util.*
 
 const val MAX_COMPARE_SIZE = 5
-private const val IS_DELETABLE = 1
 class ComponentHandler(
     private val dbHandler: SQLiteDatabase
 ) {
@@ -27,6 +27,7 @@ class ComponentHandler(
      *
      */
     fun insertHardware(component: Component) {
+        Log.i("TEST", component.type)
         val loadColumns: List<String> = when (component.type.toUpperCase(Locale.ROOT)) {
             ComponentsEnum.GPU.toString() -> FirstByteSQLConstants.GraphicsCards.COLUMN_LIST
             ComponentsEnum.CPU.toString() -> FirstByteSQLConstants.Processors.COLUMN_LIST
@@ -48,7 +49,7 @@ class ComponentHandler(
     fun removeHardware(name: String) {
         //Find the hardware's name in Components Table and delete it,
         //which initiates cascade delete to any created Foreign Keys
-        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =? AND ${FirstByteSQLConstants.Components.IS_DELETABLE} =$IS_DELETABLE"
+        val whereClause = "${FirstByteSQLConstants.Components.COMPONENT_NAME} =? AND ${FirstByteSQLConstants.Components.IS_DELETABLE} =$WRITABLE_DATA"
         val result = dbHandler.delete(
             FirstByteSQLConstants.Components.TABLE, whereClause,
             arrayOf(name)
