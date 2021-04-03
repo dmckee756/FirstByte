@@ -6,7 +6,13 @@ import android.view.View
 
 object MyAnimationList {
 
-    fun startCrossFade(view: View, alphaStart: Float, alphaTarget: Float, duration: Long, visibility: Int) {
+    fun startCrossFade(
+        view: View,
+        alphaStart: Float,
+        alphaTarget: Float,
+        duration: Long,
+        visibility: Int
+    ) {
 
         view.apply {
             //AlphaStart is used, it sets the views initial Alpha/Transparency value for a cross fade animation
@@ -19,5 +25,4 @@ object MyAnimationList {
                 })
         }
     }
-
 }

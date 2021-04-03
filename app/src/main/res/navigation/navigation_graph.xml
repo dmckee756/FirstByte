@@ -22,6 +22,19 @@
         <action
             android:id="@+id/action_home_fragmentID_to_searchSavedComponents_fragmentID"
             app:destination="@id/searchSavedComponents_fragmentID" />
+        <action
+            android:id="@+id/action_home_fragmentID_to_personalBuild_fragmentID"
+            app:destination="@id/personalBuild_fragmentID" />
+        <argument
+            android:name="SELECTED_PC"
+            android:defaultValue="@null"
+            app:argType="dam95.android.uk.firstbyte.model.PCBuild"
+            app:nullable="true" />
+        <argument
+            android:name="READ_ONLY_PC"
+            android:defaultValue="false"
+            app:argType="string"
+            app:nullable="false" />
     </fragment>
 
     <fragment
@@ -34,9 +47,14 @@
             app:destination="@id/personalBuild_fragmentID">
             <argument
                 android:name="SELECTED_PC"
+                android:defaultValue="@null"
                 app:argType="dam95.android.uk.firstbyte.model.PCBuild"
-                app:nullable="true"
-                android:defaultValue="@null" />
+                app:nullable="true" />
+            <argument
+                android:name="READ_ONLY_PC"
+                android:defaultValue="false"
+                app:argType="string"
+                app:nullable="false" />
         </action>
 
     </fragment>
@@ -51,7 +69,7 @@
             app:destination="@id/compareHardware_fragmentID" />
         <argument
             android:name="COMPARE_LIST"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name='"COMPARED_VALUES_LIST"'
             app:argType="string[]" />
@@ -97,12 +115,13 @@
     <fragment
         android:id="@+id/hardwareDetails_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.hardware.HardwareDetails"
-        android:label="@string/hardwareDetails" >
+        android:label="@string/hardwareDetails">
         <action
             android:id="@+id/action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID"
             app:destination="@id/webViewConnection_fragmentID" />
-        <argument android:name="URL_LINK"
-            app:argType="string"/>
+        <argument
+            android:name="URL_LINK"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -123,11 +142,11 @@
             app:argType="boolean" />
         <argument
             android:name="PC_ID"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
         <argument
             android:name="NOT_FROM_SEARCH"
-            app:argType="boolean"/>
+            app:argType="boolean" />
 
 
     </fragment>
@@ -145,7 +164,7 @@
         android:id="@+id/compareHardware_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.CompareHardware"
         android:label="@string/compareHardware"
-        tools:layout="@layout/fragment_compare_hardware" >
+        tools:layout="@layout/fragment_compare_hardware">
         <action
             android:id="@+id/action_compareHardware_fragmentID_to_hardwareList_fragmentID"
             app:destination="@id/hardwareList_fragmentID" />
@@ -157,7 +176,7 @@
             app:argType="boolean" />
         <argument
             android:name="NOT_FROM_SEARCH"
-            app:argType="string"/>
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchSavedComponents_fragmentID"
@@ -175,8 +194,8 @@
             app:argType="boolean" />
         <argument
             android:name="PC_ID"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/webViewConnection_fragmentID"

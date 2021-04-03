@@ -13,6 +13,8 @@
     <color name="bottomNavigationBarColor">#FFFFFF</color>
     <color name="bottomNavButtonsClicked">@android:color/black</color>
 
+    <color name="disableButton">#707070</color>
+
     <color name="primaryColor">#FFFFFF</color>
     <color name="primaryColorDark">#434343</color>
     <color name="secondaryColor">#F4F4F4</color>

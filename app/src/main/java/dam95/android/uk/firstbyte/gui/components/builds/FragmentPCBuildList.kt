@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
+import dam95.android.uk.firstbyte.gui.mainactivity.READ_ONLY_PC
 import dam95.android.uk.firstbyte.model.PCBuild
 import kotlinx.coroutines.Dispatchers
 
@@ -59,7 +60,7 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
      *
      */
     override fun onButtonClick(pcBuild: PCBuild) {
-        val nameBundle = bundleOf()
+        val nameBundle = bundleOf(READ_ONLY_PC to false)
         nameBundle.putParcelable(SELECTED_PC, pcBuild)
         //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }

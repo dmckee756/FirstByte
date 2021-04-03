@@ -5,6 +5,7 @@ import android.view.*
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,7 @@ import dam95.android.uk.firstbyte.gui.components.search.CATEGORY_KEY
 import dam95.android.uk.firstbyte.gui.components.search.LOCAL_OR_NETWORK_KEY
 import dam95.android.uk.firstbyte.gui.components.search.NAME_KEY
 import dam95.android.uk.firstbyte.gui.components.search.PC_ID
+import dam95.android.uk.firstbyte.gui.mainactivity.READ_ONLY_PC
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
@@ -35,6 +37,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     private lateinit var fbHardwareDb: FirstByteDBAccess
     private lateinit var personalBuildListAdapter: PersonalBuildRecyclerList
     private lateinit var personalPC: MutableLiveData<PCBuild>
+    private var readOnlyPC = false
 
 
     override fun onCreateView(
@@ -42,7 +45,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         savedInstanceState: Bundle?
     ): View {
         val loadedPc = arguments?.getParcelable(SELECTED_PC) as PCBuild?
-
+        readOnlyPC = arguments?.getBoolean(READ_ONLY_PC)!!
         //If there is no loadedPC from arguments, then skip the initialisation
         if (loadedPc != null) {
             setHasOptionsMenu(true)
@@ -61,9 +64,15 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
                 //Display the correct pc name
                 personalBuildBinding.pcNameDisplay.text = personalPC.value?.pcName
-                //Edit PC name button listener
-                personalBuildBinding.changePCName.setOnClickListener {
-                    dialogBox()
+                if (!readOnlyPC) {
+                    //Edit PC name button listener
+                    personalBuildBinding.changePCName.setOnClickListener {
+                        dialogBox()
+                    }
+                } else {
+                    val saveIcon = ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_add_recommended_pc, null)
+                    saveIcon!!.alpha = 255
+                    personalBuildBinding.changePCName.visibility = View.GONE
                 }
                 //Set up the recycler list with loaded PC and allow it to be edited.
                 setUpPCDisplay(pcParts)
@@ -163,7 +172,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         displayDetails.layoutManager = LinearLayoutManager(this.context)
         personalBuildListAdapter = PersonalBuildRecyclerList(context, this)
 
-        personalBuildListAdapter.setDataList(pcParts)
+        personalBuildListAdapter.setDataList(pcParts, readOnlyPC)
         displayDetails.adapter = personalBuildListAdapter
     }
 
@@ -333,7 +342,11 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        inflater.inflate(R.menu.pc_build_toolbar_items, menu)
+        if (readOnlyPC){
+            inflater.inflate(R.menu.readonlypc_toolbar_items, menu)
+        } else {
+            inflater.inflate(R.menu.pc_build_toolbar_items, menu)
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -341,6 +354,36 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
      *
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (readOnlyPC){
+            readOnlyPCToolbars(item)
+        } else {
+            writeablePCToolbars(item)
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun readOnlyPCToolbars(item: MenuItem){
+        when (item.itemId){
+            R.id.editRecommendedPCID -> {
+                personalPC.value!!.deletable = true
+                val result = fbHardwareDb.createPC(personalPC.value!!)
+                item.isEnabled = false
+                item.icon.alpha = 155
+                if (result >= 0){
+                    Toast.makeText(context, "Recommended PC Saved.", Toast.LENGTH_SHORT).show()
+                } else {
+                    personalPC.value!!.deletable = false
+                    Toast.makeText(context, "Cannot save PC, at max limit.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            // Display a tip to the user
+            R.id.tipsID -> Toast.makeText(context, "Tip Displayed", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun writeablePCToolbars(item: MenuItem){
         //Otherwise execute toolbar button command.
         when (item.itemId) {
             // Delete the PC and back out to the pc list
@@ -351,7 +394,6 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             // Display a tip to the user
             R.id.tipsID -> Toast.makeText(context, "Tip Displayed", Toast.LENGTH_SHORT).show()
         }
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {

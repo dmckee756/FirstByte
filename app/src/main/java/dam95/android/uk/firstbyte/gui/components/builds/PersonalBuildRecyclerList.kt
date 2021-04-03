@@ -27,6 +27,7 @@ class PersonalBuildRecyclerList(
     private var firstLoad: Boolean = true
     private var totalPrice: Double = 0.00
     private var isPCCompleted: Boolean = true
+    private var recommendedPC: Boolean = false
     private val pcCheck = PersonalBuildChecks(pcDetails.size-1, this)
 
     inner class ViewHolder(
@@ -72,14 +73,18 @@ class PersonalBuildRecyclerList(
                     part.imageLink,
                     imageView
                 )
-                addButton.isClickable = false
+
                 imageView.isClickable = true
+                if (recommendedPC){
+                    readOnlySetup()
+                } else {
+                    addButton.isClickable = false
 
-                partRequiredBtn.visibility = View.GONE
-                removeComponentBtn.visibility = View.VISIBLE
-                notCompatibleBtn.visibility =
-                    pcCheck.checkCompatibility(adapterPosition, pcDetails)
-
+                    partRequiredBtn.visibility = View.GONE
+                    removeComponentBtn.visibility = View.VISIBLE
+                    notCompatibleBtn.visibility =
+                        pcCheck.checkCompatibility(adapterPosition, pcDetails)
+                }
             } ?: addHardwareSetup(type)
 
             //If there are no incompatible hardware, no missing required parts and the total price is under the user's budget then the computer is completed.
@@ -108,6 +113,18 @@ class PersonalBuildRecyclerList(
             removeComponentBtn.visibility = View.GONE
             notCompatibleBtn.visibility = View.GONE
             priceOrAddInfo.text = context?.getString(R.string.addPartToBuild, type)
+
+            if (isPCCompleted){
+                readOnlySetup()
+                priceOrAddInfo.text = context!!.resources.getString(R.string.saveToEditPCTest)
+            }
+        }
+
+        private fun readOnlySetup(){
+            addButton.isClickable = false
+            partRequiredBtn.visibility = View.GONE
+            removeComponentBtn.visibility = View.GONE
+            notCompatibleBtn.visibility = View.GONE
         }
 
         /**
@@ -155,8 +172,9 @@ class PersonalBuildRecyclerList(
     /**
      *
      */
-    fun setDataList(updatedPCDetails: List<Pair<Component?, String>>) {
+    fun setDataList(updatedPCDetails: List<Pair<Component?, String>>, readOnlyPC: Boolean) {
         pcDetails = updatedPCDetails.toMutableList()
+        recommendedPC = readOnlyPC
         notifyDataSetChanged()
     }
 

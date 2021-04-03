@@ -29,6 +29,16 @@ class PCBuildHandler(
      *
      */
     fun createPersonalPC(personalPC: PCBuild): Int {
+        var cursor = dbHandler.rawQuery("SELECT ${FirstByteSQLConstants.PcBuild.PC_ID} FROM ${FirstByteSQLConstants.PcBuild.TABLE} " +
+                "WHERE ${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA", null)
+        //We only allow 10 Personal Builds created at a time, if a new PC is being created...
+        //...and there is already 10 PC's, then don't create the PC and return -1
+        if (cursor.count >= 10) {
+            cursor.close()
+            return -1
+        }
+        cursor.close()
+
         //Input values into the correct component table.
         val result = pcBuildExtraExtraQueries.insertPCDetails(personalPC)
         //If there was an error, exit out of this insertion.
@@ -36,7 +46,7 @@ class PCBuildHandler(
             Log.e("FAILED INSERT", result.toString())
             return -1
         } else {
-            val cursor = dbHandler.rawQuery(
+            cursor = dbHandler.rawQuery(
                 "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID} FROM ${FirstByteSQLConstants.PcBuild.TABLE} " +
                         "WHERE ${FirstByteSQLConstants.PcBuild.PC_ID} =(SELECT MAX(${FirstByteSQLConstants.PcBuild.PC_ID}) " +
                         "FROM ${FirstByteSQLConstants.PcBuild.TABLE})", null

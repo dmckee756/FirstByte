@@ -4,53 +4,53 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import dam95.android.uk.firstbyte.api.util.ConvertImageURL
 import dam95.android.uk.firstbyte.databinding.ImageSliderBinding
+import dam95.android.uk.firstbyte.model.PCBuild
 
 class ImageSliderAdapter(
-    private val viewPager2: ViewPager2,
     private val context: Context?,
-    private val listener: RecommendedBuildRecyclerList.OnItemClickListener
+    private val urlImageList: MutableList<String?>,
+    private val listener: RecommendedBuildRecyclerList.OnItemClickListener,
+    private val pcBuild: PCBuild
 ) : RecyclerView.Adapter<ImageSliderAdapter.ViewHolder>() {
 
-    private var urlImageList = listOf<String>()
-
     inner class ViewHolder(
-        itemView: View
-    ) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
+        itemView: View,
+        private val sliderImageView: ImageView
+    ) : RecyclerView.ViewHolder(itemView) {
 
-        fun onBindDataSet(){
-
+        init {
+            sliderImageView.setOnClickListener{
+                listener.onBuildButtonClick(pcBuild)
+            }
         }
 
-
-        override fun onClick(v: View?) {
-            TODO("Not yet implemented")
+        fun onBindDataSet(pcPartURL: String?) {
+            pcPartURL?.let { url ->
+                ConvertImageURL.convertURLtoImage(
+                    url, sliderImageView
+                )
+            }
         }
-    }
-
-    interface OnItemClickListener {
-
-    }
-
-    fun setImageUrlList(urlList: List<String>){
-        urlImageList = urlList
-        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val sliderViewBinding = ImageSliderBinding.inflate(LayoutInflater.from(context), parent, false)
+        val sliderViewBinding =
+            ImageSliderBinding.inflate(LayoutInflater.from(context), parent, false)
 
         return ViewHolder(
-            sliderViewBinding.imageSliderView
+            sliderViewBinding.imageSliderView,
+            sliderViewBinding.displayRecommendBuildPCPartImage
         )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.onBindDataSet()
+        holder.onBindDataSet(urlImageList[position])
     }
 
     override fun getItemCount(): Int = urlImageList.size
+
 }

@@ -65,6 +65,7 @@
     <string name="recommendedTierTitle">Title of Tier Build</string>
     <string name="recommendedTierPrice">Price: %1$s%2$.2f</string>
     <string name="recommendedTierDescription">Tier Description.</string>
+    <string name="sliderImageView">Displays recommended build pc parts on the home screen.</string>
 
     <!-- Compare Screen -->
     <string name="hardwareCompareTitle">%1$s Specs</string>
@@ -139,6 +140,8 @@
     <string name="pcPrice">Total RRP Price: %1$s%2$.2f</string>
     <string name="pcBuildImage">PC Build Image, which is the PCs selected case</string>
     <string name="pcbuildHardwareAddOrImage">An image showing the add hardware symbol, or the components image.</string>
+    <string name="editRecommendedPC">Save recommended PC and edit it</string>
+    <string name="saveToEditPCTest">Save the PC to edit it.</string>
 
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>

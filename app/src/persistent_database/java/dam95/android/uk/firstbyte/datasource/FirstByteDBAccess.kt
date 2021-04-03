@@ -72,9 +72,7 @@ class FirstByteDBAccess(
      *
      */
     fun insertHardware(component: Component) {
-        coroutineScope.launch(coroutineDispatcher) {
             componentQueries.insertHardware(component)
-        }
     }
 
     /**

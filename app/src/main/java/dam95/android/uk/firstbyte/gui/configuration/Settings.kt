@@ -1,23 +1,36 @@
 package dam95.android.uk.firstbyte.gui.configuration
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.*
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import kotlinx.coroutines.Dispatchers
+import java.util.*
 
-const val RECOMMENDED_LIST = "RECOMMENDED_LIST"
+const val HOME_CASUAL_PCS_START: Int = 1
+const val GAMING_PCS_START: Int = 5
+const val WORKSTATION_PCS_START: Int = 9
+private const val HOME_CASUAL = "HOME CASUAL"
+private const val GAMING = "GAMING"
+private const val WORKSTATION = "WORKSTATION"
+
+//Assign the starting Recommended PC ID to this KEY, the last PC ID will always be n+3. n must never be 0 or less.
+const val RECOMMENDED_BUILDS = "RECOMMENDED_BUILDS"
 const val NIGHT_MODE = "NIGHT_MODE"
+private const val RECOMMENDED_LIST = "RECOMMENDED_LIST"
 private const val RESET_DATA = "RESET_DATA"
 
+/**
+ *
+ */
 class Settings : PreferenceFragmentCompat() {
+
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,6 +38,7 @@ class Settings : PreferenceFragmentCompat() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         nightModeListener()
         recommendedListListener()
@@ -53,26 +67,38 @@ class Settings : PreferenceFragmentCompat() {
             }
     }
 
-    private fun recommendedListListener(){
+    private fun recommendedListListener() {
+
         findPreference<ListPreference>(RECOMMENDED_LIST)?.summaryProvider =
-            Preference.SummaryProvider<ListPreference>{ chooseRecommendations ->
-
+            Preference.SummaryProvider<ListPreference> { chooseRecommendations ->
+                chooseRecommendations.setOnPreferenceChangeListener { _, newValue ->
+                    //Assign the new starting PC ID for each type of recommended build set.
+                    when (newValue.toString().toUpperCase(Locale.ROOT)) {
+                        HOME_CASUAL -> sharedPreferences.edit()
+                            .putInt(RECOMMENDED_BUILDS, HOME_CASUAL_PCS_START).apply()
+                        GAMING -> sharedPreferences.edit()
+                            .putInt(RECOMMENDED_BUILDS, GAMING_PCS_START).apply()
+                        WORKSTATION -> sharedPreferences.edit()
+                            .putInt(RECOMMENDED_BUILDS, WORKSTATION_PCS_START).apply()
+                    }
+                    true
+                }
                 ""
             }
     }
 
-    private fun resetDataListener(){
+    private fun resetDataListener() {
         findPreference<Preference>(RESET_DATA)?.summaryProvider =
-            Preference.SummaryProvider<Preference>{ reset ->
-               reset.setOnPreferenceClickListener {
-                   areYouSureAlert()
-                   true
-               }
+            Preference.SummaryProvider<Preference> { reset ->
+                reset.setOnPreferenceClickListener {
+                    areYouSureAlert()
+                    true
+                }
                 ""
             }
     }
 
-    private fun areYouSureAlert(){
+    private fun areYouSureAlert() {
 
         val alertBuilder =
             AlertDialog.Builder(ContextThemeWrapper(activity, R.style.myAlertDialogTheme))
@@ -83,7 +109,10 @@ class Settings : PreferenceFragmentCompat() {
             .setPositiveButton(activity?.getString(R.string.yesButton)) { _, _ ->
                 //Reset app data
                 val resetDatabase =
-                    FirstByteDBAccess.dbInstance(requireActivity().applicationContext, Dispatchers.Main)
+                    FirstByteDBAccess.dbInstance(
+                        requireActivity().applicationContext,
+                        Dispatchers.Main
+                    )
                 resetDatabase?.resetDatabase()
             }
             .setNegativeButton(activity?.resources?.getString(R.string.noButton)) { dialog, _ ->

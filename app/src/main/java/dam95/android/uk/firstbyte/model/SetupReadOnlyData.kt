@@ -7,10 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.components.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.io.IOException
 import java.io.InputStream
 import java.io.StringReader
@@ -42,7 +39,7 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
      * @return the result of the loaded in file in text format, or null if file was not found.
      */
     @Throws(IOException::class)
-    fun loadFile(fileName: String): String? {
+    fun loadFile(fileName: String): String?{
         return try {
             //Load file if found
             val inputStream: InputStream = context.assets.open(fileName)
@@ -72,11 +69,7 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
         //Load all read only PC's into the database
         val readOnlyPCBuildsList: List<PCBuild> =
             gson.fromJson(stringReader, Array<PCBuild>::class.java).toMutableList()
-        coroutineScope.launch {
-            for (index in readOnlyPCBuildsList.indices) {
-                fbHardwareDB!!.createPC(readOnlyPCBuildsList[index])
-            }
-        }
+        for (index in readOnlyPCBuildsList.indices) fbHardwareDB!!.createPC(readOnlyPCBuildsList[index])
     }
 
     @Throws(NullPointerException::class)
@@ -96,12 +89,15 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
             componentList = when (componentFileList[index]) {
                 READ_ONLY_CPU -> gson.fromJson(stringReader, Array<Cpu>::class.java).toList()
                 READ_ONLY_GPU -> gson.fromJson(stringReader, Array<Gpu>::class.java).toList()
-                READ_ONLY_MOTHERBOARD -> gson.fromJson(stringReader, Array<Motherboard>::class.java).toList()
+                READ_ONLY_MOTHERBOARD -> gson.fromJson(stringReader, Array<Motherboard>::class.java)
+                    .toList()
                 READ_ONLY_RAM -> gson.fromJson(stringReader, Array<Ram>::class.java).toList()
                 READ_ONLY_PSU -> gson.fromJson(stringReader, Array<Psu>::class.java).toList()
-                READ_ONLY_STORAGE -> gson.fromJson(stringReader, Array<Storage>::class.java).toList()
+                READ_ONLY_STORAGE -> gson.fromJson(stringReader, Array<Storage>::class.java)
+                    .toList()
                 READ_ONLY_CASES -> gson.fromJson(stringReader, Array<Case>::class.java).toList()
-                READ_ONLY_HEATSINK -> gson.fromJson(stringReader, Array<Heatsink>::class.java).toList()
+                READ_ONLY_HEATSINK -> gson.fromJson(stringReader, Array<Heatsink>::class.java)
+                    .toList()
                 READ_ONLY_FAN -> gson.fromJson(stringReader, Array<Fan>::class.java).toList()
                 else -> null
             }
