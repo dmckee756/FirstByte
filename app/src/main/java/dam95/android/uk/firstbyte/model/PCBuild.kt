@@ -3,9 +3,13 @@ package dam95.android.uk.firstbyte.model
 import android.os.Parcel
 import android.os.Parcelable
 
-
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * PCBuild object designed to hold the ID, PC Name and pricing of a created PC.
+ * Has a value informing the user if the PC is "completed", meaning there are no incompatibilities and all required parts are in the PC.
+ * Each name and list holds represents a PC Part, and is a reference to the component's name,
+ * which details are loaded within the PersonalBuildList, Home and PersonalBuild fragments.
  */
 class PCBuild() : Parcelable {
     var pcID: Int? = null
@@ -23,6 +27,9 @@ class PCBuild() : Parcelable {
     var fanList: List<String?>? = null
     var deletable: Boolean = true
 
+    /**
+     * Constructor used to assign all pc build values into a parcel/package for transport.
+     */
     constructor(parcel: Parcel) : this() {
         pcID = parcel.readInt()
         pcName = parcel.readString().toString()
@@ -41,7 +48,9 @@ class PCBuild() : Parcelable {
     }
 
     /**
-     *
+     * Bundles all variables of a Gpu into a list and returns it to the caller.
+     * This is primarily used when dealing with loading/saving components into the app's database.
+     * @return list of all Gpu variables and values.
      */
     fun getPrimitiveDetails(): List<*> {
         return listOf(
@@ -53,7 +62,9 @@ class PCBuild() : Parcelable {
     }
 
     /**
-     *
+     * Important to keep this in the same order as the constructor,
+     * When the PCBuild is loaded from the database, assign primitive values of the PC's details their corresponding values.
+     * @param readInData All loaded primitive PC details from the app's database.
      */
     fun setPrimitiveDetails(readInData: List<*>) {
         pcID = readInData[0] as Int
@@ -70,7 +81,8 @@ class PCBuild() : Parcelable {
     }
 
     /**
-     *
+     * Bundle up all pc parts that only allow one slot in the pc and send it to the
+     * "getPCBuildContents" method, so that it can retrieve the pc parts details.
      */
     fun pcPartsSearchConfig(): List<Pair<String?, String>> {
         return listOf(
@@ -83,13 +95,18 @@ class PCBuild() : Parcelable {
         )
     }
 
+    /**
+     * A required method from the Parcelable interface. Ignore it.
+     * @return 0, ignore.
+     */
     override fun describeContents(): Int {
         return 0
     }
 
 
     /**
-     *
+     * Writes all of the data in the PCBuild into a parcelable package(?),
+     * allowing it to be transported across a fragment.
      */
     override fun writeToParcel(dest: Parcel?, flags: Int) {
         dest?.let {
@@ -110,6 +127,9 @@ class PCBuild() : Parcelable {
         }
     }
 
+    /**
+     * Recreates the PCBuild object when it reaches it's destination (Fragment class)
+     */
     companion object CREATOR : Parcelable.Creator<PCBuild> {
         override fun createFromParcel(parcel: Parcel): PCBuild {
             return PCBuild(parcel)

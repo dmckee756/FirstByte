@@ -10,8 +10,21 @@ import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import java.lang.IndexOutOfBoundsException
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Used to split up the methods from the PCBuildHandler class and avoid overcrowding.
+ * This class then handles with saving and retrieval PC Details.
+ * Saving and retrieving relational PC parts.
+ * @param dbHandler Instance of the app's SQLite Database
+ */
 class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
 
+    /**
+     * Saves all of the PC's details into the pc builds table.
+     * @param personalPC The PC that is being saved the to database
+     * @return Returns a long indicating if the insertion was successful or not.
+     */
     fun insertPCDetails(personalPC: PCBuild): Long{
         val currentTableColumns: List<String> = FirstByteSQLConstants.PcBuild.COLUMN_LIST
         val cv = ContentValues()
@@ -39,7 +52,10 @@ class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
     }
 
     /**
-     *
+     * Retrieves all details belonging to a PC, loads it into a newly created PCBuild object and puts it inside Mutable Live Data.
+     * @param currentTableColumns
+     * @param cursor Cursor is used to iterate through and retrieve the values from the database.
+     * @return Returns MutableLiveData PCBuild for us in PersonalBuild Fragment.
      */
     fun getPCDetails(
         currentTableColumns: List<String>,
@@ -64,9 +80,30 @@ class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
     }
 
     /**
-     *
+     * Saves name of many-to-many PC Part into it's table. [RAM, STORAGE, FAN]
+     * @param name Name of component.
+     * @param type Type of Component, indicates what table the component is being saved to.
+     * @param pcID The PC the component is being saved to.
      */
-    fun getPcRelationalData(loadPC: PCBuild) {
+    fun insertPCBuildRelationTables(
+        name: String,
+        type: String,
+        pcID: Int
+    ) {
+        val cv = ContentValues()
+        //Insert a name reference of a component [Storage, Ram, Fan] into the...
+        //corresponding many-to-many relational table between the PC build and the component.
+        cv.put("pc_id", pcID)
+        cv.put("${type}_name", name)
+        dbHandler.insert("${type}_in_pc", null, cv)
+    }
+
+    /**
+     * Retrieves the data stored in this PC's many-to-many tables [RAM, STORAGE, FANS]
+     * and stores them into the PC Builds List values.
+     * @param loadPC The PC that the data will be saved into.
+     */
+    private fun getPcRelationalData(loadPC: PCBuild) {
         Log.i("PC_ID", "${loadPC.pcID}")
         //Load Names of Ram in the PC
         var reusableCursor: Cursor = dbHandler.rawQuery(
@@ -91,9 +128,10 @@ class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
     }
 
     /**
-     *
+     * Refactored method used to load the names of the components in the many-to-many tables.
+     * @param cursor Cursor is used to iterate through and retrieve the values from the database.
+     * @return List of component names
      */
-    @Throws(IndexOutOfBoundsException::class)
     fun relationalPCLoop(cursor: Cursor): List<String> {
         val nameList = mutableListOf<String>()
         cursor.moveToFirst()
@@ -106,19 +144,12 @@ class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
     }
 
     /**
-     *
+     * Removes PC Part(s) from the PC before a component is deleted from the database. Updates the PC price.
+     * @param cursor Cursor is used to iterate through and retrieve the values from the database.
+     * @param categoryType Only used when Ram, Storage Or Fan object is being removed from the database, to find the correct table.
+     * @param rrpPrice Price of the component that will be removed from the total price of the PC.
+     * @param singlePart A boolean check to determine if the PC is having Ram, Storage Or Fan objects removed.
      */
-    fun insertPCBuildRelationTables(
-        name: String,
-        type: String,
-        pcID: Int
-    ) {
-        val cv = ContentValues()
-        cv.put("pc_id", pcID)
-        cv.put("${type}_name", name)
-        dbHandler.insert("${type}_in_pc", null, cv)
-    }
-
     fun removeComponentPriceFromPCs(
         cursor: Cursor,
         categoryType: String,

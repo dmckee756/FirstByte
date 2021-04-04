@@ -128,21 +128,19 @@ class TestDatabaseHardwareComponents {
 
 
     @Test
-    fun testThat_Saved_Category_List_Responds_To_Searching() = runBlocking {
-        inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
-        inMemoryDatabase.insertHardware(amd_ryzen_5_3600)
+    fun testThat_Saved_Category_List_Responds_To_Searching() =
+        runBlocking { //TODO Rework with new system
+            inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
+            inMemoryDatabase.insertHardware(amd_ryzen_5_3600)
 
-        var componentsDisplayList: LiveData<List<SearchedHardwareItem>>? =
-            inMemoryDatabase.retrieveCategory("all")
-
-        if (componentsDisplayList != null && componentsDisplayList.value?.size == 2) {
-            componentsDisplayList = inMemoryDatabase.retrieveCategorySearch("all", "amd")
+            var componentsDisplayList: LiveData<List<SearchedHardwareItem>>? =
+                inMemoryDatabase.retrieveCategory("all")
 
             Assert.assertEquals(1, componentsDisplayList!!.value!!.size)
             Assert.assertEquals("AMD Ryzen 5 3600", componentsDisplayList.value!![0].name)
 
-        } else {
+
             assert(false)
+
         }
-    }
 }

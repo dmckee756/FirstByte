@@ -4,10 +4,19 @@ import dam95.android.uk.firstbyte.model.components.*
 import java.util.*
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Object dedicated to loading a blank template of a Component Child object.
+ * Used when loading a component from the database.
  */
 object DataClassTemplate {
 
+    /**
+     * Find, and load the correct blank template of a component object and return it back to the
+     * component database loader method.
+     * @param type Determines the type of object to create a blank version of.
+     * @return Returns a blank template of a Component child object
+     */
     fun createTemplateObject(type: String): Component {
         return when (type.toUpperCase(Locale.ROOT)) {
             ComponentsEnum.GPU.toString() -> Gpu(

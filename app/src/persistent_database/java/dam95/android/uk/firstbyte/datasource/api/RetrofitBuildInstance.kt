@@ -12,13 +12,16 @@ import java.lang.Exception
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 
+
+private const val URL = "https://users.dcs.aber.ac.uk/dam95/MMP/components/"
 /**
+ * @author David Mckee
+ * @Version 1.0
  * A cleaner implementation of converting the json array of hardware components using a gson converter
  * and supplying the base URL, allowing for future commands.
  * This is the release/persistent version.
+ * @param context used to find the cache directory, so that I can control the size of data that can be cached. (4MB)
  */
-private const val URL = "https://users.dcs.aber.ac.uk/dam95/MMP/components/"
-
 class RetrofitBuildInstance(context: Context) {
 
     //Cache of 4MB of data
@@ -45,6 +48,8 @@ class RetrofitBuildInstance(context: Context) {
     /**
      * Builds a retrofit caching system that will save cached items for up to 30 minutes if online,
      * or if offline will store cache data for up to 1 week.
+     * @param context used to check if app is connected to online and then determine what type of caching to utilise.
+     * @return OkHttpClient with cache instructions.
      */
     @Throws(SocketTimeoutException::class)
     fun buildCachingSystem(context: Context): OkHttpClient {

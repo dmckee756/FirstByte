@@ -10,7 +10,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LiveData
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +26,6 @@ import dam95.android.uk.firstbyte.model.SearchedHardwareItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.Serializable
-import java.lang.NullPointerException
 import java.text.NumberFormat
 import java.util.*
 
@@ -39,13 +36,6 @@ const val CATEGORY_KEY = "CATEGORY"
 const val NAME_KEY = "NAME"
 const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 const val PC_ID = "PC_ID"
-
-private const val ORIGINAL_LIST = "ORIGINAL_LIST"
-private const val SORTED_LIST = "SORTED_LIST"
-private const val CURRENT_LIST = "CURRENT_LIST"
-private const val LIST_SORTED = "LIST_SORTED"
-private const val LIST_FILTERED = "LIST_FILTERED"
-
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
@@ -110,7 +100,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             //Reset SearchView when filters are reset
             recyclerListBinding.hardwareListSearchViewID.setQuery("", false)
             recyclerListBinding.hardwareListSearchViewID.clearFocus()
-            hardwareListAdapter.resetFilter()
+            if (this::hardwareListAdapter.isInitialized) hardwareListAdapter.resetFilter()
         }
         recyclerListBinding.applyFilterBtn.setOnClickListener {
             priceSlider.values.forEach { price ->
@@ -127,7 +117,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             recyclerListBinding.hardwareListSearchViewID.setQuery("", false)
             recyclerListBinding.hardwareListSearchViewID.clearFocus()
 
-            hardwareListAdapter.filterByPrice(firstValue, secondValue)
+            if (this::hardwareListAdapter.isInitialized) hardwareListAdapter.filterByPrice(firstValue, secondValue)
         }
     }
 
@@ -222,7 +212,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     }
 
     private fun searchList(newText: String?) {
-        if (newText != null) {
+        if (newText != null && this::hardwareListAdapter.isInitialized) {
             //
             if (newText != "") {
                 //
@@ -301,43 +291,48 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      *
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            // Bring up a sorting menu
-            R.id.alphabeticalAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
-            R.id.alphabeticalDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
-            R.id.priceAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
-            R.id.priceDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
-            // Bring up a filter menu
-            R.id.filterID -> {
-                if (recyclerListBinding.filterViewID.visibility == View.GONE) {
-                    MyAnimationList.startCrossFade(
-                        recyclerListBinding.filterViewID,
-                        0F,
-                        1F,
-                        1.toLong(),
-                        View.VISIBLE
-                    )
-                    item.icon = ResourcesCompat.getDrawable(
-                        requireContext().resources,
-                        R.drawable.ic_baseline_arrow_upward_24,
-                        null
-                    )
-                } else {
-                    recyclerListBinding.filterViewID.visibility = View.GONE
+        if (this::hardwareListAdapter.isInitialized) {
+            when (item.itemId) {
+                // Bring up a sorting menu
+                R.id.alphabeticalAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+                R.id.alphabeticalDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+                R.id.priceAscendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+                R.id.priceDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
+                // Bring up a filter menu
+                R.id.filterID -> {
+                    if (recyclerListBinding.filterViewID.visibility == View.GONE) {
+                        MyAnimationList.startCrossFade(
+                            recyclerListBinding.filterViewID,
+                            0F,
+                            1F,
+                            1.toLong(),
+                            View.VISIBLE
+                        )
+                        item.icon = ResourcesCompat.getDrawable(
+                            requireContext().resources,
+                            R.drawable.ic_baseline_arrow_upward_24,
+                            null
+                        )
+                    } else {
+                        recyclerListBinding.filterViewID.visibility = View.GONE
+                        TransitionManager.beginDelayedTransition(
+                            recyclerListBinding.filterViewID,
+                            AutoTransition()
+                        )
+                        item.icon = ResourcesCompat.getDrawable(
+                            requireContext().resources,
+                            R.drawable.ic_filter,
+                            null
+                        )
+                    }
                     TransitionManager.beginDelayedTransition(
-                        recyclerListBinding.filterViewID,
+                        recyclerListBinding.root,
                         AutoTransition()
                     )
-                    item.icon = ResourcesCompat.getDrawable(
-                        requireContext().resources,
-                        R.drawable.ic_filter,
-                        null
-                    )
                 }
-                TransitionManager.beginDelayedTransition(recyclerListBinding.root, AutoTransition())
             }
+            Log.i("STATE_SAVED", "onSaveInstanceState")
         }
-        Log.i("STATE_SAVED", "onSaveInstanceState")
         return super.onOptionsItemSelected(item)
     }
 }

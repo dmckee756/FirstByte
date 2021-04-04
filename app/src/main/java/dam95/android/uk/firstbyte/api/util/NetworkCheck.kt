@@ -6,6 +6,12 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Build
 
+/**
+ * @Version 1.0
+ * @author David Mckee, Ali Shatergholi (Referenced below)
+ * Object dedicated to checking if the app is currently online or offline and returning a true boolean result if online...
+ * and false if offline. Used in cache usage decision making.
+ */
 object NetworkCheck {
 
     /**
@@ -19,7 +25,11 @@ object NetworkCheck {
      * ACCESSED DATE: 12/03/2021
      * AVAILABLE ONLINE: https://stackoverflow.com/questions/57284582/networkinfo-has-been-deprecated-by-api-29
      *
-     * NOTE: I have refactored the code to be more human readable.
+     * I have refactored the code to be more human readable. I use this in checked whether to use online mode caching of 30 minutes ago...
+     * ...or the offline caching of up to 1 week ago.
+     * @param context Application context
+     * @return Boolean: true if app is online, false if app if offline
+     * @suppress DEPRECATION = "activeNetworkInfo?.isConnected"
      */
     @Suppress("DEPRECATION")
     fun isConnectedToServer(context: Context): Boolean {

@@ -7,7 +7,11 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Processor object designed to hold all hardware specifications of display on fragments, saving to the app's database
+ * and data retrieval from both the API and app's database.
+ * Is a child object of Component.
  */
 data class Cpu(
     @SerializedName("component_type")
@@ -41,6 +45,8 @@ data class Cpu(
 
     /**
      * Bundles all variables of a Cpu into a list and returns it to the caller.
+     * This is primarily used when dealing with loading/saving components into the app's database.
+     * @return list of all Cpu variables and values.
      */
     override fun getDetails(): List<*> {
         return listOf(
@@ -55,7 +61,25 @@ data class Cpu(
     }
 
     /**
-     *
+     * Important to keep this in the same order as the constructor,
+     * When the Cpu is loaded from the database, assign all of it's details to this Cpu object first, then call the
+     * parent components setAllDetails method to assign the rest of it's values.
+     * @param allDetails All loaded details from the app's database.
+     */
+    override fun setAllDetails(allDetails: List<Any?>) {
+        core_speed_ghz = allDetails[allDetails.lastIndex - 5] as Double
+        core_count = allDetails[allDetails.lastIndex - 4] as Int
+        isMultiThreaded = allDetails[allDetails.lastIndex - 3] as Int
+        cpu_socket = allDetails[allDetails.lastIndex - 2] as String
+        cpu_wattage = allDetails[allDetails.lastIndex - 1] as Int
+        hasHeatsink = allDetails[allDetails.lastIndex] as Int
+        super.setAllDetails(allDetails)
+    }
+
+    /**
+     * Put the Cpu values into a human readable sentences for display in the hardware details fragment.
+     * @param context used to find the XML String resource that the values are put into.
+     * @param childDetails details of this Cpu object
      */
     override fun getDetailsForDisplay(
         context: Context,
@@ -76,15 +100,5 @@ data class Cpu(
             )
         )
         return super.getDetailsForDisplay(context, details)
-    }
-
-    override fun setAllDetails(allDetails: List<Any?>) {
-        core_speed_ghz = allDetails[allDetails.lastIndex - 5] as Double
-        core_count = allDetails[allDetails.lastIndex - 4] as Int
-        isMultiThreaded = allDetails[allDetails.lastIndex - 3] as Int
-        cpu_socket = allDetails[allDetails.lastIndex - 2] as String
-        cpu_wattage = allDetails[allDetails.lastIndex - 1] as Int
-        hasHeatsink = allDetails[allDetails.lastIndex] as Int
-        super.setAllDetails(allDetails)
     }
 }

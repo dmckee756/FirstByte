@@ -200,7 +200,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         if (fbHardwareDb.checkIfComponentIsInComparedTable(component.name) > 0){
             fbHardwareDb.removeComparedComponent(component.name)
         }
-        if (fbHardwareDb.checkIfComponentIsAnyPC(component.name, component.type) > 0){
+        if (fbHardwareDb.checkIfComponentIsInAnyPC(component.name, component.type) > 0){
             fbHardwareDb.removeComponentFromAllPCs(component.name, component.type, component.rrpPrice)
         }
     }

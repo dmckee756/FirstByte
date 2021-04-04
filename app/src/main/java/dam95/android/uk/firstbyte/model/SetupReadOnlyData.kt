@@ -25,13 +25,40 @@ private const val READ_ONLY_HEATSINK = "ReadOnlyHeatsinks.json"
 private const val READ_ONLY_FAN = "ReadOnlyFans.json"
 private const val READ_ONLY_PC_BUILDS = "ReadOnlyPCBuilds.json"
 
+/**
+ * During the app's first time setup and before the user can do anything, load in all Read Only values into the database.
+ * These values are several components of each category that are used in the 12 recommended pc builds.
+ * None of these values can be deleted from the app. This class is only called once, during the first time setup.
+ *
+ * @param application Application is passed to the AndroidViewModel parent class
+ * @param context Context is used to open the assets folder and retrieve all json files holding ReadOnly Components and PC's
+ */
 class SetupReadOnlyData(application: Application, private val context: Context) :
     AndroidViewModel(application) {
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
-     *
+     * Load in all ReadOnly component values from the json files in assets and load them into the database.
+     * After the components are saved into the database, load the recommended PC json file and saved them into the database.
+     */
+    fun loadReadOnlyValues() {
+
+        val gson = GsonBuilder().create()
+        val fbHardwareDB = FirstByteDBAccess.dbInstance(context, Dispatchers.Main)
+
+        //Have the gson build a mutable list of read only Components
+        saveReadOnlyComponents(gson, fbHardwareDB)
+
+        //Have the gson build a mutable list of read only PC Builds
+        val loadedPCBuilds = loadFile(READ_ONLY_PC_BUILDS)
+        val stringReader = StringReader(loadedPCBuilds)
+        //Load all read only PC's into the database
+        val readOnlyPCBuildsList: List<PCBuild> =
+            gson.fromJson(stringReader, Array<PCBuild>::class.java).toMutableList()
+        for (index in readOnlyPCBuildsList.indices) fbHardwareDB!!.createPC(readOnlyPCBuildsList[index])
+    }
+
+    /**
      * Load either the read only recommended pc builds or read only components.
      * This is done at the initial launch of the app and will be stored within the database with deletable values set to 0.
      * @throws IOException if the file cannot be found, then throw missing file exception with a stack trace
@@ -52,27 +79,12 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
         }
     }
 
+
     /**
-     *
+     * Reads in each Read Only component json file and loads them into the database.
+     * @param gson Gson parsing
+     * @param fbHardwareDB Instance of the app's SQLite Database
      */
-    fun loadReadOnlyValues() {
-
-        val gson = GsonBuilder().create()
-        val fbHardwareDB = FirstByteDBAccess.dbInstance(context, Dispatchers.Main)
-
-        //Have the gson build a mutable list of read only Components
-        saveReadOnlyComponents(gson, fbHardwareDB)
-
-        //Have the gson build a mutable list of read only PC Builds
-        val loadedPCBuilds = loadFile(READ_ONLY_PC_BUILDS)
-        val stringReader = StringReader(loadedPCBuilds)
-        //Load all read only PC's into the database
-        val readOnlyPCBuildsList: List<PCBuild> =
-            gson.fromJson(stringReader, Array<PCBuild>::class.java).toMutableList()
-        for (index in readOnlyPCBuildsList.indices) fbHardwareDB!!.createPC(readOnlyPCBuildsList[index])
-    }
-
-    @Throws(NullPointerException::class)
     private fun saveReadOnlyComponents(
         gson: Gson,
         fbHardwareDB: FirstByteDBAccess?
@@ -83,8 +95,16 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
         )
         var stringReader: StringReader
         var componentList: List<Component>?
+
+        //Just like in the API process, each Component Object have to be loaded nad parsed separately.
+        //For each ReadOnly json component file load the correct file and determine the type of component that is being held within the json file.
+        //Once identified, parse the json objects to the correct component object as a list and then send it over to be added into the database.
+        //Currently this loops 9 times.
         for (index in componentFileList.indices) {
+            //Find file, if file can't be found/doesn't exist then it skips this loop.
             val loadFile = loadFile(componentFileList[index]) ?: continue
+
+            //Find and parse correct object list
             stringReader = StringReader(loadFile)
             componentList = when (componentFileList[index]) {
                 READ_ONLY_CPU -> gson.fromJson(stringReader, Array<Cpu>::class.java).toList()
@@ -102,6 +122,7 @@ class SetupReadOnlyData(application: Application, private val context: Context) 
                 else -> null
             }
 
+            //If a component list was successfully loaded and parsed, then load all of it's components into the database.
             componentList?.let { savedList ->
                 for (component in savedList.indices)
                     fbHardwareDB!!.insertHardware(savedList[component])

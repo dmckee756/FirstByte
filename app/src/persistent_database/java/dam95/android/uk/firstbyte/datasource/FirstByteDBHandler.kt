@@ -12,6 +12,11 @@ import java.lang.Exception
 private const val DATABASE_NAME = "AndroidFB_Hardware"
 private const val NEW_DATABASE = 0
 
+/**
+ * Create the database when Activity Home creates it's instance for the first time.
+ * Can utilise upgrading at a later date after the end of the project.
+ * @param context Used in SQLiteOpenHelper
+ */
 class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     context,
     DATABASE_NAME,
@@ -20,7 +25,8 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
 ) {
 
     /**
-     *
+     * When the database instance is initialised for the first time, create the database.
+     * @param database
      */
     override fun onCreate(database: SQLiteDatabase?) {
         Log.i("DATABASE_START", "Creating $DATABASE_NAME...")
@@ -32,14 +38,17 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     }
 
     /**
-     *
+     * Currently not utilised, but typically used to upgrade the database
      */
     override fun onUpgrade(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         updateFBHardware(database, oldVersion, newVersion)
     }
 
     /**
-     *
+     * If the database version is 0, then create the database for the first time. Otherwise upgrade the database.
+     * @param database First Instance of this app's database
+     * @param oldVersion Database old version
+     * @param newVersion Database new version
      */
     private fun updateFBHardware(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         //If it's the first version of the database, then initialize the database by creating relational tables
@@ -54,7 +63,8 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     }
 
     /**
-     *
+     * Create the database by iterating through the SQL creation commands within FirstByteSQLConstants.kt
+     * @param database First Instance of this app's database
      */
     private fun buildNewFBDatabase(database: SQLiteDatabase?) {
         val creationCommands: List<String> = FirstByteSQLConstants.TABLE_CREATION_COMMANDS
@@ -73,7 +83,8 @@ class FirstByteDBHandler(val context: Context) : SQLiteOpenHelper(
     }
 
     /**
-     *
+     * Currently not implemented, no use for it in this project, but also struggling to see the use of an
+     * update class that's called from a method that doesn't allow dynamic queries for updating different sections of the database.
      */
     private fun rebuildFBDatabase(database: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         try {

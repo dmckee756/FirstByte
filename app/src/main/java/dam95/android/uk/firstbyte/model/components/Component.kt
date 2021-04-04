@@ -4,7 +4,11 @@ import android.content.Context
 import dam95.android.uk.firstbyte.R
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Parent class to all hardware components in the database.
+ * Can't be created, but is a template that allows polymorphism throughout this project.
+ * However, polymorphism cannot be applied when loading components from the API.
  */
 interface Component {
     var name: String
@@ -18,15 +22,14 @@ interface Component {
     var deletable: Boolean
 
     /**
-     * Bundles all variables of a Component into a list and returns it to the caller.
-     * Name must be repeated twice, first at the start of the list and
-     * again when the relational table in the AndroidFB_Hardware/Components database
-     * has started being read/written to/from.
+     * Bundles all variables of a component into a list and returns it to the caller.
+     * This is primarily used when dealing with loading/saving components into the app's database.
      */
     abstract fun getDetails(): List<*>
 
     /**
-     *
+     * Put the component RrpPrices, Amazon Price & Link and Scan.co.uk Price & Link into human readable sentences
+     * for displaying in the hardware details fragment.
      */
     fun getDetailsForDisplay(context: Context, childDetails: MutableList<String>?): List<String>? {
        val prettyPriceDetails = mutableListOf<String>()
@@ -45,7 +48,10 @@ interface Component {
     }
 
     /**
-     * Important to keep this in the same order as the constructor
+     * Important to keep this in the same order as the constructor,
+     * When the component is loaded from the database, assign all loaded values into their corresponding variables.
+     * This is not a particularly robust method, as it relies purely on casting.
+     * But I couldn't any alternative within my knowledge.
      */
     fun setAllDetails(allDetails: List<Any?>){
         name = allDetails[0] as String

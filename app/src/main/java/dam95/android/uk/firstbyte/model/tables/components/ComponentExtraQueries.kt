@@ -15,12 +15,25 @@ import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.tables.FirstByteSQLConstants
 import dam95.android.uk.firstbyte.model.util.DataClassTemplate
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Used to split up the methods from the ComponentHandler class and avoid overcrowding.
+ * This class then handles with saving/inserting components into the app's database,
+ * rebuilding the component when it is being loaded from the database and
+ * building a list of SearchedHardwareItems when the user searches for components saved to the database.
+ */
 class ComponentExtraQueries {
 
     private val componentsTableSize = FirstByteSQLConstants.Components.COLUMN_LIST.size - 1
 
     /**
-     *
+     * Puts the passed through component and saves it to the app's database.
+     * It assigns all it's component values into the component table and then it's specific values into the it's correct table.
+     * @param component The component object that is being saved to the app's database
+     * @param tableColumns The number of columns that the components values will be split into. This is all the columns in the component table and then it's corresponding table's columns.
+     * @param dbHandler The instance of the database used for inserting the data into the database
+     * @return Boolean value of true if the process was successful, and false if it failed.
      */
     fun batchValueInsert(
         component: Component,
@@ -34,7 +47,7 @@ class ComponentExtraQueries {
 
         //When the loop skips the duplicate name, make this value minus 1
         // meaning that none of details being inserted into the database from the component will be skipped
-        var correctListAlign: Int = 0
+        var correctListAlign = 0
 
         //Utilising ContentValues to safely put data into the database and...
         //...minimise the possibility of sql injections being successful.
@@ -95,7 +108,11 @@ class ComponentExtraQueries {
     }
 
     /**
-     *
+     * Load the saved component from the database and rebuild the correct object with all of the loaded values.
+     * @param cursor Cursor is used to iterate through and retrieve the values from the database.
+     * @param type Used to find the correct object to build and gets a template object that the values will be loaded into.
+     * @param tableColumns The number of columns in the component table, has specific columns added onto it within this method.
+     * @return Returns the rebuilt loaded component.
      */
     fun buildTheComponent(cursor: Cursor, type: String, tableColumns: List<String>): Component {
 
@@ -128,9 +145,12 @@ class ComponentExtraQueries {
     }
 
     /**
-     *
+     * This method builds a list of display items when the user wants to search through the saved components on the database.
+     * Each display item holds the saved component's:
+     * Name, Category (Not displayed, but for what type of objects should be displayed), Image URL (Converted into image) and it's RrpPrice
+     * @param cursor Cursor is used to iterate through and retrieve the values from the database.
+     * @return Returns a MutableLiveData instance with it's value being the SearchedHardwareItem List
      */
-    @Throws(NullPointerException::class)
     fun buildSearchItemList(cursor: Cursor): LiveData<List<SearchedHardwareItem>> {
         val buildDisplayList: MutableList<SearchedHardwareItem> = mutableListOf()
         val liveDataList: MutableLiveData<List<SearchedHardwareItem>> = MutableLiveData()

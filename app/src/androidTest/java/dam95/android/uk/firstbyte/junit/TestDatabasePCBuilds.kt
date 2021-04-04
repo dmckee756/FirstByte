@@ -374,8 +374,8 @@ class TestDatabasePCBuilds {
 
         inMemoryDatabase.removeRelationalPCPart(
             ComponentsEnum.FAN.toString().toLowerCase(Locale.ROOT),
-            cooler_Master_MasterBox_MB511.name,
-            newPC1.pcID!!
+            newPC1.pcID!!,
+            0
         )
         delay(100)
         newPC1 = inMemoryDatabase.retrievePC(newPC1.pcID!!).value!!
