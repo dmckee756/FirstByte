@@ -3,7 +3,6 @@ package dam95.android.uk.firstbyte.gui.configuration
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.*
@@ -26,12 +25,17 @@ private const val RECOMMENDED_LIST = "RECOMMENDED_LIST"
 private const val RESET_DATA = "RESET_DATA"
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Preference settings class used to change Displayed Recommended Builds, Change to NightMode or DayMode and reset all user saved data in the app.
  */
 class Settings : PreferenceFragmentCompat() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    /**
+     * When the settings fragment is created, assign listeners to the preferences and allow the resource preference layout to be displayed.
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,14 +51,23 @@ class Settings : PreferenceFragmentCompat() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    /**
+     * Creates the settings shared preference XML resource layout
+     */
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_preferences, rootKey)
     }
 
+    /**
+     * Makes the app bar clear of menu items.
+     */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
     }
 
+    /**
+     * Preference Switch listener used to change the app to/from light and dark mode.
+     */
     private fun nightModeListener() {
         findPreference<SwitchPreferenceCompat>(NIGHT_MODE)?.summaryProvider =
             Preference.SummaryProvider<SwitchPreferenceCompat> { night ->
@@ -67,6 +80,11 @@ class Settings : PreferenceFragmentCompat() {
             }
     }
 
+    /**
+     * Preference List listener for changing the display recommended builds on the home page.
+     * User can choose between Casual Home Builds, Gaming Builds or Workstation Builds.
+     * Each recommendation has 4 PC Build tiers: Entry Level, Budget, High end and Enthusiast.
+     */
     private fun recommendedListListener() {
 
         findPreference<ListPreference>(RECOMMENDED_LIST)?.summaryProvider =
@@ -87,6 +105,9 @@ class Settings : PreferenceFragmentCompat() {
             }
     }
 
+    /**
+     * Preference listener for resetting data. Once the user clicks on the data it will prompt the user with an alert box.
+     */
     private fun resetDataListener() {
         findPreference<Preference>(RESET_DATA)?.summaryProvider =
             Preference.SummaryProvider<Preference> { reset ->
@@ -98,6 +119,9 @@ class Settings : PreferenceFragmentCompat() {
             }
     }
 
+    /**
+     * Alert box to give the user a final chance to determine if they want to reset all their saved data in the app.
+     */
     private fun areYouSureAlert() {
 
         val alertBuilder =

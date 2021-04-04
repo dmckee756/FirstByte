@@ -29,13 +29,19 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 
-/**
- *
- */
 const val CATEGORY_KEY = "CATEGORY"
 const val NAME_KEY = "NAME"
 const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 const val PC_ID = "PC_ID"
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Allows the user to search through all components or all components of the same category that either loaded from
+ * the online API or the App's local database. The user can sort and filter the list and search for components.
+ *
+ * The user then can click on the component to see it's details, or if it was navigated from PCBuilds or Compared fragments,
+ * it will then add the component to the PC or the compared list.
+ */
 class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     SearchView.OnQueryTextListener {
 
@@ -53,8 +59,10 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     private var pcID: Int = -1
 
     /**
-     *
-     */
+     * Determines if the HardwareList was loaded from the database or from the online API,
+     * then chooses it's initialisation and loading path accordingly.
+     * It will either Stream in the hardware display items from the API or will load the list from the database.
+    */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -82,6 +90,12 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         return recyclerListBinding.root
     }
 
+    /**
+     * Set up the Filter price view, allowing the user to filter the components in the list.
+     * This utilises Google's Range Slider so that the user can set a minimum and maximum price filter.
+     * The user can apply the price range filter, or reset the displayed component list to it's original form.
+     * Check Integer.xml for min and max prices.
+     */
     private fun setUpFilterMenu() {
 
         val priceSlider = recyclerListBinding.priceSliderRangeBar
@@ -103,6 +117,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             if (this::hardwareListAdapter.isInitialized) hardwareListAdapter.resetFilter()
         }
         recyclerListBinding.applyFilterBtn.setOnClickListener {
+            //Get the minimum and maximum filtered prices.
             priceSlider.values.forEach { price ->
                 if (readFirstValue) {
                     firstValue = price
@@ -117,10 +132,17 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
             recyclerListBinding.hardwareListSearchViewID.setQuery("", false)
             recyclerListBinding.hardwareListSearchViewID.clearFocus()
 
-            if (this::hardwareListAdapter.isInitialized) hardwareListAdapter.filterByPrice(firstValue, secondValue)
+            if (this::hardwareListAdapter.isInitialized) hardwareListAdapter.filterByPrice(
+                firstValue,
+                secondValue
+            )
         }
     }
 
+    /**
+     * Load all displayed components that are saved to the online API
+     * and then put the retrieved list into the recycler list adapter for the user to select.
+     */
     private fun initialiseOnlineLoading() {
         Log.i("ONLINE_METHOD", "Loading from either server or cache.")
 
@@ -129,13 +151,17 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         apiViewModel = ApiViewModel(apiRepository)
         //Load the values streamed from the api into a mutable live data list in the "apiRepository".
         apiViewModel.getCategory(searchCategory)
-        //Observe the loaded displayDetails from the apiRepository
 
+        //Put the response from the apiRepository/API into the recycler view adapter
         apiViewModel.apiCategoryResponse.observe(viewLifecycleOwner, { res ->
             res.body()?.let { setUpHardwareList(it) }
         })
     }
 
+    /**
+     * Load all displayed components that are saved to the app's database
+     * and then put the retrieved list into the recycler list adapter for the user to select.
+     */
     private fun initialiseOfflineLoading() {
         Log.i("OFFLINE_METHOD", "Load client database.")
         //Load FB_Hardware_Android Instance
@@ -144,10 +170,12 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
         coroutineScope.launch {
 
+            //Retrieve a list of display component items.
             searchCategory?.let {
                 categoryListLiveData =
                     fbHardwareDb.retrieveCategory(it.toLowerCase(Locale.ROOT))
             }
+            //Put the list into the recycler view adapter
             categoryListLiveData?.observe(viewLifecycleOwner) { list ->
                 var gatheredList = list
                 gatheredList = gatheredList.sortedBy { it.name.capitalize(Locale.ROOT) }
@@ -158,7 +186,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     }
 
     /**
-     *
+     * Set up the search view that allows users to filter through the component display list.
      */
     private fun setUpSearch() {
         //Display the search view for the hardware list
@@ -180,7 +208,9 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     }
 
     /**
-     *
+     * Setup the recycler list that display each component that can be loaded from either the API
+     * or the app's database, depending on where this was navigated from.
+     * @param res a list of display component items
      */
     private fun setUpHardwareList(res: List<SearchedHardwareItem>) {
 
@@ -196,7 +226,8 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
     //Searching Through recycler list methods
     /**
-     *
+     * Search through the list when the search view is submitted.
+     * @param query The search view query.
      */
     override fun onQueryTextSubmit(query: String?): Boolean {
         searchList(query)
@@ -204,18 +235,24 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     }
 
     /**
-     *
+     * Search through the list when the search view changes.
+     * @param newText The search view query.
      */
     override fun onQueryTextChange(newText: String?): Boolean {
         searchList(newText)
         return true
     }
 
+    /**
+     * When the search view is interacted with, either create and display a list of components that only contain the searched characters/string
+     * or if the search view is empty, display the full list.
+     * @param newText The search view query.
+     */
     private fun searchList(newText: String?) {
         if (newText != null && this::hardwareListAdapter.isInitialized) {
-            //
             if (newText != "") {
-                //
+                //Get the current sorted unaltered list and add only components containing the searched characters into a list
+                //and set the newly created list into the data set that is being used in the recycler adapter.
                 val searchList = hardwareListAdapter.getFullSortedList()
 
                 val updatedList = mutableListOf<SearchedHardwareItem>()
@@ -232,11 +269,16 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
         }
     }
 
-
-    //Recycler list event methods
+    //Recycler list event method
 
     /**
+     * When a component has been clicked/pressed, navigate to HardwareDetails and display all of the components specifications.
      *
+     * When the HardwareList fragment was navigated to from PCBuild and a component was clicked/pressed,
+     * then add that item into the PCBuild on the database and navigate back to the PC.
+     *
+     * When the HardwareList fragment was navigated to from the comparison and a component was clicked/pressed,
+     * then add that item into the compared list on the database.
      */
     override fun onHardwareClick(componentName: String, componentType: String) {
 
@@ -279,7 +321,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     //UI Methods
 
     /**
-     *
+     * Create the HardwareList app bar menu, allowing a price search filter and sorting the list of components.
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
@@ -288,7 +330,8 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     }
 
     /**
-     *
+     * Handle app bar items, such as sorting the hardware list alphabetically and by price tag.
+     * Also allows the user to open and close the price filter menu.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (this::hardwareListAdapter.isInitialized) {
@@ -300,6 +343,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 R.id.priceDescendingID -> hardwareListAdapter.sortDataSet(item.itemId)
                 // Bring up a filter menu
                 R.id.filterID -> {
+                    //Display the Filter menu
                     if (recyclerListBinding.filterViewID.visibility == View.GONE) {
                         MyAnimationList.startCrossFade(
                             recyclerListBinding.filterViewID,
@@ -308,23 +352,27 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                             1.toLong(),
                             View.VISIBLE
                         )
+                        //Change the filter icon at the top to show the filter menu is open
                         item.icon = ResourcesCompat.getDrawable(
                             requireContext().resources,
                             R.drawable.ic_baseline_arrow_upward_24,
                             null
                         )
                     } else {
+                        //Close the Filter menu
                         recyclerListBinding.filterViewID.visibility = View.GONE
                         TransitionManager.beginDelayedTransition(
                             recyclerListBinding.filterViewID,
                             AutoTransition()
                         )
+                        //Change the filter icon at the top to show the filter menu is closed
                         item.icon = ResourcesCompat.getDrawable(
                             requireContext().resources,
                             R.drawable.ic_filter,
                             null
                         )
                     }
+                    //Do an animation when opening/closing the filter menu
                     TransitionManager.beginDelayedTransition(
                         recyclerListBinding.root,
                         AutoTransition()

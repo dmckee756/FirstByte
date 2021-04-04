@@ -13,6 +13,9 @@ private const val DATABASE_NAME = "AndroidFB_Hardware"
 private const val NEW_DATABASE = 0
 
 /**
+ * @author David Mckee
+ * @Version 0.8
+ *
  * Create the database when Activity Home creates it's instance for the first time.
  * Can utilise upgrading at a later date after the end of the project.
  * @param context Used in SQLiteOpenHelper

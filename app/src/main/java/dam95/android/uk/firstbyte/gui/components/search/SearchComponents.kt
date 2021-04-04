@@ -13,28 +13,30 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Sets up the Category search recycler list for retrieving all or the same category of component's from
+ * FirstByte API.
  */
 class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
 
     /**
-     *
+     * Re-uses the recycler list layout.
      */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
-        //Initialise the recycler adapter for searching the server
-
         setupSearchSelection()
         return recyclerListBinding.root
     }
 
     /**
-     *
+     * Loads 2 string resource arrays for displaying each category of components the user can select from,
+     * then creates the recycler list adapter with these values.
      */
     private fun setupSearchSelection() {
         //Load in 2 lists of category search options for the user.
@@ -64,14 +66,14 @@ class SearchComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListe
     }
 
     /**
-     *
+     * When a button is clicked, load into HardwareList and load the desired category of components.
+     * API loading version.
      */
     override fun onButtonClick(chosenCategory: String) {
         Log.i("CHOSEN_CATEGORY", chosenCategory)
-        //
+        //Finds the action that allows navigation from this fragment to the HardwareList,
+        //with a bundle of the chosen category and a boolean to inform the fragment to load from the API.
         val categoryBundle = bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to true)
-
-        //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
         navController?.navigate(
             R.id.action_searchCategory_fragmentID_to_hardwareList_fragmentID,

@@ -170,7 +170,8 @@ class PCBuildExtraQueries(private val dbHandler: SQLiteDatabase) {
 
             //If this is a relational part, then get the number of this components in the PC
             if (!singlePart){
-               relationalCursor = dbHandler.rawQuery("SELECT pc_id FROM ${categoryType}_in_pc WHERE pc_id =?",
+               relationalCursor = dbHandler.rawQuery("SELECT pc_id FROM ${categoryType}_in_pc WHERE pc_id =? " +
+                       "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA",
                     arrayOf(pcID.toString())
                 )
                 numberOfSlots = relationalCursor.count

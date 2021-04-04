@@ -12,29 +12,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.RecyclerListBinding
 
-
 private const val CATEGORY_ALL = 0
-
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Sets up the Category search recycler list for retrieving all or the same category of component's from
+ * the App's Database.
  */
 class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
 
+    /**
+     * Re-uses the recycler list layout.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
         setupSearchSelection()
-
         return recyclerListBinding.root
     }
 
     /**
-     *
+     * Loads 2 string resource arrays for displaying each category of components the user can select from,
+     * then creates the recycler list adapter with these values.
      */
     private fun setupSearchSelection() {
 
@@ -64,15 +67,15 @@ class SearchSavedComponents : Fragment(), SearchCategoryRecyclerList.OnItemClick
     }
 
     /**
-     *
+     * When a button is clicked, load into HardwareList and load the desired category of components.
+     * App's database version.
      */
     override fun onButtonClick(chosenCategory: String) {
         Log.i("CHOSEN_CATEGORY", chosenCategory)
-        //
+        //Finds the action that allows navigation from this fragment to the HardwareList,
+        //with a bundle of the chosen category and a boolean to inform the fragment to load from the App's database.
         val categoryBundle =
             bundleOf(CATEGORY_KEY to chosenCategory, LOCAL_OR_NETWORK_KEY to false, PC_ID to -1)
-
-        //
         val navController = activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
         navController?.navigate(
             R.id.action_searchSavedComponents_fragmentID_to_hardwareList_fragmentID,

@@ -12,9 +12,9 @@
 
         <menu>
             <item
-                android:id="@+id/pdfID"
-                android:icon="@drawable/ic_to_pdf"
-                android:title="@string/toPDF"
+                android:id="@+id/emailID"
+                android:icon="@drawable/ic_to_email"
+                android:title="@string/toEmail"
                 app:showAsAction="never" />
             <item
                 android:id="@+id/tipsID"

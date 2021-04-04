@@ -30,7 +30,16 @@ const val SELECTED_PC = "SELECTED_PC"
 private const val NUM_OF_RAM = 1
 private const val NUM_OF_STORAGE = 2
 const val NOT_FROM_SEARCH = "FROM_PC"
-
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * This class loads all components of a PC Build and allows the user to see all PC Parts,
+ * and edit the build by adding/removing PC Parts in a dynamic fashion. Displays some hardware incompatibilities,
+ * if a part if required for the PC to be functional and updates PC values when necessary.
+ *
+ * It also allows users to inspect Read only recommended build, which they cannot edit. But instead
+ * they can saved the recommended build for editing (creates a new instance of the recommended build).
+ */
 class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
     private lateinit var personalBuildBinding: FragmentPersonalBuildBinding
@@ -39,7 +48,14 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     private lateinit var personalPC: MutableLiveData<PCBuild>
     private var readOnlyPC = false
 
-
+    /**
+     * Load a MutableLiveData instance of the passed in PCBuild,
+     * load all of the component's in the PCBuild into their objects (with all of their details)
+     * and pass all of these components to the recycler list for display and editing.
+     * Display the PC with it's correct name and the PC's image (Image of it's Computer Case).
+     *
+     * If this is a read only computer, reset the alpha value of the edit Recommended Build icon.
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -64,13 +80,20 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
 
                 //Display the correct pc name
                 personalBuildBinding.pcNameDisplay.text = personalPC.value?.pcName
+                //If this is a writable PC, allow the user to change the name of the PC.
                 if (!readOnlyPC) {
                     //Edit PC name button listener
                     personalBuildBinding.changePCName.setOnClickListener {
                         dialogBox()
                     }
                 } else {
-                    val saveIcon = ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_add_recommended_pc, null)
+                    //If this is a read only recommended PC, don't allow the user to change the PC's name and reset
+                    //the icon for saving a recommended build.
+                    val saveIcon = ResourcesCompat.getDrawable(
+                        requireContext().resources,
+                        R.drawable.ic_add_recommended_pc,
+                        null
+                    )
                     saveIcon!!.alpha = 255
                     personalBuildBinding.changePCName.visibility = View.GONE
                 }
@@ -82,7 +105,9 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
-     *
+     * Load all of the components that is a part of the PC from the database and put their Component objects it a
+     * paired list, with the first slot being the Component object and the second slot being an identifier on what type of
+     * component inhabits this slot of the list.
      */
     private fun getPCBuildContents(loadedPC: PCBuild): List<Pair<Component?, String>> {
         val pcParts: MutableList<Pair<Component?, String>> = mutableListOf()
@@ -126,35 +151,50 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         return pcParts
     }
 
+    /**
+     * Handle the loading of all components that is a part of the PC, but is in one of the many-to-many
+     * relational tables [RAM, STORAGE, FAN].
+     */
     private fun getRelationalParts(
         pcParts: MutableList<Pair<Component?, String>>,
         loadedPC: PCBuild,
         numberOfFans: Int
     ) {
         //Load Ram
-        pcParts.addAll(fbHardwareDb.retrievePCComponents(
+        pcParts.addAll(
+            fbHardwareDb.retrievePCComponents(
                 loadedPC.pcID!!, ComponentsEnum.RAM.toString()
-                    .toLowerCase(Locale.ROOT),loadedPC.ramList, NUM_OF_RAM))
+                    .toLowerCase(Locale.ROOT), loadedPC.ramList, NUM_OF_RAM
+            )
+        )
         loadedPC.ramList = attachedToPC(pcParts, NUM_OF_RAM)
 
         //Load Storage
-        pcParts.addAll(fbHardwareDb.retrievePCComponents(
-            loadedPC.pcID!!, ComponentsEnum.STORAGE.toString()
-                .toLowerCase(Locale.ROOT), loadedPC.storageList, NUM_OF_STORAGE))
+        pcParts.addAll(
+            fbHardwareDb.retrievePCComponents(
+                loadedPC.pcID!!, ComponentsEnum.STORAGE.toString()
+                    .toLowerCase(Locale.ROOT), loadedPC.storageList, NUM_OF_STORAGE
+            )
+        )
         loadedPC.storageList = attachedToPC(pcParts, NUM_OF_STORAGE)
 
         //Load Fans
-        pcParts.addAll(fbHardwareDb.retrievePCComponents(
+        pcParts.addAll(
+            fbHardwareDb.retrievePCComponents(
                 loadedPC.pcID!!, ComponentsEnum.FAN.toString()
-                    .toLowerCase(Locale.ROOT), loadedPC.fanList, numberOfFans - 1))
+                    .toLowerCase(Locale.ROOT), loadedPC.fanList, numberOfFans - 1
+            )
+        )
         loadedPC.fanList = attachedToPC(pcParts, numberOfFans - 1)
     }
 
     /**
-     *
+     * A loop method used to load the components that is a part of the PC, but is in one of the many-to-many
+     * relational tables [RAM, STORAGE, FAN].
      */
     private fun attachedToPC(pcParts: List<Pair<Component?, String>>, slots: Int): List<String?> {
         val tempList = mutableListOf<String?>()
+        //Attach the multi-slot components to the list of PC Parts.
         for (i in slots downTo 0) {
             pcParts[pcParts.lastIndex - i].first?.let { tempList.add(it.name) }
                 ?: tempList.add(null)
@@ -163,21 +203,50 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
-     *
+     * Sets up the PersonalBuildRecyclerList with all of the PC Parts slots, but occupied and empty.
+     * Allows the user to successfully edit the build and allows a dynamic list.
+     * @param pcParts all current PC parts and empty pc slots that's a part of the PC.
      */
     private fun setUpPCDisplay(pcParts: List<Pair<Component?, String>>) {
-        //
+        //Finds and initialises the correct recycler list for this fragment.
         val displayDetails = personalBuildBinding.pcDetailsRecyclerList
-        //
         displayDetails.layoutManager = LinearLayoutManager(this.context)
         personalBuildListAdapter = PersonalBuildRecyclerList(context, this)
-
+        //Assigns all PC Part slots into the recycler list adapter
         personalBuildListAdapter.setDataList(pcParts, readOnlyPC)
         displayDetails.adapter = personalBuildListAdapter
     }
 
     /**
+     * Navigates to the HardwareList fragment for the user to select what component they want to add to this PC Build
+     * Will only see components of the same category type that are saved to the app's database.
+     * @param addCategory The category of components that will only be displayed in the HardwareList
+     */
+    override fun onAddButtonClick(addCategory: String) {
+        //Finds the action that allows navigation from the PersonalBuild fragment to the HardwareListFragment,
+        //with a bundle of information indicating the category we want to see displayed,
+        //that it's from the components fragment and indicating we only want to see components that are saved to the app's database.
+        val addToPcBundle = bundleOf(
+            CATEGORY_KEY to addCategory,
+            LOCAL_OR_NETWORK_KEY to false,
+            PC_ID to personalPC.value?.pcID
+        )
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(
+            R.id.action_personalBuild_fragmentID_to_hardwareList_fragmentID,
+            addToPcBundle
+        )
+    }
+
+    /**
+     * When the user removes a component from the PC, determine if it's a multi-slot component such as a RAM, STORAGE OR FAN.
+     * If it is, then remove it from the PC Builds many-to-many relational table in the database.
+     * If the removed component was a Heatsink or Case, then trim off the excess amount of fans on the PC.
+     * If it was any other slot, free up the slot in the PC Builds table.
      *
+     * Once the component is removed from the PC's in the database, update the recycler list that the slot is now unoccupied
+     * and update the PC's total price, if the PC is still complete or incomplete (Part was required).
      */
     override fun removePCPart(component: Component, position: Int, relativePosition: Int) {
         val category = component.type
@@ -203,7 +272,8 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
-     *
+     * Update the recycler list that Fan slots have been removed from the database if the component was
+     * a heatsink or a case.
      */
     private fun removeExtraFans(category: String, component: Component) {
         when (category.toUpperCase(Locale.ROOT)) {
@@ -214,6 +284,10 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         }
     }
 
+    /**
+     * When the case is removed from the PC...
+     * Trim off fan slots that were added because of the case fan slots from the database and inform the recycler list.
+     */
     private fun removeCaseFans(component: Case) {
         //remove the personal build image at the top of the screen
         personalBuildBinding.caseImage.background = null
@@ -228,11 +302,61 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         )
     }
 
-    private fun removeHeatsinkFans(component: Heatsink){
+    /**
+     * Updates the total price of the PC when the PC Build is edited.
+     * E.g. PC Part is added/removed.
+     */
+    override fun updateTotalPrice(totalPrice: Double) {
+        personalPC.value!!.pcPrice = totalPrice
+        //Sometimes removing all hardware puts the price into a minutely small negative number,
+        //which is a ticking time bomb. Therefore if the total price is below 0.00, enforce total price to equal 0.00.
+        if (totalPrice < 0.00) personalPC.value!!.pcPrice = 0.00
+        personalBuildBinding.pcTotalPrice.text =
+            resources.getString(R.string.totalPrice, "£", personalPC.value!!.pcPrice)
+        fbHardwareDb.updatePCPrice(personalPC.value!!.pcPrice, personalPC.value!!.pcID!!)
+    }
+
+
+    /**
+     * Update the value indicating the PC is completed/functional.
+     */
+    override fun pcCompleted(isCompleted: Boolean) {
+        personalPC.value!!.isPcCompleted = isCompleted
+    }
+
+    /**
+     * When the heatsink is removed from the PC...
+     * Trim off fan slots that were added because of the heatsink fan slots from the database and inform the recycler list.
+     */
+    private fun removeHeatsinkFans(component: Heatsink) {
         //remove fans from recycler list first and update the price...
         personalBuildListAdapter.removeFans(component.fan_slots)
         //then remove the "overflowed" fan slots
         fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, component.fan_slots)
+    }
+
+    /**
+     * Navigates to the HardwareDetails fragment so we can see the PC Parts specifications/details.
+     * @param componentName The name of the component that we are searching for/loading it's information.
+     * @param componentType The component's category type, used to find what table we are loading the information from in the database.
+     */
+    override fun goToHardware(componentName: String, componentType: String) {
+        //Finds the action that allows navigation from the PersonalBuild fragment to the HardwareDetails Fragment,
+        //with a bundle of information indicating that the component details will be loaded from the app's database,
+        //that it's from the PCBuild fragment (can't be added or removed to/from database)
+        //and the name of the component we to see.
+        val nameBundle = bundleOf(
+            NAME_KEY to componentName,
+            CATEGORY_KEY to componentType,
+            LOCAL_OR_NETWORK_KEY to false,
+            NOT_FROM_SEARCH to true
+        )
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        navController?.navigate(
+            R.id.action_personalBuild_to_hardwareDetails_fragmentID,
+            nameBundle
+        )
     }
 
     /**
@@ -253,10 +377,10 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
             .setCancelable(false)
             .setPositiveButton(activity?.getString(R.string.ok_button)) { _, _ ->
 
-                if (userInput?.text.toString().isBlank()){
+                if (userInput?.text.toString().isBlank()) {
                     //If the user changes the pc to a blank name, then set the default name
                     personalPC.value?.pcName = "New-PC"
-                } else{
+                } else {
                     //Change the PC Name to the user's inputted text...
                     personalPC.value?.pcName = userInput?.text.toString()
                 }
@@ -280,69 +404,14 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
+     * If the loaded PC is writable, the it applies an appbar menu that allows the user to delete the PC Build,
+     * display tips and emailing the PC's details.
      *
-     */
-    override fun onAddButtonClick(addCategory: String) {
-
-        val addToPcBundle = bundleOf(
-            CATEGORY_KEY to addCategory,
-            LOCAL_OR_NETWORK_KEY to false,
-            PC_ID to personalPC.value?.pcID
-        )
-
-        val navController =
-            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(
-            R.id.action_personalBuild_fragmentID_to_hardwareList_fragmentID,
-            addToPcBundle
-        )
-    }
-
-    /**
-     *
-     */
-    override fun goToHardware(componentName: String, componentType: String) {
-        //
-        val nameBundle = bundleOf(
-            NAME_KEY to componentName,
-            CATEGORY_KEY to componentType,
-            LOCAL_OR_NETWORK_KEY to false,
-            NOT_FROM_SEARCH to true
-        )
-
-        //
-        val navController =
-            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        navController?.navigate(
-            R.id.action_personalBuild_to_hardwareDetails_fragmentID,
-            nameBundle
-        )
-    }
-
-    /**
-     *
-     */
-    override fun updateTotalPrice(totalPrice: Double) {
-        personalPC.value!!.pcPrice = totalPrice
-        //Sometimes removing all hardware puts the price into a minutely small negative number,
-        //which is a ticking time bomb. Therefore if the total price is below 0.00, enforce total price to equal 0.00.
-        if (totalPrice < 0.00) personalPC.value!!.pcPrice = 0.00
-        personalBuildBinding.pcTotalPrice.text =
-            resources.getString(R.string.totalPrice, "£", personalPC.value!!.pcPrice)
-        fbHardwareDb.updatePCPrice(personalPC.value!!.pcPrice, personalPC.value!!.pcID!!)
-    }
-
-
-    override fun pcCompleted(isCompleted: Boolean) {
-        personalPC.value!!.isPcCompleted = isCompleted
-    }
-
-    /**
-     *
+     * If the loaded PC is read only, then it can be edited/saved with a Heart Icon, display tips and be emailed.
      */
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
-        if (readOnlyPC){
+        if (readOnlyPC) {
             inflater.inflate(R.menu.readonlypc_toolbar_items, menu)
         } else {
             inflater.inflate(R.menu.pc_build_toolbar_items, menu)
@@ -351,31 +420,41 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
-     *
+     * Determine which app bar item should be affected.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        if (readOnlyPC){
+        if (readOnlyPC) {
             readOnlyPCToolbars(item)
         } else {
             writeablePCToolbars(item)
         }
-
         return super.onOptionsItemSelected(item)
     }
 
-    private fun readOnlyPCToolbars(item: MenuItem){
-        when (item.itemId){
+    /**
+     * Handle menu item clicks on Recommended PC Builds.
+     */
+    private fun readOnlyPCToolbars(item: MenuItem) {
+        when (item.itemId) {
             R.id.editRecommendedPCID -> {
+                //If the heart icon was clicked, try adding the PC Build to the database for the user to edit.
                 personalPC.value!!.deletable = true
+                //Attempt to duplicate the PC as a writable Build
                 val result = fbHardwareDb.createPC(personalPC.value!!)
+                //Re-check this current Recommended PC as being read only, just in case.
+                //It was altered changed in the database.
+                personalPC.value!!.deletable = false
+                //Disable the button and grey it out.
                 item.isEnabled = false
                 item.icon.alpha = 155
-                if (result >= 0){
+
+                if (result >= 0) {
+                    //If the build was succesfully added, then inform the user it was added to the database.
                     Toast.makeText(context, "Recommended PC Saved.", Toast.LENGTH_SHORT).show()
                 } else {
-                    personalPC.value!!.deletable = false
-                    Toast.makeText(context, "Cannot save PC, at max limit.", Toast.LENGTH_SHORT).show()
+                    //If the PC couldn't be added due to there being too many slots, inform the user.
+                    Toast.makeText(context, "Cannot save PC, at max limit.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             // Display a tip to the user
@@ -383,7 +462,10 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         }
     }
 
-    private fun writeablePCToolbars(item: MenuItem){
+    /**
+     * Handle menu item clicks on user created PC Builds.
+     */
+    private fun writeablePCToolbars(item: MenuItem) {
         //Otherwise execute toolbar button command.
         when (item.itemId) {
             // Delete the PC and back out to the pc list
@@ -396,12 +478,17 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         }
     }
 
+    /**
+     * If the database is initialized, update the database that this PC is either complete or incomplete when this fragment is paused.
+     */
     override fun onPause() {
-        
         if (this::fbHardwareDb.isInitialized) fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
         super.onPause()
     }
 
+    /**
+     * If the database is initialized, update the database that this PC is either complete or incomplete when this fragment is destroyed.
+     */
     override fun onDestroy() {
         if (this::fbHardwareDb.isInitialized) fbHardwareDb.pcUpdateCompletedValue(personalPC.value!!)
         super.onDestroy()

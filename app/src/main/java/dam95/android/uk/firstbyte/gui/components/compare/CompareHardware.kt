@@ -27,12 +27,18 @@ import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 import kotlinx.coroutines.Dispatchers
 import java.util.*
 
-
 const val COMPARE = "COMPARE_LIST"
 const val FINISH_ID = "_COMPARE_LIST"
 const val FROM_COMPARE = "FROM_COMPARE"
 const val COMPARED_VALUES_LIST = "COMPARED_VALUES_LIST"
-
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * This class sets up the bar chart that each each compared component's value will be displayed it.
+ * It allows the user to select the compared value on a spinner and then add/remove components to/from the list.
+ * It is all in a human readable format and in a format that portrays what value is currently being compared.
+ * E.g. Price is formatted in GBP Currency. Memory Speed in MHz.
+ */
 class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListener {
 
     private lateinit var compareHardwareBinding: FragmentCompareHardwareBinding
@@ -51,7 +57,9 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     private val myBarChartFormatting = HumanReadableUtils.MyBarChartFormatting()
 
     /**
-     *
+     * Establishes a connection to the app's database and loads all components that are currently being compared.
+     * Initialises the bar chart and the spinner with the component's Rrp Price being the default value.
+     * All previously compared components will be reloaded with their price being compared.
      */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +93,11 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
         return compareHardwareBinding.root
     }
 
+    /**
+     * Initialises the value selection spinner and all of the currently compared components details,
+     * allowing the bar chart to display each component's currently compared value/specification.
+     * Also allows the user to swap the compared value.
+     */
     private fun initialiseComponents(categoryType: String, comparedTableID: String) {
         //Set up component value selection spinner
         CompareValueSpinner.initializeSpinner(
@@ -112,49 +125,20 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
             )
     }
 
-    private fun updateValuesChanged(
-        newValueFunction: (List<Component?>) -> List<Float>,
-        newValueName: String
-    ) {
-        //Assign the new value that the component will compare for the BarChart
-        currentComparedValueFunction = newValueFunction
-
-        //Assign the new value name
-        val category = currentComparison.second
-        currentComparison = Pair(newValueName, category)
-        //Re-assign the text
-        compareHardwareBinding.compareValues.text =
-            requireContext().resources.getString(
-                R.string.compareValues,
-                currentComparison.first
-            )
-
-        //Dynamically assign the new style formatting for the BarChart
-        when (currentComparison.first) {
-            "Prices" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatCurrency
-            "Wattage" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatWattage
-            "Memory Size" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatGB
-            "Core Speed" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatGhz
-            "Core Count" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatCoreCount
-            else -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatMhz
-        }
-        updateBarChart()
-    }
-
     /**
-     *
+     * Loads the details of each compared component from the app's database.
      */
     private fun loadComparedComponents(
         comparedTableID: String,
         category: String
     ) {
-
         //Check if the table exists, if not then create a comparison ID table
         if (fbHardwareDb.checkIfComparedTableExists(comparedTableID) == 0) fbHardwareDb.createComparedComponents(
             comparedTableID
         )
 
         mutableLiveComponentList.value = mutableListOf()
+        //Retrieve all the names of the same category that is being compared.
         val nameReferences = fbHardwareDb.retrieveComparedComponents(comparedTableID)
         var componentOrNull: Component?
 
@@ -171,22 +155,25 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     }
 
     /**
-     *
+     * Sets up the recycler list that allows users to add and remove components to/from the compared list.
+     * @param comparedList List of the compared components
      */
     private fun setUpRecyclerList(comparedList: MutableList<Component?>, categoryType: String) {
+        //Finds and initialises the correct recycler list for this fragment.
         val displayComparedHardware = compareHardwareBinding.compareComponentsRecyclerList
-        //
         displayComparedHardware.layoutManager = LinearLayoutManager(this.context)
         compareHardwareListAdapter = CompareHardwareRecyclerList(context, categoryType, this)
-
+        //Assigns the list of components into the recycler list adapter
         compareHardwareListAdapter.setDataList(comparedList)
         displayComparedHardware.adapter = compareHardwareListAdapter
     }
 
     /**
-     *
+     * Creates/updates the bar chart with the currently compared components.
+     * Applies appearance styling and human readability.
      */
     private fun updateBarChart() {
+        // Values used when setting up the bar chart, both it's functionality and it's appearance.
         val barEntry: MutableList<BarEntry> = mutableListOf()
         val legendEntries = mutableListOf<LegendEntry>()
         val colorScheme = requireContext().resources.obtainTypedArray(R.array.myGraphColors)
@@ -218,6 +205,12 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
         compareBarChart.invalidate()
     }
 
+    /**
+     * Set up how the bar chart looks in the fragment:
+     * What Axis are display, how it looks.
+     * Text sizes, colors and formats.
+     * Assigns the current data set into the bar chart.
+     */
     private fun finaliseBarChart(
         barEntry: MutableList<BarEntry>,
         legendEntries: MutableList<LegendEntry>,
@@ -245,18 +238,46 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     }
 
     /**
-     *
+     * When the user changes what value is being compared, update the bar chart.
      */
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.hardware_related_toolbar_items, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    private fun updateValuesChanged(
+        newValueFunction: (List<Component?>) -> List<Float>,
+        newValueName: String
+    ) {
+        //Assign the new value that the component will compare for the BarChart
+        currentComparedValueFunction = newValueFunction
+
+        //Assign the new value name
+        val category = currentComparison.second
+        currentComparison = Pair(newValueName, category)
+        //Re-assign the text
+        compareHardwareBinding.compareValues.text =
+            requireContext().resources.getString(
+                R.string.compareValues,
+                currentComparison.first
+            )
+
+        //Dynamically assign the new style formatting for the BarChart
+        when (currentComparison.first) {
+            "Prices" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatCurrency
+            "Wattage" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatWattage
+            "Memory Size" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatGB
+            "Core Speed" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatGhz
+            "Core Count" -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatCoreCount
+            else -> myBarChartFormatting.formatFloat = myBarChartFormatting::formatMhz
+        }
+        updateBarChart()
     }
 
     /**
-     *
+     * Navigates to the HardwareList fragment for the user to select what component they want to add to the compared list.
+     * Will only see components of the same category type that are saved to the app's database.
+     * @param componentType The category of components that will only be displayed in the HardwareList
      */
     override fun addComponent(componentType: String) {
+        //Finds the action that allows navigation from the compare hardware screen to the HardwareList Fragment,
+        //with a bundle of information indicating the category we want to see displayed,
+        //that it's from the components fragment and indicating we only want to see components that are saved to the app's database.
         val addToPcCompare = bundleOf(
             CATEGORY_KEY to componentType,
             LOCAL_OR_NETWORK_KEY to false,
@@ -271,7 +292,7 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
     }
 
     /**
-     *
+     * Removes the selected component from the compared list in the database.
      */
     override fun removeComponent(component: Component, position: Int) {
         fbHardwareDb.removeComparedComponent(component.name)
@@ -280,5 +301,12 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
         mutableLiveComponentList.value!!.add(null)
         compareHardwareListAdapter.notifyDataSetChanged()
         updateBarChart()
+    }
+
+    /**
+     * Makes the app bar clear of menu items.
+     */
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
     }
 }

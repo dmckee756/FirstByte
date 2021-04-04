@@ -13,6 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplayHardwareDetailsBinding
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * This recycler adapter allows a dynamic approach to displaying all component specifications/details
+ * of any type of component that exists in this project.
+ * Each specification is converted to a human readable format and allows the user to navigate to a components
+ * Amazon or Scan.co.uk Web Page, if there is a URL assigned to the component from these websites.
+ */
 class HardwareDetailsRecyclerList(
     private val context: Context?,
     private val listener: OnItemListener
@@ -21,7 +29,8 @@ class HardwareDetailsRecyclerList(
     private var hardwareDetails = emptyList<String>()
 
     /**
-     *
+     * Bind each component specification information in a dynamic approach, correctly assigning the icons depending
+     * if the specification has expanded details to describe what it means.
      */
     inner class ViewHolder(
         itemView: View,
@@ -33,16 +42,17 @@ class HardwareDetailsRecyclerList(
         View.OnClickListener {
 
         /**
-         *
+         * Assign the correct human readable specification to the text view and assign the correct bullet point icon.
          */
         fun bindDataSet(detail: String) {
             detailText.text = detail
             correctIcon(detail)
-
         }
 
         /**
-         * Determine the correct icon to load depending on what detail is being displayed
+         * Determine the correct icon to load depending on what detail is being displayed.
+         * Basket for Web Link navigation.
+         * Bullet Points for non expandable views.
          */
         private fun correctIcon(detail: String) {
             return when (true) {
@@ -54,6 +64,10 @@ class HardwareDetailsRecyclerList(
             }
         }
 
+        /**
+         * Assign the WebLink icons to the correct component details and set up the button click listener that takes
+         * the user to the Web Client.
+         */
         private fun webLink(clickableButton: Button) {
             clickableButton.setBackgroundResource(R.drawable.ic_baseline_shopping_basket_24)
             // 50 Width, 40 Height
@@ -66,11 +80,18 @@ class HardwareDetailsRecyclerList(
             clickableButton.setOnClickListener(this)
         }
 
+        /**
+         * Setup the blank bullet point and make sure that the button does nothing when clicked.
+         */
         private fun bulletPoint(clickableButton: Button) {
             clickableButton.setBackgroundResource(R.drawable.ic_blank_bulletpoint)
             clickableButton.isClickable = false
         }
 
+        /**
+         * Set up the expandable view bullet points, where it will expand and collapse further details about
+         * the component's specification.
+         */
         private fun allowDetailDisplay(clickableButton: Button) {
             clickableButton.setOnClickListener {
                 if (descriptionLayout.visibility == View.GONE) {
@@ -85,7 +106,7 @@ class HardwareDetailsRecyclerList(
         }
 
         /**
-         *
+         * Send onClick event to the HardwareDetails fragment.
          */
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -97,29 +118,27 @@ class HardwareDetailsRecyclerList(
     }
 
     /**
-     *
+     * Methods that call back to the HardwareDetails fragment.
      */
     interface OnItemListener {
         fun onLinkClicked(clickedLink: String)
     }
 
-
     /**
-     *
+     * Assigns the data set that will be used in this recycler list.
      */
     fun setDataList(newComponentDetails: List<String>) {
         hardwareDetails = newComponentDetails
         notifyDataSetChanged()
     }
 
-
     /**
-     *
+     * Return size of the data set.
      */
     override fun getItemCount(): Int = hardwareDetails.size
 
     /**
-     *
+     * Initialize the layout/views that will display the component's current specification.
      */
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -138,7 +157,7 @@ class HardwareDetailsRecyclerList(
     }
 
     /**
-     *
+     * Call the inner view holder class and bind the details of the currently displayed Component specification.
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindDataSet(hardwareDetails[position])

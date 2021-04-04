@@ -17,6 +17,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Recycler list adapter displays all writeable saved PC Builds currently in the app's database that the user created.
+ * It allows empty slots in the list, so that the user can create a pc when these slots are clicked.
+ * Each slot will display the PC's name, Total Price, if the PC is completed and the PC's image, with is the Image of the PC's Computer Case.
+ */
 class PcBuildRecyclerList(
     private val context: Context?,
     private val fb_Hardware_DB: FirstByteDBAccess,
@@ -27,7 +34,8 @@ class PcBuildRecyclerList(
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     /**
-     *
+     * Bind each PC Builds display details to all occupied slots in the recycler list.
+     * Set up the empty slots with information informing the user that clicking on these slots will create a new PC Build.
      */
     inner class ViewHolder(
         itemView: View,
@@ -44,7 +52,11 @@ class PcBuildRecyclerList(
         }
 
         /**
+         * If the slot is empty, display the empty drawable background, assign the icon for creating a new PC with
+         * instructions to the user that clicking on the button will create a new PC.
          *
+         * If the slot is occupied with a created PC, display it's Name, Total Price, If it is Completed and it's Computer case Image.
+         * Change it's background to further indicate the slot is occupied and for additional color on the screen.
          */
         fun bindDataSet(pcBuild: PCBuild?) {
             //List the pc build list as being able to create a new pc
@@ -93,7 +105,7 @@ class PcBuildRecyclerList(
         }
 
         /**
-         *
+         * Send onClick event to the FragmentPCBuildList fragment.
          */
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -115,14 +127,15 @@ class PcBuildRecyclerList(
     }
 
     /**
-     *
+     * Methods that call back to the FragmentPCBuildList fragment.
      */
     interface OnItemClickListener {
         fun onButtonClick(pcBuild: PCBuild)
     }
 
     /**
-     *
+     * Assigns the Personal PC List data set that will be used in this recycler list.
+     * Can include nulls for "empty" slots.
      */
     fun setDataList(updatedPCList: List<PCBuild?>) {
         pcList = updatedPCList
@@ -130,12 +143,13 @@ class PcBuildRecyclerList(
     }
 
     /**
-     *
+     * Return size of the data set.
      */
     override fun getItemCount(): Int = pcList.size
 
     /**
-     *
+     * Initialize the layout/views that will display PC details is the current display slot is occupied,
+     * or display an view indicated the user can create a new PC build.
      */
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -155,7 +169,7 @@ class PcBuildRecyclerList(
     }
 
     /**
-     *
+     * Call the inner view holder class and bind the current PC's display details, or the details to create a new PC.
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindDataSet(pcList[position])

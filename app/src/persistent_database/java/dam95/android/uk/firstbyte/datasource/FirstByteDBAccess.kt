@@ -23,6 +23,9 @@ const val FLOAT_RES = 0x00000002
 const val STRING_RES = 0x00000003
 
 /**
+ * @author David Mckee
+ * @Version 1.0
+ *
  * This is the handler class for the persistent-memory database for the FirstByte app.
  * All SQLite database commands pass through this class to either the PCBuildHandler SQLite query class or the Component Handler SQLite query class.
  * @param context Application context

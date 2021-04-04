@@ -12,6 +12,8 @@ private const val DATABASE_NAME = "FB_TEST_DATABASE"
 private const val NEW_DATABASE = 0
 
 /**
+ * @author David Mckee
+ * @Version 0.8
  * Create the  in-memory database for the FirstByte app.
  * Can utilise upgrading at a later date after the end of the project.
  * @param context Used in SQLiteOpenHelper

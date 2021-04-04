@@ -26,6 +26,8 @@ const val STRING_RES = 0x00000003
 private const val DATABASE_NAME = "FB_TEST_DATABASE"
 
 /**
+ * @author David Mckee
+ * @Version 1.0
  * This is the handler class for the in-memory database for the FirstByte app.
  * All SQLite database commands pass through this class to either the PCBuildHandler SQLite query class or the Component Handler SQLite query class.
  * @param context Application context
@@ -126,7 +128,7 @@ class FirstByteDBAccess(
      * @param category Indicated if all display component items should be loaded if it has a value of "all" or if a specific category is to be loaded e.g. "cpu"
      * @return LiveData instance of a SearchedHardwareItem List
      */
-    suspend fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>>? =
+    fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>> =
         componentQueries.getCategory(category)
 
     /**
@@ -134,7 +136,7 @@ class FirstByteDBAccess(
      * @param componentName Name of the component that's URL is being retrieved.
      * @return URL of the component's image, that will be converted into an image using Picasso.
      */
-    fun retrieveImageURL(componentName: String): String? =
+    fun retrieveImageURL(componentName: String): String =
         componentQueries.retrieveImageURL(componentName)
 
     /**

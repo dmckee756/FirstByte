@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
-import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.FragmentWebViewConnectionBinding
 
 /**
+ * @author David Mckee
+ * @Version 1.0
  * This fragment is dedicated to loading and displaying the components web links to...
  * Amazon.co.uk or Scan.co.uk.
  */
@@ -27,6 +28,7 @@ class WebViewConnection : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val urlLink = arguments?.getString("URL_LINK")
+        //If no link was passed, don't attempt to connect.
         if (urlLink != null) {
             webViewConnectionBinding =
                 FragmentWebViewConnectionBinding.inflate(inflater, container, false)
@@ -42,9 +44,11 @@ class WebViewConnection : Fragment() {
      */
     @SuppressLint("SetJavaScriptEnabled")
     private fun setUpWebView(url: String){
+        //Find and setup the web client
         val webViewer = webViewConnectionBinding.webClient
         webViewer.webViewClient = WebViewClient()
 
+        //Loads the given URL on this screen.
         webViewer.apply {
             loadUrl(url)
             //Allow the use of Javascript in the webViewer

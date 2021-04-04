@@ -465,14 +465,15 @@ class PCBuildHandler(
             dbHandler.rawQuery(
                 "SELECT DISTINCT ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
                         "FROM ${FirstByteSQLConstants.PcBuild.TABLE} JOIN ${categoryType}_in_pc ON ${categoryType}_in_pc.${FirstByteSQLConstants.PcBuild.PC_ID} " +
-                        "WHERE ${categoryType}_name =?",
+                        "WHERE ${categoryType}_name =? AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA",
                 arrayOf(componentName)
             )
         } else {
             //Get all unique PC's that contain the current part that's being removed
             dbHandler.rawQuery(
                 "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID} ,${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
-                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${categoryType}_name =?",
+                        "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${categoryType}_name =? " +
+                        "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA",
                 arrayOf(componentName)
             )
         }
@@ -516,7 +517,8 @@ class PCBuildHandler(
         //Find all pc's that contain the heatsink or case.
         val cursor = dbHandler.rawQuery(
             "SELECT ${FirstByteSQLConstants.PcBuild.PC_ID}, ${FirstByteSQLConstants.PcBuild.PC_RRP_PRICE} " +
-                    "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${component.type}_name =?",
+                    "FROM ${FirstByteSQLConstants.PcBuild.TABLE} WHERE ${component.type}_name =?" +
+                    "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA",
             arrayOf(component.name)
         )
         cursor.moveToFirst()
@@ -531,6 +533,7 @@ class PCBuildHandler(
             SELECT DISTINCT pcbuild.pc_id, fan_in_pc.fan_name, pcbuild.pc_price
             FROM pcbuild JOIN fan_in_pc ON fan_in_pc.pc_id
             WHERE fan_in_pc.pc_id = $pcID AND pcbuild.pc_id = $pcID
+            AND pcbuild.deletable = 1;
              */
             //Get all unique PC's that contain the relational part
             val fanCursor = dbHandler.rawQuery(
@@ -541,7 +544,8 @@ class PCBuildHandler(
                         "JOIN ${FirstByteSQLConstants.FansInPc.TABLE} " +
                         "ON ${FirstByteSQLConstants.FansInPc.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} " +
                         "WHERE ${FirstByteSQLConstants.FansInPc.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} =$pcID " +
-                        "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} =$pcID",
+                        "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_ID} =$pcID" +
+                        "AND ${FirstByteSQLConstants.PcBuild.TABLE}.${FirstByteSQLConstants.PcBuild.PC_IS_DELETABLE} = $WRITABLE_DATA",
                 null
             )
             //Update PC Price

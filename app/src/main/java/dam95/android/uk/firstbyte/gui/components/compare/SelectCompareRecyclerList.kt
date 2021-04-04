@@ -15,6 +15,12 @@ import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.io.IOException
 import java.util.*
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Recycler list adapter sets up the display that allows the user to compare components of the same type of category.
+ * Display the image, what values an be compared and a button to allow navigation to HardwareCompare.
+ */
 class SelectCompareRecyclerList(
     private val context: Context?,
     private val listener: OnItemClickListener
@@ -24,7 +30,7 @@ class SelectCompareRecyclerList(
     private var tierPosition: Int = 1
 
     /**
-     *
+     * Bind each part of the compared category selection to each display item of this recycler list.
      */
     inner class ViewHolder(
         itemView: View,
@@ -40,12 +46,11 @@ class SelectCompareRecyclerList(
         }
 
         /**
-         *
+         * Loads the current category that is being created and applies the correct information
+         * of what component category is being compared and what values can be compared.
          */
         @Throws(IOException::class)
         fun bindDataSet(componentType: String) {
-
-
             //Dynamically load the hardware images in drawable from assets folder.
             try {
                 val inputStream =
@@ -60,19 +65,22 @@ class SelectCompareRecyclerList(
 
             compareTitle.text =
                 context!!.resources?.getString(R.string.hardwareCompareTitle, componentType)
-
             goCompareBtn.text =
                 context.resources?.getString(R.string.compareCategory, componentType)
 
+            //Set the description of what values can be compared depending on the current category.
             when (componentType) {
                 ComponentsEnum.GPU.toString() -> {
-                    compareDescription.text = context.resources.getString(R.string.gpuCompareDetails)
+                    compareDescription.text =
+                        context.resources.getString(R.string.gpuCompareDetails)
                 }
                 ComponentsEnum.CPU.toString() -> {
-                    compareDescription.text = context.resources.getString(R.string.cpuCompareDetails)
+                    compareDescription.text =
+                        context.resources.getString(R.string.cpuCompareDetails)
                 }
                 ComponentsEnum.RAM.toString() -> {
-                    compareDescription.text = context.resources.getString(R.string.ramCompareDetails)
+                    compareDescription.text =
+                        context.resources.getString(R.string.ramCompareDetails)
                     //Take of the 's off of "COMPARE RAM'S", because it looks weird.
                     goCompareBtn.text = goCompareBtn.text.dropLast(2)
 
@@ -81,7 +89,7 @@ class SelectCompareRecyclerList(
         }
 
         /**
-         *
+         * Send onClick event to the SelectCompare fragment.
          */
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -98,14 +106,14 @@ class SelectCompareRecyclerList(
     }
 
     /**
-     *
+     * Methods that call back to the SelectCompare fragment.
      */
     interface OnItemClickListener {
         fun onCompareBtnClick(chosenCategory: String)
     }
 
     /**
-     *
+     * Assigns the 3 category compare options for this recycler list adapter to display.
      */
     fun setDataList(selectionList: List<String>) {
         comparisonSelection = selectionList
@@ -113,12 +121,14 @@ class SelectCompareRecyclerList(
     }
 
     /**
-     *
+     * Return size of the data set.
      */
     override fun getItemCount(): Int = comparisonSelection.size
 
     /**
-     *
+     * Initialize the layout/views that will display the compared category selection.
+     * Every odd numbered display will have it's image to the left, and description to the right.
+     * Every even numbered display will have it's image to the right, and description to the left.
      */
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -132,6 +142,8 @@ class SelectCompareRecyclerList(
         val goCompareButton: Button
 
         if (tierPosition % 2 == 1) {
+            // If the current displayed item position is odd
+            // then load the left layout display.
             val selectCompareLeftBinding = DisplayChooseCompareLeftBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
@@ -143,6 +155,8 @@ class SelectCompareRecyclerList(
             compareImage = selectCompareLeftBinding.componentCompareImageLeft
             goCompareButton = selectCompareLeftBinding.enterComparisonBtnLeft
         } else {
+            // If the current displayed item position is even
+            // then load the right layout display.
             val selectCompareRightBinding = DisplayChooseCompareRightBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
@@ -164,6 +178,9 @@ class SelectCompareRecyclerList(
         )
     }
 
+    /**
+     * Call the inner view holder class and bind the current compared categories image, details and navigation button.
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindDataSet(comparisonSelection[position])
         tierPosition++

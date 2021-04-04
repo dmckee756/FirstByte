@@ -6,5 +6,5 @@
 
     <integer name="priceFilterIntervals">20</integer>
     <integer name="minFilterPriceSize">0</integer>
-    <integer name="maxFilterPriceSize">2000</integer>
+    <integer name="maxFilterPriceSize">4000</integer>
 </resources>

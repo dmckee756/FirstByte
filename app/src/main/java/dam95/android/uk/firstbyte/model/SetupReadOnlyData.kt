@@ -26,6 +26,8 @@ private const val READ_ONLY_FAN = "ReadOnlyFans.json"
 private const val READ_ONLY_PC_BUILDS = "ReadOnlyPCBuilds.json"
 
 /**
+ * @author David Mckee
+ * @Version 1.0
  * During the app's first time setup and before the user can do anything, load in all Read Only values into the database.
  * These values are several components of each category that are used in the 12 recommended pc builds.
  * None of these values can be deleted from the app. This class is only called once, during the first time setup.

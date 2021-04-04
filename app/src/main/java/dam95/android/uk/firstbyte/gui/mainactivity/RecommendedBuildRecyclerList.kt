@@ -1,8 +1,6 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
 import android.content.Context
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +17,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Recycler list adapter for the home fragment, responsible for creating the views
+ * for displaying each recommended pc and adding the necessary
+ * contents that are displayed on the home screen.
+ */
 class RecommendedBuildRecyclerList(
     private val context: Context?,
     private val listener: OnItemClickListener,
@@ -29,7 +34,9 @@ class RecommendedBuildRecyclerList(
     private var tierPosition: Int = 1
 
     /**
-     *
+     * Bind each part of the recommended pc builds for displaying.
+     * This will repeat until all 4 recommended pc builds have their views correctly assigned,
+     * if any onclick events happen to the image views in the PC's ViewPager adapter, It will send the event to the Home Fragment.
      */
     inner class ViewHolder(
         itemView: View,
@@ -42,7 +49,8 @@ class RecommendedBuildRecyclerList(
         View.OnClickListener {
 
         /**
-         *
+         * Bind each view with the Recommended PC Builds displayed details. E.g. The tier name, pc price, images and description.
+         * Also sets a timer for the ViewPager2 adapter to scroll to the next PC Part image in it's horizontal recycler list.
          */
         fun bindDataSet(pcBuild: PCBuild) {
             tierTitle.text = pcBuild.pcName
@@ -57,14 +65,12 @@ class RecommendedBuildRecyclerList(
             )
 
             pcBuild.heatsinkName?.let { heatsink -> urlList.add(fbHardwareDB.retrieveImageURL(heatsink)) }
-
-
             //Do a small time delay, meaning there's some time difference between image scrolling in each display
             runBlocking {
                 delay(50)
             }
 
-            //
+            //Initialise the ViewPager2 recycler list adapter, to allow PC Part images to be shown like a slideshow gallery, in a horizontal orientation
             viewPager2.adapter = ImageSliderAdapter(context, urlList, listener, pcBuild)
 
 
@@ -106,7 +112,7 @@ class RecommendedBuildRecyclerList(
         }
 
         /**
-         *
+         * Send onClick event to the home fragment
          */
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
@@ -118,14 +124,14 @@ class RecommendedBuildRecyclerList(
     }
 
     /**
-     *
+     * Methods that call back to the home fragment when the assigned view is clicked.
      */
     interface OnItemClickListener {
         fun onBuildButtonClick(recommendedPC: PCBuild)
     }
 
     /**
-     *
+     * Assigns the data set that will be used in this recycler list.
      */
     fun setDataList(recommendedBuilds: List<PCBuild>) {
         recommendedTier = recommendedBuilds
@@ -133,12 +139,13 @@ class RecommendedBuildRecyclerList(
     }
 
     /**
-     *
+     * Return size of the data set.
      */
     override fun getItemCount(): Int = recommendedTier.size
 
     /**
-     *
+     * Initialize the layout/views that will display the recommended PC and send the information to the inner view holder class.
+     * Utilises 2 different layouts, so that the home screen has some variation.
      */
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -152,6 +159,7 @@ class RecommendedBuildRecyclerList(
         val viewPager2: ViewPager2
 
         if (tierPosition == 1 || tierPosition == 2) {
+            //For the first two displays of this recycler list, use the left layout view for the home page
             val homeLeftBinding = DisplayRecommendedBuildLeftBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
@@ -163,6 +171,7 @@ class RecommendedBuildRecyclerList(
             tierDescription = homeLeftBinding.recommendedTierDescriptionLeft
             viewPager2 = homeLeftBinding.imageSliderView
         } else {
+            //For the next two displays of this recycler list, use the right layout view for the home page
             val homeRightBinding = DisplayRecommendedBuildRightBinding.inflate(
                 LayoutInflater.from(context),
                 parent,
@@ -185,7 +194,7 @@ class RecommendedBuildRecyclerList(
     }
 
     /**
-     *
+     * Call the inner view holder class and bind pc details to the current recycler list display item.
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 

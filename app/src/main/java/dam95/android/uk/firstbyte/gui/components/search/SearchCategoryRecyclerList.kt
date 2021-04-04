@@ -17,7 +17,11 @@ import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import java.util.*
 
 /**
- *
+ * @author David Mckee
+ * @Version 1.0
+ * Recycler list adapter that displays each component category the user can choose from.
+ * When the user clicked on one of the categories, in then loads into HardwareList with only components of the
+ * selected category being shown.
  */
 class SearchCategoryRecyclerList(
     private val context: Context?,
@@ -28,7 +32,9 @@ class SearchCategoryRecyclerList(
     private var categories: List<Pair<String, String>> = listOf()
 
     /**
-     *
+     * Bind each part of the category view with the correct details, images and allow the user to navigate to
+     * HardwareList fragment with the correctly selected category and information to determine if they want to find saved components
+     * from the app's database, or the online API.
      */
     inner class ViewHolder(
         itemView: View,
@@ -38,14 +44,17 @@ class SearchCategoryRecyclerList(
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
-
-
         init {
             categoryBtn.setOnClickListener(this)
         }
 
+        /**
+         * Bind each category view with the correct human readable text and images.
+         * If it is the first view in this recycler list, apply a style to make it look nice.
+         * Blue for online search.
+         * Green for app database search.
+         */
         fun bindDataSet(category: Pair<String, String>) {
-
             //Dynamically load the category images in drawable from assets folder.
             try {
                 val inputStream =
@@ -58,8 +67,8 @@ class SearchCategoryRecyclerList(
                 exception.printStackTrace()
             }
 
+            //Assign human readable text of the current category.
             searchText.text = categories[adapterPosition].first
-
             //Assign the correct colour to the actual first card of the recycler list, because it looks nice.
             if ( searchText.text == categories[0].first) {
                 if (online) {
@@ -71,7 +80,7 @@ class SearchCategoryRecyclerList(
         }
 
         /**
-         *
+         * Send onClick event to the SearchCategory fragment that is currently utilising this adapter.
          */
         override fun onClick(category: View?) {
 
@@ -86,14 +95,14 @@ class SearchCategoryRecyclerList(
     }
 
     /**
-     *
+     * Methods that call back to the SearchCategory fragment that is currently utilising this adapter.
      */
     interface OnItemClickListener {
         fun onButtonClick(chosenCategory: String)
     }
 
     /**
-     *
+     * Assigns the data set that will be used in this recycler list.
      */
     fun setDataList(categoryList: List<Pair<String, String>>) {
         categories = categoryList
@@ -101,12 +110,12 @@ class SearchCategoryRecyclerList(
     }
 
     /**
-     *
+     * Return size of the data set.
      */
     override fun getItemCount(): Int = categories.size
 
     /**
-     *
+     * Initialize the layout/views that will display the category, it's text and image.
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val displaySearchBinding =
@@ -121,7 +130,7 @@ class SearchCategoryRecyclerList(
     }
 
     /**
-     *
+     * Call the inner view holder class and bind category selection details to the current recycler list display item.
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
        holder.bindDataSet(categories[position])

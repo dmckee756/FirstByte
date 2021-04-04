@@ -1,7 +1,5 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
-import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -15,7 +13,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
@@ -23,13 +20,18 @@ import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.configuration.NIGHT_MODE
 import dam95.android.uk.firstbyte.model.SetupReadOnlyData
 import kotlinx.coroutines.*
-import kotlin.concurrent.thread
 
-/**
- *
- */
 private const val FIRST_TIME_SETUP = "FIRST_TIME_SETUP"
 
+/**
+ * @author David Mckee
+ * @Version 0.9
+ * The main class used to setup the app for the first time.
+ * Utilises Android's JetPack Navigation, allowing a one activity app.
+ * The app can only be views in vertical mode and is not designed for tablets, only smart phones.
+ * This class creates the first instance of the app's database, and on it's destruction closes the database.
+ * Overrides some methods that is utilised/called back to throughout the app's fragments.
+ */
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var fbHardwareDB: FirstByteDBAccess
@@ -42,7 +44,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var navListener: NavController.OnDestinationChangedListener
 
     /**
-     *
+     * This on create method Initiates first time setup, loading the read only components and
+     * pc builds into the database by calling the SetUpReadOnlyData class.
+     * Initialises the app bar, toggle drawer and assigns the navigation controller.
+     * Apply's the app's current theme.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         //Create recommended builds and build databases
@@ -80,7 +85,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Sets up the JetPack Navigation for both the bottom navigation bar and the Toggle Drawer.
+     * Allows a very easy method of navigation utilising the navigation menu in the XML resources.
      */
     private fun setUpNavigation() {
 
@@ -108,7 +114,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Creates the generic app toolbar menu with shared items. Used on the main 3 front screens.
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menu?.clear()
@@ -117,7 +123,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Creates and handles on click events with the app's main 3 front screens app bar.
+     * Navigates to online search category list when the user clicks on the magnifying glass.
+     * Displays a random tip when the user clicks on the Speech icon in the 3 dots icon menu.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //Otherwise execute toolbar button command.
@@ -139,7 +147,9 @@ class HomeActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    @SuppressLint("ResourceType")
+    /**
+     * If the Toggle Drawer menu is currently open, the back button will close it first before popping the navigation stack.
+     */
     override fun onBackPressed() {
         if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
