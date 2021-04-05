@@ -31,10 +31,10 @@ class PCBuild() : Parcelable {
      * Constructor used to assign all pc build values into a parcel/package for transport.
      */
     constructor(parcel: Parcel) : this() {
-        pcID = parcel.readInt()
+        pcID = parcel.readValue(Int::class.java.classLoader) as? Int
         pcName = parcel.readString().toString()
         pcPrice = parcel.readDouble()
-        isPcCompleted = parcel.readBoolean()
+        isPcCompleted = parcel.readByte() != 0.toByte()
         gpuName = parcel.readString()
         cpuName = parcel.readString()
         ramList = parcel.createStringArrayList()
@@ -44,7 +44,7 @@ class PCBuild() : Parcelable {
         heatsinkName = parcel.readString()
         caseName = parcel.readString()
         fanList = parcel.createStringArrayList()
-        deletable = parcel.readBoolean()
+        deletable = parcel.readByte() != 0.toByte()
     }
 
     /**
@@ -70,14 +70,14 @@ class PCBuild() : Parcelable {
         pcID = readInData[0] as Int
         pcName = readInData[1] as String
         pcPrice = readInData[2] as Double
-        isPcCompleted = (readInData[3] as Int) !=0
+        isPcCompleted = (readInData[3] as Int) != 0
         gpuName = readInData[4] as String?
         cpuName = readInData[5] as String?
         psuName = readInData[6] as String?
         motherboardName = readInData[7] as String?
         heatsinkName = readInData[8] as String?
         caseName = readInData[9] as String?
-        deletable = (readInData[readInData.lastIndex] as Int) !=0
+        deletable = (readInData[readInData.lastIndex] as Int) != 0
     }
 
     /**
@@ -96,6 +96,26 @@ class PCBuild() : Parcelable {
     }
 
     /**
+     * Recreates the PCBuild object when it reaches it's destination (Fragment class)
+     */
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeValue(pcID)
+        parcel.writeString(pcName)
+        parcel.writeDouble(pcPrice)
+        parcel.writeByte(if (isPcCompleted) 1 else 0)
+        parcel.writeString(gpuName)
+        parcel.writeString(cpuName)
+        parcel.writeStringList(ramList)
+        parcel.writeString(psuName)
+        parcel.writeString(motherboardName)
+        parcel.writeStringList(storageList)
+        parcel.writeString(heatsinkName)
+        parcel.writeString(caseName)
+        parcel.writeStringList(fanList)
+        parcel.writeByte(if (deletable) 1 else 0)
+    }
+
+    /**
      * A required method from the Parcelable interface. Ignore it.
      * @return 0, ignore.
      */
@@ -103,32 +123,9 @@ class PCBuild() : Parcelable {
         return 0
     }
 
-
     /**
      * Writes all of the data in the PCBuild into a parcelable package(?),
      * allowing it to be transported across a fragment.
-     */
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest?.let {
-            it.writeInt(pcID!!)
-            it.writeString(pcName)
-            pcPrice.let { price -> it.writeDouble(price) }
-            it.writeBoolean(isPcCompleted)
-            it.writeString(gpuName)
-            it.writeString(cpuName)
-            it.writeList(ramList)
-            it.writeString(psuName)
-            it.writeString(motherboardName)
-            it.writeList(storageList)
-            it.writeString(heatsinkName)
-            it.writeString(caseName)
-            it.writeList(fanList)
-            it.writeBoolean(deletable)
-        }
-    }
-
-    /**
-     * Recreates the PCBuild object when it reaches it's destination (Fragment class)
      */
     companion object CREATOR : Parcelable.Creator<PCBuild> {
         override fun createFromParcel(parcel: Parcel): PCBuild {
@@ -139,4 +136,5 @@ class PCBuild() : Parcelable {
             return arrayOfNulls(size)
         }
     }
+
 }

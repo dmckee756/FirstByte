@@ -159,7 +159,11 @@
         android:id="@+id/help_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.configuration.Help"
         android:label="@string/helpLabel"
-        tools:layout="@layout/fragment_help" />
+        tools:layout="@layout/fragment_help" >
+        <action
+            android:id="@+id/action_help_fragmentID_to_licenses_fragmentID"
+            app:destination="@id/licenses_fragmentID" />
+    </fragment>
     <fragment
         android:id="@+id/compareHardware_fragmentID"
         android:name="dam95.android.uk.firstbyte.gui.components.compare.CompareHardware"
@@ -202,5 +206,9 @@
         android:name="dam95.android.uk.firstbyte.gui.components.hardware.WebViewConnection"
         android:label="@string/hardwareDetails"
         tools:layout="@layout/fragment_web_view_connection" />
+    <fragment
+        android:id="@+id/licenses_fragmentID"
+        android:name="dam95.android.uk.firstbyte.gui.configuration.Licenses"
+        android:label="Licenses" />
 
 </navigation>

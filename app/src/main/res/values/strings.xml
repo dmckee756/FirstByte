@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">FirstByte</string>
-
-    <string name="appVersion">App Version: 0.5a</string>
+    <string name="appVersion">App Version: 0.7a</string>
     <string name="fbLogo">First Byte Logo</string>
+
+    <!-- First Time Setup -->
+    <string name="welcomingText">Welcome to FirstByte!</string>
+    <string name="typeOfPcTitle">What type of PC are you building?</string>
+    <string name="startYourJourney">Search and build your dream PC</string>
 
     <!-- Fragment Labels-->
     <string name="hardwareList">Components List</string>
@@ -162,6 +166,7 @@
     <string name="displayProcessorSocket">Processor Socket: %1$s</string>
     <string name="displayRamDDR">SDRAM DDR: %1$s</string>
     <string name="displayFanSlots">Number of fan slots: %1$d</string>
+    <string name="licensesAndLibrariesGoHere">Here are the used Licenses and Libraries used in this App.</string>
     <!-- Gpu Display Text -->
     <string name="gpuDisplayCoreSpeed">Core Speed: %1$dMHz</string>
     <string name="gpuDisplayVirtualMemorySize">Virtual Memory Size: %1$dGB</string>

@@ -20,7 +20,9 @@ private const val WORKSTATION = "WORKSTATION"
 
 //Assign the starting Recommended PC ID to this KEY, the last PC ID will always be n+3. n must never be 0 or less.
 const val RECOMMENDED_BUILDS = "RECOMMENDED_BUILDS"
+
 const val NIGHT_MODE = "NIGHT_MODE"
+private const val CHANGE_THEME = "CHANGE_THEME"
 private const val RECOMMENDED_LIST = "RECOMMENDED_LIST"
 private const val RESET_DATA = "RESET_DATA"
 
@@ -69,12 +71,14 @@ class Settings : PreferenceFragmentCompat() {
      * Preference Switch listener used to change the app to/from light and dark mode.
      */
     private fun nightModeListener() {
-        findPreference<SwitchPreferenceCompat>(NIGHT_MODE)?.summaryProvider =
+        findPreference<SwitchPreferenceCompat>(CHANGE_THEME)?.summaryProvider =
             Preference.SummaryProvider<SwitchPreferenceCompat> { night ->
                 if (night.isChecked) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    sharedPreferences.edit().putBoolean(NIGHT_MODE, true).apply()
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    sharedPreferences.edit().putBoolean(NIGHT_MODE, false).apply()
                 }
                 ""
             }

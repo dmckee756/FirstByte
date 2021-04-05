@@ -13,7 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstByte">
-        <activity android:name=".gui.mainactivity.HomeActivity"
+        <activity
+            android:name=".gui.launchapp.FirstTimeSetup"
+            android:parentActivityName=".gui.mainactivity.HomeActivity">
+            <meta-data
+                android:name="android.support.gui.MainActivity"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".gui.mainactivity.HomeActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

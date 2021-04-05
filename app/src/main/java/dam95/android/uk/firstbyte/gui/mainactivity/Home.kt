@@ -18,8 +18,10 @@ import dam95.android.uk.firstbyte.model.PCBuild
 import kotlinx.coroutines.Dispatchers
 
 const val READ_ONLY_PC = "READ_ONLY_PC"
+
 //The last PC ID will always be n+3. n must never be 0 or less.
 private const val TO_ENTHUSIAST_PC_ID = 3
+
 /**
  * @author David Mckee
  * @Version 1.0
@@ -41,16 +43,23 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-      recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
+        recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
         fbHardwareDB = FirstByteDBAccess(requireContext(), Dispatchers.Main)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val entryLevelPCID: Int = sharedPreferences.getInt(RECOMMENDED_BUILDS, 1)
-        val recommendedBuilds = mutableListOf<PCBuild>()
+        //Group the Recommended Builds and their tier descriptions together for display.
+        val recommendedBuilds = mutableListOf<Pair<PCBuild, String>>()
+        val tierDescriptions = resources.getStringArray(R.array.tierDescriptions)
 
-        for (pc_ID in entryLevelPCID..(entryLevelPCID + TO_ENTHUSIAST_PC_ID)){
-            fbHardwareDB.retrievePC(pc_ID).value?.let { PC -> recommendedBuilds.add(PC) }
+        //Use another index for inserting the tierDescriptions along with the PC's ID.
+        for ((index, pc_ID) in (entryLevelPCID..(entryLevelPCID + TO_ENTHUSIAST_PC_ID)).withIndex()) {
+            fbHardwareDB.retrievePC(pc_ID).value?.let { PC ->
+                recommendedBuilds.add(
+                    Pair(PC, tierDescriptions[index])
+                )
+            }
         }
 
         setUpRecommendedBuildList(recommendedBuilds.toList())
@@ -63,7 +72,7 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
      * Allowing it to be displayed in the home page, with future possibility of additional builds if a developer wanted.
      * @param recommendedBuilds List of the 4 Tiers of Read Only recommended PC Builds.
      */
-    private fun setUpRecommendedBuildList(recommendedBuilds: List<PCBuild>) {
+    private fun setUpRecommendedBuildList(recommendedBuilds: List<Pair<PCBuild, String>>) {
         //Finds and initialises the correct recycler list for this fragment.
         val displayDetails = recyclerListBinding.recyclerList
         displayDetails.layoutManager = LinearLayoutManager(this.context)

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/firstTimeSetupFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".gui.launchapp.FirstTimeSetup">
+
+    <ImageView
+        android:id="@+id/firstTimeSetupFBLogo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/fbLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/welcomingTextID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/welcomingText"
+        android:textAppearance="@style/headlineTextFB"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstTimeSetupFBLogo" />
+
+    <TextView
+        android:id="@+id/selectPCTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/typeOfPcTitle"
+        android:textAppearance="@style/headlineTextFB"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcomingTextID" />
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/selectRecommendedBuildSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/object_spinner_style"
+        android:gravity="start"
+        android:paddingVertical="5dp"
+        android:popupBackground="@color/secondaryColor"
+        android:spinnerMode="dropdown"
+        app:layout_constraintEnd_toEndOf="@+id/selectPCTitleText"
+        app:layout_constraintStart_toStartOf="@+id/selectPCTitleText"
+        app:layout_constraintTop_toBottomOf="@+id/selectPCTitleText" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/enterAppBtn"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/ic_start_app"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/enterAppText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/enterAppText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:text="@string/startYourJourney"
+        android:textAppearance="@style/headlineTextFB"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

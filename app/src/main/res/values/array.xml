@@ -28,4 +28,104 @@
         <item>12</item>
     </integer-array>
 
+    <string-array name="tierDescriptions">
+        <item>Reasonable performance for the low price. Decent fit for the intended purpose.</item>
+        <item>Good price to performance ratio. An all round good PC.</item>
+        <item>Higher price with great performance. Does very well and an all round great PC.</item>
+        <item>Insanely high price, with amazing performance. Perfect for the required job.</item>
+    </string-array>
+
+    <string-array name="gpuDescriptions">
+        <item>The Core speed of a GPU is how fast it operates. The higher the number in Mhz, the faster it operates.\n\nThis does not mean it performs better than other graphics cards. A GPU\’s architecture, with speed, indicates it\’s performance.</item>
+        <item>The size of a GPU\'s memory indicates the amount of memory your GPU can use locally to render resolutions each frame on your screen.\n\nIt\'s a key component for loading textures in video games.</item>
+        <item>The speed of a GPU\'s memory indicates how fast it can store texture/resolution assets.\n\nThe higher the memory speed, the faster the GPU can interact with it\'s memory.</item>
+        <item>This is amount of Power Supplied Wattage this GPU will use up.\n\nHowever the value above may not indicate the GPU\'s power consumption when under load.</item>
+    </string-array>
+
+    <string-array name="cpuDescriptions">
+        <item>Typically the more GHz CPU\'s core\'s have, the faster the CPU.\n\nHowever, with single core performance and the CPU\'s architecture this isn\'t the case.</item>
+        <item>The more cores in a CPU indicates how good it is at multi-tasking.\n\nA high core-count CPU could mean it performs worse in single core performance, but is great for a workstation PC.</item>
+        <item>Multithreading means that for every core that\'s in the CPU, there are 2 threads.\n\nThis means CPU\'s can execute tasks concurrently.</item>
+        <item>A CPU socket label informs you of what Motherboards and Heatsinks are compatible with the CPU.\n\nSome parts are compatible with multiple CPU sockets.\n\nBut you can\'t use a LGA Intel socket in a with an AMD Ryzen CPU which has a AM4 socket.</item>
+        <item>This is amount of Power Supplied Wattage this CPU will use up.\n\nHowever the value above may not indicate the CPU\'s power consumption when under load.</item>
+    </string-array>
+
+    <string-array name="ramDescriptions">
+        <item>The greater the size of Ram memory, the more data your PC or OS can hold onto.</item>
+        <item>The greater the MHz of the Ram\'s memory, the faster the PC can store and transfer data.</item>
+        <item>SDRAM DDR is the version of Synchronous Dynamic Random Access Memory that the Ram supports.\n\nThis must be the same version as the DDR on a Motherboard.</item>
+    </string-array>
+
+    <string-array name="psuDescriptions">
+        <item>This is the amount of wattage the PSU supplies to the computer.\n\nAll components must in the computer must collectively consume less power than the PSU produces.</item>
+        <item>The Power Supply Rating indicates how efficient a PSU is at producing power and keeping it.\n\nA PSU will degrade over time, but the higher the quality, the better the PSU\'s efficiency.\n\nWhite (80+ in this) is the lowest and Titanium is the highest.</item>
+        <item>A modular PSU means you, the PC Build can attach or detach necessary power cables.\n\nIt allows control over cable management and swapping out of wires for specific components.</item>
+    </string-array>
+
+    <string-array name="motherboardDescriptions">
+        <item>The size of the motherboard, this will come with advantages and disadvantages.\n\nSmaller motherboards may have less features and worse power management, but allows smaller systems to be built.</item>
+        <item>The CPU socket used in this Motherboard. Only CPU\'s with the same socket are compatible in this app.\n\nBut in reality, it may be backwards or forward compatible with a similar CPU socket.</item>
+        <item>The DDR version of Ram that the Motherboard supports.</item>
+        <item>Some Motherboards come with in built Wifi chips.</item>
+        <item>Usb3.0+ are blue USB ports, they are a lot faster than it\'s 2.0 predecessors and allow far faster data transfer speeds.</item>
+        <!--
+        COMPANY: Techopedia, Janalta Interactive.
+        TITLE: What does PCI Slot mean?
+        DATE: 2021
+        WEBSITE: https://www.techopedia.com/definition/8816/pci-slot
+        The line below was taken from a website. The above is it's reference.
+        -->
+        <item>A PCI slot is a built-in slot on a device that allows for the attachment of various hardware components such as network cards, modems, sound cards, disk controllers and other peripherals.</item>
+        <!-- End of Reference -->
+        <item>NVME M.2 Drives are a very fast storage devices. Some Motherboards may not support them yet.</item>
+    </string-array>
+
+    <string-array name="storageDescriptions">
+        <item>How much GigaBytes of data that can be stored on the drive.</item>
+        <item>A HDD uses a spinning disk to store data and is a slower but cheaper drive.\n\nA SSD uses flash technology to read and write data at fast speeds.\n\nA M.2 NVMe drive uses flash memory, but uses PCI-E express lanes instead of HDD and SSD SATA III, making it extremely fast.</item>
+        <item>This value is the speed the drive reads data in MegaBytes per second.</item>
+    </string-array>
+
+    <string-array name="caseDescriptions">
+        <item>This indicates the largest Motherboard that can fit in the computer case.</item>
+        <item>How many fans can be put into the case.\n\nFor this app, it indicates how many mm sized fans of the value below can be fitted into the case.\n\nCases can have both 120mm and 140mm fans.</item>
+        <item>The size of the fans being put into the case fan slots in this app.</item>
+    </string-array>
+
+    <string-array name="heatsinkDescriptions">
+        <item>The number of fans that can be attached to the heatsink.</item>
+    </string-array>
+
+    <string-array name="fanDescriptions">
+        <item>How large the fans width is in Milli Metres.</item>
+        <item>How fast the fans operate on average.\nRotations Per Minute.</item>
+    </string-array>
+
+    <string-array name="usedLibrariesAndLicenses">
+        <item>org.jetbrains.kotlin:kotlin-stdlib</item>
+        <item>org.jetbrains.kotlin:kotlin-reflect</item>
+        <item>androidx.core:core-ktx</item>
+        <item>androidx.appcompat:appcompat</item>
+        <item>androidx.constraintlayout:constraintlayout</item>
+        <item>androidx.legacy:legacy-support-v4</item>
+        <item>androidx.preference:preference-ktx</item>
+        <item>com.google.android.material:material</item>
+        <item>androidx.navigation:navigation-fragment-ktx</item>
+        <item>androidx.navigation:navigation-ui-ktx</item>
+        <item>androidx.lifecycle:lifecycle-extensions</item>
+        <item>androidx.lifecycle:lifecycle-viewmodel-ktx</item>
+        <item>androidx.fragment:fragment-ktx</item>
+        <item>org.jetbrains.kotlinx:kotlinx-coroutines-core</item>
+        <item>org.jetbrains.kotlinx:kotlinx-coroutines-android</item>
+        <item>com.google.code.gson:gson</item>
+        <item>com.squareup.retrofit2:retrofit</item>
+        <item>com.squareup.retrofit2:converter-gson</item>
+        <item>com.squareup.okhttp3:logging-interceptor</item>
+        <item>com.squareup.picasso:picasso</item>
+        <item>com.github.PhilJay:MPAndroidChart</item>
+        <item>SQLite databases.</item>
+        <item>Any used resources have been correctly referenced.</item>
+        <item>Used images fall under either the Creative Commons License or the Licensed use.</item>
+    </string-array>
+
 </resources>

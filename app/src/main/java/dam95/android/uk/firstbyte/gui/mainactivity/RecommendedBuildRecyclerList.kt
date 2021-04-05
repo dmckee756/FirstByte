@@ -30,7 +30,7 @@ class RecommendedBuildRecyclerList(
     private val fbHardwareDB: FirstByteDBAccess
 ) : RecyclerView.Adapter<RecommendedBuildRecyclerList.ViewHolder>() {
 
-    private var recommendedTier = emptyList<PCBuild>()
+    private var recommendedTier = emptyList<Pair<PCBuild, String>>()
     private var tierPosition: Int = 1
 
     /**
@@ -52,26 +52,27 @@ class RecommendedBuildRecyclerList(
          * Bind each view with the Recommended PC Builds displayed details. E.g. The tier name, pc price, images and description.
          * Also sets a timer for the ViewPager2 adapter to scroll to the next PC Part image in it's horizontal recycler list.
          */
-        fun bindDataSet(pcBuild: PCBuild) {
-            tierTitle.text = pcBuild.pcName
+        fun bindDataSet(recommendedPC: Pair<PCBuild, String>) {
+            tierTitle.text = recommendedPC.first.pcName
             tierPrice.text =
-                context!!.resources.getString(R.string.recommendedTierPrice, "£", pcBuild.pcPrice)
+                context!!.resources.getString(R.string.recommendedTierPrice, "£", recommendedPC.first.pcPrice)
+            tierDescription.text = recommendedPC.second
             val urlList = mutableListOf(
-                fbHardwareDB.retrieveImageURL(pcBuild.caseName!!),
-                fbHardwareDB.retrieveImageURL(pcBuild.gpuName!!),
-                fbHardwareDB.retrieveImageURL(pcBuild.cpuName!!),
-                fbHardwareDB.retrieveImageURL(pcBuild.psuName!!),
-                fbHardwareDB.retrieveImageURL(pcBuild.motherboardName!!)
+                fbHardwareDB.retrieveImageURL(recommendedPC.first.caseName!!),
+                fbHardwareDB.retrieveImageURL(recommendedPC.first.gpuName!!),
+                fbHardwareDB.retrieveImageURL(recommendedPC.first.cpuName!!),
+                fbHardwareDB.retrieveImageURL(recommendedPC.first.psuName!!),
+                fbHardwareDB.retrieveImageURL(recommendedPC.first.motherboardName!!)
             )
 
-            pcBuild.heatsinkName?.let { heatsink -> urlList.add(fbHardwareDB.retrieveImageURL(heatsink)) }
+            recommendedPC.first.heatsinkName?.let { heatsink -> urlList.add(fbHardwareDB.retrieveImageURL(heatsink)) }
             //Do a small time delay, meaning there's some time difference between image scrolling in each display
             runBlocking {
                 delay(50)
             }
 
             //Initialise the ViewPager2 recycler list adapter, to allow PC Part images to be shown like a slideshow gallery, in a horizontal orientation
-            viewPager2.adapter = ImageSliderAdapter(context, urlList, listener, pcBuild)
+            viewPager2.adapter = ImageSliderAdapter(context, urlList, listener, recommendedPC.first)
 
 
             val moveImages = Runnable {
@@ -85,14 +86,14 @@ class RecommendedBuildRecyclerList(
                 viewPager2.fakeDragBy(-(viewPager2.width/1.5).toFloat())
                 viewPager2.endFakeDrag()
             }
-            //Schedule for this viewPager2 display to change the displayed image every 4 seconds
+            //Schedule for this viewPager2 display to change the displayed image every 4 seconds.
             Timer().schedule(object : TimerTask() {
                 override fun run() {
                     viewPager2.post(moveImages)
                 }
             }, 4000, 4000)
 
-            //For every even numbered position in this recycler adapter, change the background colors
+            //For every even numbered position in this recycler adapter, change the background colors.
             if (tierPosition % 2 == 0) {
                 itemView.setBackgroundColor(
                     ContextCompat.getColor(
@@ -100,6 +101,7 @@ class RecommendedBuildRecyclerList(
                         R.color.secondaryColorDark
                     )
                 )
+                //Set up the display text colors for the darker background displays.
                 tierTitle.setTextColor(ContextCompat.getColor(context, R.color.textColorLight))
                 tierPrice.setTextColor(ContextCompat.getColor(context, R.color.textColorLight))
                 tierDescription.setTextColor(
@@ -117,7 +119,7 @@ class RecommendedBuildRecyclerList(
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
-                    viewPager2.id -> listener.onBuildButtonClick(recommendedTier[adapterPosition])
+                    viewPager2.id -> listener.onBuildButtonClick(recommendedTier[adapterPosition].first)
                 }
             }
         }
@@ -133,7 +135,7 @@ class RecommendedBuildRecyclerList(
     /**
      * Assigns the data set that will be used in this recycler list.
      */
-    fun setDataList(recommendedBuilds: List<PCBuild>) {
+    fun setDataList(recommendedBuilds: List<Pair<PCBuild, String>>) {
         recommendedTier = recommendedBuilds
         notifyDataSetChanged()
     }

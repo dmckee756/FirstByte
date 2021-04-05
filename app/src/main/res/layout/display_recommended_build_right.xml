@@ -22,20 +22,22 @@
 
     <TextView
         android:id="@+id/recommendedTierPriceRight"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
         android:text="@string/recommendedTierPrice"
+        app:layout_constraintEnd_toStartOf="@+id/imageBackgroundRight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recommendedTierTitleRight" />
 
     <TextView
         android:id="@+id/recommendedTierDescriptionRight"
-        android:layout_width="170dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/recommendedTierDescription"
+        app:layout_constraintEnd_toStartOf="@+id/imageBackgroundRight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recommendedTierPriceRight" />
 

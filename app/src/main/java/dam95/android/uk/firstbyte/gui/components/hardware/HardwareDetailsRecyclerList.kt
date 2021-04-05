@@ -26,7 +26,7 @@ class HardwareDetailsRecyclerList(
     private val listener: OnItemListener
 ) : RecyclerView.Adapter<HardwareDetailsRecyclerList.ViewHolder>() {
 
-    private var hardwareDetails = emptyList<String>()
+    private var hardwareDetails = emptyList<Pair<String, String?>>()
 
     /**
      * Bind each component specification information in a dynamic approach, correctly assigning the icons depending
@@ -37,30 +37,36 @@ class HardwareDetailsRecyclerList(
         private val parent: ViewGroup,
         private val clickableButton: Button,
         private val detailText: TextView,
-        private val descriptionLayout: ConstraintLayout
+        private val specDescription: TextView
     ) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
 
         /**
          * Assign the correct human readable specification to the text view and assign the correct bullet point icon.
          */
-        fun bindDataSet(detail: String) {
-            detailText.text = detail
+        fun bindDataSet(detail: Pair<String, String?>) {
+            detailText.text = detail.first
+            //If applicable, apply the specification's description.
+            detail.second?.let { description -> specDescription.text = description }
             correctIcon(detail)
         }
 
         /**
          * Determine the correct icon to load depending on what detail is being displayed.
          * Basket for Web Link navigation.
-         * Bullet Points for non expandable views.
+         * Bullet Points for non expandable views (When detail's second pair value is null).
          */
-        private fun correctIcon(detail: String) {
+        private fun correctIcon(detail: Pair<String, String?>) {
             return when (true) {
-                (detail.indexOf("Amazon Price") != -1) -> webLink(clickableButton)
-                (detail.indexOf("Scan.co.uk Price") != -1) -> webLink(clickableButton)
-                (detail.indexOf("RRP Price") != -1) -> bulletPoint(clickableButton)
-                (detail.indexOf("Dimension") != -1) -> bulletPoint(clickableButton)
-                else -> allowDetailDisplay(clickableButton)
+                (detail.first.indexOf("Amazon Price") != -1) -> webLink(clickableButton)
+                (detail.first.indexOf("Scan.co.uk Price") != -1) -> webLink(clickableButton)
+                else -> {
+                    if (detail.second != null) {
+                        allowDetailDisplay(clickableButton)
+                    } else {
+                        bulletPoint(clickableButton)
+                    }
+                }
             }
         }
 
@@ -94,11 +100,11 @@ class HardwareDetailsRecyclerList(
          */
         private fun allowDetailDisplay(clickableButton: Button) {
             clickableButton.setOnClickListener {
-                if (descriptionLayout.visibility == View.GONE) {
-                    descriptionLayout.visibility = View.VISIBLE
+                if (specDescription.visibility == View.GONE) {
+                    specDescription.visibility = View.VISIBLE
                     clickableButton.setBackgroundResource(R.drawable.ic_dropup)
                 } else {
-                    descriptionLayout.visibility = View.GONE
+                    specDescription.visibility = View.GONE
                     clickableButton.setBackgroundResource(R.drawable.ic_dropdown)
                 }
                 TransitionManager.beginDelayedTransition(parent, AutoTransition())
@@ -111,7 +117,7 @@ class HardwareDetailsRecyclerList(
         override fun onClick(view: View?) {
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 when (view?.id) {
-                  clickableButton.id -> listener.onLinkClicked(hardwareDetails[adapterPosition])
+                  clickableButton.id -> listener.onLinkClicked(hardwareDetails[adapterPosition].first)
                 }
             }
         }
@@ -127,7 +133,7 @@ class HardwareDetailsRecyclerList(
     /**
      * Assigns the data set that will be used in this recycler list.
      */
-    fun setDataList(newComponentDetails: List<String>) {
+    fun setDataList(newComponentDetails: List<Pair<String, String?>>) {
         hardwareDetails = newComponentDetails
         notifyDataSetChanged()
     }
@@ -152,7 +158,7 @@ class HardwareDetailsRecyclerList(
             parent,
             displayHardwareDetail.expandDisplayButtonID,
             displayHardwareDetail.textDetail,
-            displayHardwareDetail.expandableDisplayViewID
+            displayHardwareDetail.specificationDescriptionID
         )
     }
 

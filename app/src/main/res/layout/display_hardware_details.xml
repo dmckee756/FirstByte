@@ -8,13 +8,12 @@
 
     <TextView
         android:id="@+id/textDetail"
-        android:textAppearance="@style/headlineTextFB"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/halved_standard_margins"
         android:text="@string/componentSpecification"
+        android:textAppearance="@style/headlineTextFB"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/expand_display_buttonID"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,26 +28,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Expanded section -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/expandable_display_viewID"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/specificationDescriptionID"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:text="@string/specificationDetail"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
-
-        <TextView
-            android:id="@+id/specificationDescriptionID"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
-            android:padding="6dp"
-            android:text="@string/specificationDetail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="@+id/textDetail"
+        app:layout_constraintStart_toStartOf="@+id/textDetail"
+        app:layout_constraintTop_toBottomOf="@+id/textDetail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

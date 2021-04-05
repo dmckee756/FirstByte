@@ -1,6 +1,8 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
 import android.content.Context
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -150,7 +152,7 @@ class PersonalBuildRecyclerList(
             priceOrAddInfo.text = context?.getString(R.string.addPartToBuild, type)
 
             //If this is a recommended read only pc, then set up a read only format.
-            if (isPCCompleted){
+            if (recommendedPC){
                 readOnlySetup()
                 priceOrAddInfo.text = context!!.resources.getString(R.string.saveToEditPCTest)
             }
@@ -220,6 +222,12 @@ class PersonalBuildRecyclerList(
         recommendedPC = readOnlyPC
         notifyDataSetChanged()
     }
+
+    /**
+     * Retrieves the used data list of components.
+     * Used to gather the components used in the PC when sharing this PC.
+     */
+    fun getDataList(): List<Pair<Component?, String>> = pcDetails
 
     /**
      * Return size of the PC data set.

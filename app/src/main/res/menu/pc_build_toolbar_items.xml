@@ -19,11 +19,6 @@
                 android:icon="@drawable/ic_to_email"
                 android:title="@string/toEmail"
                 app:showAsAction="never" />
-            <item
-                android:id="@+id/tipsID"
-                android:icon="@drawable/ic_tips"
-                android:title="@string/tips"
-                app:showAsAction="never" />
         </menu>
     </item>
 </menu>

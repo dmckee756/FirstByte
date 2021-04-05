@@ -1,6 +1,10 @@
 package dam95.android.uk.firstbyte.gui.components.builds
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
@@ -23,13 +27,18 @@ import dam95.android.uk.firstbyte.gui.mainactivity.READ_ONLY_PC
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.*
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
+import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 const val SELECTED_PC = "SELECTED_PC"
 private const val NUM_OF_RAM = 1
 private const val NUM_OF_STORAGE = 2
 const val NOT_FROM_SEARCH = "FROM_PC"
+
 /**
  * @author David Mckee
  * @Version 1.0
@@ -420,63 +429,100 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
-     * Determine which app bar item should be affected.
+     * Correctly handle the menu item that was clicked by the user.
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (readOnlyPC) {
-            readOnlyPCToolbars(item)
-        } else {
-            writeablePCToolbars(item)
+        when (item.itemId) {
+            R.id.emailID -> emailPC()
+            R.id.deleteID -> deletePC()
+            R.id.editRecommendedPCID -> editRecommendedPC(item)
         }
         return super.onOptionsItemSelected(item)
     }
 
     /**
-     * Handle menu item clicks on Recommended PC Builds.
+     * Gets all of the parts in a PC and sends it over to an email app, allowing the user
+     * to share the names of components in their PC.
      */
-    private fun readOnlyPCToolbars(item: MenuItem) {
-        when (item.itemId) {
-            R.id.editRecommendedPCID -> {
-                //If the heart icon was clicked, try adding the PC Build to the database for the user to edit.
-                personalPC.value!!.deletable = true
-                //Attempt to duplicate the PC as a writable Build
-                val result = fbHardwareDb.createPC(personalPC.value!!)
-                //Re-check this current Recommended PC as being read only, just in case.
-                //It was altered changed in the database.
-                personalPC.value!!.deletable = false
-                //Disable the button and grey it out.
-                item.isEnabled = false
-                item.icon.alpha = 155
+    private fun emailPC() {
+        val coroutineScope = CoroutineScope(Dispatchers.IO)
+        coroutineScope.launch {
+            //Launch an send email intent
+            val emailIntent = Intent(Intent.ACTION_SEND)
+            //Indicate this is a mail to intent
+            emailIntent.data = Uri.parse("mailto:")
+            //Assign the subject's name
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "My Designed PC")
 
-                if (result >= 0) {
-                    //If the build was succesfully added, then inform the user it was added to the database.
-                    Toast.makeText(context, "Recommended PC Saved.", Toast.LENGTH_SHORT).show()
-                } else {
-                    //If the PC couldn't be added due to there being too many slots, inform the user.
-                    Toast.makeText(context, "Cannot save PC, at max limit.", Toast.LENGTH_SHORT)
-                        .show()
+            //Create a string variable that will hold the emails text.
+            var emailText =
+                "The name of my PC: ${personalPC.value!!.pcName}\n" +
+                        "\nTotal Price of my PC: ${HumanReadableUtils.rrpPriceToCurrency(personalPC.value!!.pcPrice)}\n"
+
+            val pcParts = personalBuildListAdapter.getDataList()
+            //Put in all of the names of each PC Part in the PCBuild, into the email.
+            for (index in pcParts.indices) {
+                //Skip empty slots.
+                if (pcParts[index].first != null) {
+                    //Add component to the PC Build email.
+                    emailText += "\n${pcParts[index].second}: ${pcParts[index].first!!.name}\n"
                 }
             }
-            // Display a tip to the user
-            R.id.tipsID -> Toast.makeText(context, "Tip Displayed", Toast.LENGTH_SHORT).show()
+
+            //Bundle the PC Build's components into the email intent.
+            emailIntent.putExtra(Intent.EXTRA_TEXT, emailText)
+            try {
+                //Attempt to start this intent and send the contents of the email intent.
+                startActivity(Intent.createChooser(emailIntent, "Choose Email App"))
+            } catch (exception: Exception) {
+                //Catch the exception and print the error to the user.
+                exception.printStackTrace()
+                Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     /**
-     * Handle menu item clicks on user created PC Builds.
+     * Handle menu edit Recommend PC item click, saves a new (separate) instance of the Recommended PC
+     * into the database and allows the user to edit it.
      */
-    private fun writeablePCToolbars(item: MenuItem) {
-        //Otherwise execute toolbar button command.
-        when (item.itemId) {
-            // Delete the PC and back out to the pc list
-            R.id.deleteID -> personalPC.observe(viewLifecycleOwner) {
-                it.pcID?.let { id -> fbHardwareDb.deletePC(id) }
-                requireActivity().onBackPressed()
-            }
-            // Display a tip to the user
-            R.id.tipsID -> Toast.makeText(context, "Tip Displayed", Toast.LENGTH_SHORT).show()
+    private fun editRecommendedPC(item: MenuItem) {
+
+        //If the heart icon was clicked, try adding the PC Build to the database for the user to edit.
+        personalPC.value!!.deletable = true
+        //Attempt to duplicate the PC as a writable Build
+        val result = fbHardwareDb.createPC(personalPC.value!!)
+        //Re-check this current Recommended PC as being read only, just in case.
+        //It was altered changed in the database.
+        personalPC.value!!.deletable = false
+        //Disable the button and grey it out.
+        item.isEnabled = false
+        item.icon.alpha = 155
+
+        if (result >= 0) {
+            //If the build was succesfully added, then inform the user it was added to the database.
+            Toast.makeText(context, "Recommended PC Saved.", Toast.LENGTH_SHORT).show()
+        } else {
+            //If the PC couldn't be added due to there being too many slots, inform the user.
+            Toast.makeText(context, "Cannot save PC, at max limit.", Toast.LENGTH_SHORT)
+                .show()
         }
     }
+
+
+    /**
+     * Handle menu delete PC item click, which removes the pc from the database and backs the user out
+     * to the pc build list.
+     */
+    private fun deletePC() {
+        //Otherwise execute toolbar button command.
+        // Delete the PC and back out to the pc list
+        personalPC.observe(viewLifecycleOwner) {
+            it.pcID?.let { id -> fbHardwareDb.deletePC(id) }
+            requireActivity().onBackPressed()
+        }
+    }
+
 
     /**
      * If the database is initialized, update the database that this PC is either complete or incomplete when this fragment is paused.

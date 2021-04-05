@@ -1,11 +1,11 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -18,7 +18,7 @@ import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.ActivityHomeBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.configuration.NIGHT_MODE
-import dam95.android.uk.firstbyte.model.SetupReadOnlyData
+import dam95.android.uk.firstbyte.gui.launchapp.FirstTimeSetup
 import kotlinx.coroutines.*
 
 private const val FIRST_TIME_SETUP = "FIRST_TIME_SETUP"
@@ -50,38 +50,46 @@ class HomeActivity : AppCompatActivity() {
      * Apply's the app's current theme.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        //Create recommended builds and build databases
-        fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
 
-        if (sharedPreferences.getBoolean(FIRST_TIME_SETUP, true)) {
-            SetupReadOnlyData(application, applicationContext).loadReadOnlyValues()
-            sharedPreferences.edit().putBoolean(FIRST_TIME_SETUP, false).apply()
-        }
-
         super.onCreate(savedInstanceState)
-        homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(homeActivityBinding.root)
-
-        navController = findNavController(R.id.nav_fragment)
-
-        val nightModeOn: Boolean = sharedPreferences.getBoolean(NIGHT_MODE, false)
-
-        // If user put app into night mode, load it, otherwise load light mode
-        if (nightModeOn) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        //If this is the apps first time being launched, make the user select what type of PC they are building.
+        //And setup the database with read only values.
+        if (sharedPreferences.getBoolean(FIRST_TIME_SETUP, true)) {
+            val launchFirstTimeSetup = Intent(this, FirstTimeSetup::class.java)
+            startActivity(launchFirstTimeSetup)
+            finish()
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+            //Create recommended builds and build databases
+            val coroutineScope = CoroutineScope(Dispatchers.Default)
+            coroutineScope.launch {
+                fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
+            }
+
+            homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
+            setContentView(homeActivityBinding.root)
+
+            navController = findNavController(R.id.nav_fragment)
+
+            val nightModeOn: Boolean = sharedPreferences.getBoolean(NIGHT_MODE, false)
+
+            // If user put app into night mode, load it, otherwise load light mode
+            if (nightModeOn) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+
+            //
+            val topAppBar = homeActivityBinding.HomeActTopBar
+            setSupportActionBar(topAppBar)
+
+            drawerLayout = homeActivityBinding.actMainDrawer
+
+            setUpNavigation()
         }
-
-        //
-        val topAppBar = homeActivityBinding.HomeActTopBar
-        setSupportActionBar(topAppBar)
-
-        drawerLayout = homeActivityBinding.actMainDrawer
-
-        setUpNavigation()
     }
 
     /**
@@ -132,8 +140,6 @@ class HomeActivity : AppCompatActivity() {
         when (item.itemId) {
             // Navigate to search components fragment
             R.id.searchCategory_fragmentID -> item.onNavDestinationSelected(navController)
-            // Display a tip to the user
-            R.id.tipsID -> Toast.makeText(this, "Tip Displayed", Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -162,7 +168,7 @@ class HomeActivity : AppCompatActivity() {
      * Close database on app's exit
      */
     override fun onDestroy() {
-        fbHardwareDB.closeDatabase()
+    if (this::fbHardwareDB.isInitialized) fbHardwareDB.closeDatabase()
         super.onDestroy()
     }
 }

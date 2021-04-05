@@ -1,10 +1,13 @@
 package dam95.android.uk.firstbyte.gui.components.hardware
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +19,7 @@ import dam95.android.uk.firstbyte.databinding.FragmentHardwareDetailsBinding
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.gui.components.builds.NOT_FROM_SEARCH
 import dam95.android.uk.firstbyte.model.components.Component
+import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -171,9 +175,13 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
 
             //If component is in database, only allow remove button click, otherwise add button click
             if (fbHardwareDb.hardwareExists(component.name) > 0) {
+                addHardware.alpha = 0.6F
+                removeHardware.alpha = 1F
                 setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
                 //...then do not allow the user to click on removeHardware...
             } else {
+                removeHardware.alpha = 0.6F
+                addHardware.alpha = 1F
                 setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
             }
 
@@ -204,6 +212,8 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                 }
             } else offlineRemoveHardwareOnDestroy = false
             Toast.makeText(context, "Component Saved", Toast.LENGTH_SHORT).show()
+            it.alpha = 0.6F
+            removeHardware.alpha = 1F
             setClickable(noInteractionBtn = addHardware, hasInteractionBtn = removeHardware)
         }
 
@@ -216,6 +226,8 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                 }
             } else offlineRemoveHardwareOnDestroy = true
             Toast.makeText(context, "Component Removed", Toast.LENGTH_SHORT).show()
+            it.alpha = 0.6F
+            addHardware.alpha = 1F
             setClickable(noInteractionBtn = removeHardware, hasInteractionBtn = addHardware)
         }
     }
@@ -254,11 +266,45 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         displayHardwareDetails.layoutManager = LinearLayoutManager(this.context)
         hardwareDetailsListAdapter = HardwareDetailsRecyclerList(context, this)
 
+        //Load the human readable details used to display the component's specifications.
         val details: List<String> = context?.let { component.getDetailsForDisplay(it, null) }!!
+        //Load the descriptions that are used for this component's specifications.
+        val descriptions = findComponentDescriptions(component)
 
-        hardwareDetailsListAdapter.setDataList(details)
+        val detailsWithDescription = mutableListOf<Pair<String, String?>>()
+        //For each description that was loaded, assign it to the specification it's describing.
+        //Must be done in order. Any values that don't have a description will have their second pair value to null.
+        for (index in details.indices){
+            try {
+                detailsWithDescription.add(Pair(details[index], descriptions[index]))
+            }catch (exception: java.lang.IndexOutOfBoundsException){
+                detailsWithDescription.add(Pair(details[index], null))
+            }
+        }
+
+        hardwareDetailsListAdapter.setDataList(detailsWithDescription)
         displayHardwareDetails.adapter = hardwareDetailsListAdapter
 
+    }
+
+    /**
+     * Checks what type of component is being displayed and then gets a xml string array of descriptions for
+     * the component's specifications that require a description.
+     * If it can't find it, then return an empty list so that there are no descriptions.
+     */
+    private fun findComponentDescriptions(component: Component): List<String>{
+        return when (component.type.toUpperCase(Locale.ROOT)){
+            ComponentsEnum.GPU.toString() -> resources.getStringArray(R.array.gpuDescriptions).toList()
+            ComponentsEnum.CPU.toString() -> resources.getStringArray(R.array.cpuDescriptions).toList()
+            ComponentsEnum.RAM.toString() -> resources.getStringArray(R.array.ramDescriptions).toList()
+            ComponentsEnum.PSU.toString() -> resources.getStringArray(R.array.psuDescriptions).toList()
+            ComponentsEnum.STORAGE.toString() -> resources.getStringArray(R.array.storageDescriptions).toList()
+            ComponentsEnum.MOTHERBOARD.toString() -> resources.getStringArray(R.array.motherboardDescriptions).toList()
+            ComponentsEnum.CASES.toString() -> resources.getStringArray(R.array.caseDescriptions).toList()
+            ComponentsEnum.HEATSINK.toString() -> resources.getStringArray(R.array.heatsinkDescriptions).toList()
+            ComponentsEnum.FAN.toString() -> resources.getStringArray(R.array.fanDescriptions).toList()
+            else -> emptyList()
+        }
     }
 
     /**
@@ -287,6 +333,55 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         menu.clear()
         inflater.inflate(R.menu.hardware_related_toolbar_items, menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    /**
+     * Correctly handle the menu item that was clicked by the user.
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.emailID -> emailComponent()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    /**
+     * Email the specifications of the component
+     */
+    private fun emailComponent(){
+        val coroutineScope = CoroutineScope(Dispatchers.IO)
+        coroutineScope.launch {
+            //Launch an send email intent
+            val emailIntent = Intent(Intent.ACTION_SEND)
+            //Indicate this is a mail to intent
+            emailIntent.data = Uri.parse("mailto:")
+            //Assign the subject's name
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Is this component any good?")
+
+            //Create a string variable that will hold the emails text.
+            var emailText = "${component.name}\n"
+
+            val details = component.getDetailsForDisplay(requireContext(), null)
+            //Put in each of the Component's specification's into the email.
+            for (index in details!!.indices) {
+                //Skip the component name index
+                if (index != 4) {
+                    //Add Component's specification to the email's text.
+                    emailText += "${details[index]}\n"
+                }
+            }
+
+            //Bundle the Components specifications into the email intent.
+            emailIntent.putExtra(Intent.EXTRA_TEXT, emailText)
+            try {
+                //Attempt to start this intent and send the contents of the email.
+                startActivity(Intent.createChooser(emailIntent, "Choose Email App"))
+            } catch (exception: Exception) {
+                //Catch the exception and print the error to the user.
+                exception.printStackTrace()
+                Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /**
