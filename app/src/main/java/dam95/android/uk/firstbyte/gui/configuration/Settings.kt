@@ -22,7 +22,6 @@ private const val WORKSTATION = "WORKSTATION"
 const val RECOMMENDED_BUILDS = "RECOMMENDED_BUILDS"
 
 const val NIGHT_MODE = "NIGHT_MODE"
-private const val CHANGE_THEME = "CHANGE_THEME"
 private const val RECOMMENDED_LIST = "RECOMMENDED_LIST"
 private const val RESET_DATA = "RESET_DATA"
 
@@ -71,7 +70,7 @@ class Settings : PreferenceFragmentCompat() {
      * Preference Switch listener used to change the app to/from light and dark mode.
      */
     private fun nightModeListener() {
-        findPreference<SwitchPreferenceCompat>(CHANGE_THEME)?.summaryProvider =
+        findPreference<SwitchPreferenceCompat>(NIGHT_MODE)?.summaryProvider =
             Preference.SummaryProvider<SwitchPreferenceCompat> { night ->
                 if (night.isChecked) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

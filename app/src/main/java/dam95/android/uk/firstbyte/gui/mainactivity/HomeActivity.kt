@@ -29,7 +29,7 @@ private const val FIRST_TIME_SETUP = "FIRST_TIME_SETUP"
 
 /**
  * @author David Mckee
- * @Version 0.9
+ * @Version 1.0
  * The main class used to setup the app for the first time.
  * Utilises Android's JetPack Navigation, allowing a one activity app.
  * The app can only be views in vertical mode and is not designed for tablets, only smart phones.
