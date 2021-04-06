@@ -3,8 +3,6 @@ package dam95.android.uk.firstbyte.gui.components.builds
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.*
 import android.widget.EditText
 import android.widget.Toast
@@ -73,8 +71,9 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         readOnlyPC = arguments?.getBoolean(READ_ONLY_PC)!!
         //If there is no loadedPC from arguments, then skip the initialisation
         if (loadedPc != null) {
+
             setHasOptionsMenu(true)
-            fbHardwareDb = FirstByteDBAccess(requireContext(), Dispatchers.Main)
+            fbHardwareDb = FirstByteDBAccess(requireContext(), Dispatchers.Default)
 
             //Load the arguments pc from the database as a MutableLiveData variable.
             //This allows the features of live data updating etc.

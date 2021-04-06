@@ -128,15 +128,15 @@ class FirstByteDBAccess(
      * @param category Indicated if all display component items should be loaded if it has a value of "all" or if a specific category is to be loaded e.g. "cpu"
      * @return LiveData instance of a SearchedHardwareItem List
      */
-    fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>> =
-        componentQueries.getCategory(category)
+    suspend fun retrieveCategory(category: String): LiveData<List<SearchedHardwareItem>>? = componentQueries.getCategory(category)
+
 
     /**
      * Retrieve a saved component's URL. Used in cases where we only want the URL and not wanting to waste time loading the rest of the component.
      * @param componentName Name of the component that's URL is being retrieved.
      * @return URL of the component's image, that will be converted into an image using Picasso.
      */
-    fun retrieveImageURL(componentName: String): String =
+    fun retrieveImageURL(componentName: String): String? =
         componentQueries.retrieveImageURL(componentName)
 
     /**

@@ -14,6 +14,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.*
 import org.junit.runner.RunWith
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Test the functionality of the app doing GET commands to the API for displaying hardware details etc.
+ */
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class TestAPIStreamingData {
@@ -26,19 +31,21 @@ class TestAPIStreamingData {
 
 
     @Before
-    fun initialise() = runBlocking{
+    fun initialise() = runBlocking {
         instrumentContext = InstrumentationRegistry.getInstrumentation().context
         apiRepository = ApiRepository(instrumentContext)
     }
 
     @Test
     fun testThat_All_Hardware_Is_Displayed_In_Category_All_Search() = runBlocking {
+        //List should have 37 components
         val sizeOfTestResponse = 37
 
+        //Load all components from the API test database
         val allList: List<SearchedHardwareItem>? = apiRepository.repoGetCategory("all").body()
         Log.i("EXPECTED_RESULT", "$sizeOfTestResponse")
         if (allList != null) {
-
+            //Check if both lists match
             Log.i("ACTUAL_RESULT", "$allList.size")
             Assert.assertEquals(sizeOfTestResponse, allList.size)
         } else {
@@ -48,52 +55,9 @@ class TestAPIStreamingData {
     }
 
     @Test
-    fun testThe_search_Category_functionality_by_searching_for_a_AMD_components() = runBlocking {
-        val desiredListResult = listOf<SearchedHardwareItem>(
-            SearchedHardwareItem(
-                "AMD Ryzen 3 3300X",
-                "cpu",
-                "https://images-na.ssl-images-amazon.com/images/I/71qJkCH4EnL._AC_SL1384_.jpg",
-                110.0
-            ),
-            SearchedHardwareItem(
-                "AMD Ryzen 5 3600",
-                "cpu",
-                "https://images-na.ssl-images-amazon.com/images/I/71WPGXQLcLL._AC_SL1384_.jpg",
-                199.99
-            ),
-            SearchedHardwareItem(
-                "AMD Ryzen 9 3950X",
-                "cpu",
-                "https://m.media-amazon.com/images/I/61LQ1nNL-eL._AC_SL1198_.jpg",
-                749.0
-            ),
-            SearchedHardwareItem(
-                "ASUS PRIME B550-PLUS AMD B550",
-                "motherboard",
-                "https://images-na.ssl-images-amazon.com/images/I/91pZCvtUsOL._AC_SL1500_.jpg",
-                156.48
-            ),
-        )
-
-        val amdList: List<SearchedHardwareItem>? =
-            apiRepository.repoSearchCategory("all", "AMD").body()
-
-        if (amdList != null) {
-            for (i in desiredListResult.indices) {
-                Log.i("EXPECTED_RESULT", desiredListResult[i].toString())
-                Log.i("ACTUAL_RESULT", amdList[i].toString())
-                Assert.assertEquals(desiredListResult[i], amdList[i])
-            }
-        } else {
-            Log.i("ACTUAL_RESULT", "Response not found : NULL")
-            assert(false)
-        }
-    }
-
-    @Test
     fun testThat_Specific_Storage_Category_Is_Displayed() = runBlocking {
         val desiredStorageList = listOf<SearchedHardwareItem>(
+            //Desired Items that should be displayed
             SearchedHardwareItem(
                 "Samsung 870 QVO 1 TB SATA 2.5",
                 "storage",
@@ -126,10 +90,12 @@ class TestAPIStreamingData {
             ),
         )
 
+        //Load storage components from test database through the API
         val storageList: List<SearchedHardwareItem>? =
             apiRepository.repoGetCategory("storage").body()
 
         if (storageList != null) {
+            //Compare each loaded storage component with the desired components
             for (i in desiredStorageList.indices) {
                 Log.i("EXPECTED_RESULT", desiredStorageList[i].toString())
                 Log.i("ACTUAL_RESULT", storageList[i].toString())
@@ -143,6 +109,7 @@ class TestAPIStreamingData {
 
     @Test
     fun testThat_Hardware_Detail_Of_GPU_NVIDIA_1660_Ti_Is_Displayed() = runBlocking {
+        //Hardware I want to see
         val gpu_1660_Ti_specifications: Component = Gpu(
             type = "gpu",
             imageLink = "https://www.scan.co.uk/images/products/super/3125547-l-a.jpg",
@@ -159,16 +126,16 @@ class TestAPIStreamingData {
             scanLink = "https://www.scan.co.uk/products/asus-geforce-gtx-1660-ti-tuf-gaming-oc-6gb-gddr6-vr-ready-graphics-card-1536-core"
         )
 
+        //Retrieve the hardware from the test database through the API.
         val gpuResult: List<Component>? =
             apiRepository.repoGetGpu("ASUS NVIDIA GeForce GTX 1660 Ti").body()
 
         if (gpuResult != null) {
-            //Sadly I have to manually assign all incoming components as deletable = true.
-            //This is due to the GSON converter not fully understanding Kotlin...
-            //... and it doesn't understand kotlin initializer's. In the future, I would migrate to a different parsing method.
+
             gpuResult[0].deletable = true
             val gpuResultSpecifications = gpuResult[0].getDetails()
 
+                //Check if all details are correctly loaded
             for (i in (gpu_1660_Ti_specifications.getDetails().indices - 1)) {
                 Log.i("EXPECTED_RESULT", gpu_1660_Ti_specifications.getDetails()[i].toString())
                 Log.i("ACTUAL_RESULT", gpuResultSpecifications[i].toString())

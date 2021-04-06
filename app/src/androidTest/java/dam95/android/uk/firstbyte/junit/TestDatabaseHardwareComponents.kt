@@ -13,7 +13,14 @@ import dam95.android.uk.firstbyte.model.components.Gpu
 import kotlinx.coroutines.*
 import org.junit.*
 import org.junit.runner.RunWith
+import java.util.*
 
+/**
+ * @author David Mckee
+ * @Version
+ * This tests the functionality of the SQLite database when handling components.
+ * This does not test PCBuilds.
+ */
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class TestDatabaseHardwareComponents {
@@ -32,6 +39,7 @@ class TestDatabaseHardwareComponents {
     fun initialise() {
         instrumentContext = InstrumentationRegistry.getInstrumentation().targetContext
         inMemoryDatabase = FirstByteDBAccess(instrumentContext, Dispatchers.Main)
+        //Initialise the 2 used components in these tests.
         gpu_1660_Ti_specifications = Gpu(
             type = "gpu",
             imageLink = "https://www.scan.co.uk/images/products/super/3125547-l-a.jpg",
@@ -75,8 +83,10 @@ class TestDatabaseHardwareComponents {
     @Test
     fun testThat_Hardware_Gets_Saved() = runBlocking {
         val successfullyAddedToDatabase = 1
+        //Add GPU to database.
         inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
         val gpuResult = inMemoryDatabase.hardwareExists("ASUS NVIDIA GeForce GTX 1660 Ti")
+        //Database should hold only 1 Component.
         Assert.assertEquals(successfullyAddedToDatabase, gpuResult)
     }
 
@@ -103,44 +113,39 @@ class TestDatabaseHardwareComponents {
     @Test
     fun testThat_Saved_Category_List_Updates_After_Hardware_Removed() = runBlocking {
 
+        //Insert both components into the database.
         inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
         inMemoryDatabase.insertHardware(amd_ryzen_5_3600)
 
+        //Load the search components list.
         var componentsDisplayList: LiveData<List<SearchedHardwareItem>>? =
             inMemoryDatabase.retrieveCategory("all")
 
+        //Check if both components are in the list.
         if (componentsDisplayList != null && componentsDisplayList.value?.size == 2) {
             inMemoryDatabase.removeHardware("AMD Ryzen 5 3600")
             delay(200)
 
             componentsDisplayList =
                 inMemoryDatabase.retrieveCategory("all")
-
-            if (componentsDisplayList != null) {
-                Assert.assertEquals(1, componentsDisplayList.value!!.size)
-            } else {
-                assert(false)
-            }
+                Assert.assertEquals(1, componentsDisplayList?.value!!.size)
         } else {
             assert(false)
         }
     }
 
-
     @Test
-    fun testThat_Saved_Category_List_Responds_To_Searching() =
-        runBlocking { //TODO Rework with new system
-            inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
-            inMemoryDatabase.insertHardware(amd_ryzen_5_3600)
+    fun testThat_Component_Is_Saved_To_Correct_Compared_List() = runBlocking{
+        //Check if the table exists, if not then create a comparison ID table
+        val comparedTableID = "GPU_COMPARE_LIST"
+        //First add the component to the database.
+        inMemoryDatabase.insertHardware(gpu_1660_Ti_specifications)
 
-            var componentsDisplayList: LiveData<List<SearchedHardwareItem>>? =
-                inMemoryDatabase.retrieveCategory("all")
+        //Retrieve all the names of the same category that is being compared.
+        inMemoryDatabase.createComparedComponents(comparedTableID)
+        inMemoryDatabase.saveComparedComponent(comparedTableID, gpu_1660_Ti_specifications.name)
+        val nameReferences = inMemoryDatabase.retrieveComparedComponents(comparedTableID)
+        Assert.assertEquals(gpu_1660_Ti_specifications.name, nameReferences[0])
+    }
 
-            Assert.assertEquals(1, componentsDisplayList!!.value!!.size)
-            Assert.assertEquals("AMD Ryzen 5 3600", componentsDisplayList.value!![0].name)
-
-
-            assert(false)
-
-        }
 }

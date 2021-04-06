@@ -43,6 +43,7 @@ class ImageSliderAdapter(
          * Convert the supplied PC Part Image URLs into images and assign them to the image view using Picasso.
          */
         fun onBindDataSet(pcPartURL: String?) {
+            sliderImageView.contentDescription = "Image: $adapterPosition"
             pcPartURL?.let { url ->
                 ConvertImageURL.convertURLtoImage(
                     url, sliderImageView
@@ -62,7 +63,7 @@ class ImageSliderAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val sliderViewBinding =
             ImageSliderBinding.inflate(LayoutInflater.from(context), parent, false)
-
+        sliderViewBinding.root.contentDescription = pcBuild.pcName
         return ViewHolder(
             sliderViewBinding.imageSliderView,
             sliderViewBinding.displayRecommendBuildPCPartImage

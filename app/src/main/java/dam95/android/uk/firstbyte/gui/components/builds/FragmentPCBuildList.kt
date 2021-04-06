@@ -41,7 +41,7 @@ class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener 
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
         //Load all pc builds
-        fbHardwareDb = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
+        fbHardwareDb = context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Default) }!!
         pcListLiveData = fbHardwareDb.retrievePCList()
 
         //Observe these builds and pass it into the recycler list adapter for display.

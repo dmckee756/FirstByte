@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/firstTimeSetupFragment"
+    android:id="@+id/firstTimeSetupActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".gui.launchapp.FirstTimeSetup">
@@ -54,6 +54,15 @@
         app:layout_constraintEnd_toEndOf="@+id/selectPCTitleText"
         app:layout_constraintStart_toStartOf="@+id/selectPCTitleText"
         app:layout_constraintTop_toBottomOf="@+id/selectPCTitleText" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_drop_down_24"
+        app:layout_constraintEnd_toEndOf="@+id/selectRecommendedBuildSpinner"
+        app:layout_constraintTop_toTopOf="@+id/selectRecommendedBuildSpinner"
+        app:layout_constraintBottom_toBottomOf="@+id/selectRecommendedBuildSpinner"
+        android:contentDescription="@string/iconForCompareSpinner" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/enterAppBtn"

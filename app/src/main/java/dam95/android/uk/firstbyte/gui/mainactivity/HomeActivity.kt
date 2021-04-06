@@ -1,14 +1,18 @@
 package dam95.android.uk.firstbyte.gui.mainactivity
 
+import android.app.Activity
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
@@ -65,7 +69,7 @@ class HomeActivity : AppCompatActivity() {
             //Create recommended builds and build databases
             val coroutineScope = CoroutineScope(Dispatchers.Default)
             coroutineScope.launch {
-                fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Main)
+                fbHardwareDB = FirstByteDBAccess(applicationContext, Dispatchers.Default)
             }
 
             homeActivityBinding = ActivityHomeBinding.inflate(layoutInflater)
@@ -89,6 +93,7 @@ class HomeActivity : AppCompatActivity() {
             drawerLayout = homeActivityBinding.actMainDrawer
 
             setUpNavigation()
+
         }
     }
 
@@ -150,7 +155,7 @@ class HomeActivity : AppCompatActivity() {
      */
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfig)
-                || super.onSupportNavigateUp()
+                    || super.onSupportNavigateUp()
     }
 
     /**

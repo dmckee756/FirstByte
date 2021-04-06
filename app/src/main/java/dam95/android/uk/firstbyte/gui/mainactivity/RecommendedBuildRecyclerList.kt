@@ -74,7 +74,6 @@ class RecommendedBuildRecyclerList(
             //Initialise the ViewPager2 recycler list adapter, to allow PC Part images to be shown like a slideshow gallery, in a horizontal orientation
             viewPager2.adapter = ImageSliderAdapter(context, urlList, listener, recommendedPC.first)
 
-
             val moveImages = Runnable {
                 //Reset the image list position to the start, simulating a loop
                 if (viewPager2.currentItem == urlList.lastIndex) viewPager2.currentItem = 0
@@ -171,7 +170,7 @@ class RecommendedBuildRecyclerList(
             tierTitle = homeLeftBinding.recommendedTierTitleLeft
             tierPrice = homeLeftBinding.recommendedTierPriceLeft
             tierDescription = homeLeftBinding.recommendedTierDescriptionLeft
-            viewPager2 = homeLeftBinding.imageSliderView
+            viewPager2 = homeLeftBinding.imageSliderViewLeft
         } else {
             //For the next two displays of this recycler list, use the right layout view for the home page
             val homeRightBinding = DisplayRecommendedBuildRightBinding.inflate(
@@ -183,7 +182,7 @@ class RecommendedBuildRecyclerList(
             tierTitle = homeRightBinding.recommendedTierTitleRight
             tierPrice = homeRightBinding.recommendedTierPriceRight
             tierDescription = homeRightBinding.recommendedTierDescriptionRight
-            viewPager2 = homeRightBinding.imageSliderView
+            viewPager2 = homeRightBinding.imageSliderViewRight
         }
 
         return ViewHolder(

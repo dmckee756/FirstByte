@@ -33,6 +33,7 @@ const val CATEGORY_KEY = "CATEGORY"
 const val NAME_KEY = "NAME"
 const val LOCAL_OR_NETWORK_KEY = "LOADING_METHOD"
 const val PC_ID = "PC_ID"
+
 /**
  * @author David Mckee
  * @Version 1.0
@@ -50,7 +51,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
     private lateinit var hardwareListAdapter: HardwareListRecyclerList
 
     private lateinit var fbHardwareDb: FirstByteDBAccess
-    var categoryListLiveData: LiveData<List<SearchedHardwareItem>>? = null
+    private var categoryListLiveData: LiveData<List<SearchedHardwareItem>>? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     private var isLoadingFromServer: Boolean? = null
@@ -62,7 +63,7 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
      * Determines if the HardwareList was loaded from the database or from the online API,
      * then chooses it's initialisation and loading path accordingly.
      * It will either Stream in the hardware display items from the API or will load the list from the database.
-    */
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -88,6 +89,52 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
 
         // Inflate the layout for this fragment
         return recyclerListBinding.root
+    }
+
+    /**
+     * Load all displayed components that are saved to the online API
+     * and then put the retrieved list into the recycler list adapter for the user to select.
+     */
+    private fun initialiseOnlineLoading() {
+        Log.i("ONLINE_METHOD", "Loading from either server or cache.")
+
+        val apiRepository = ApiRepository(requireContext())
+
+        apiViewModel = ApiViewModel(apiRepository)
+        //Load the values streamed from the api into a mutable live data list in the "apiRepository".
+        apiViewModel.getCategory(searchCategory)
+
+        //Put the response from the apiRepository/API into the recycler view adapter
+        apiViewModel.apiCategoryResponse.observe(viewLifecycleOwner, { res ->
+            res.body()?.let { body -> setUpHardwareList(body)}
+        })
+    }
+
+    /**
+     * Load all displayed components that are saved to the app's database
+     * and then put the retrieved list into the recycler list adapter for the user to select.
+     */
+    private fun initialiseOfflineLoading() {
+        Log.i("OFFLINE_METHOD", "Load client database.")
+        //Load FB_Hardware_Android Instance
+        fbHardwareDb =
+            context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Default) }!!
+
+        coroutineScope.launch {
+
+            //Retrieve a list of display component items.
+            searchCategory?.let {
+                categoryListLiveData =
+                    fbHardwareDb.retrieveCategory(it.toLowerCase(Locale.ROOT))
+            }
+            //Put the list into the recycler view adapter
+            categoryListLiveData?.observe(viewLifecycleOwner) { list ->
+                var gatheredList = list
+                gatheredList = gatheredList.sortedBy { it.name.capitalize(Locale.ROOT) }
+                setUpHardwareList(gatheredList)
+            }
+
+        }
     }
 
     /**
@@ -136,52 +183,6 @@ class HardwareList : Fragment(), HardwareListRecyclerList.OnItemClickListener,
                 firstValue,
                 secondValue
             )
-        }
-    }
-
-    /**
-     * Load all displayed components that are saved to the online API
-     * and then put the retrieved list into the recycler list adapter for the user to select.
-     */
-    private fun initialiseOnlineLoading() {
-        Log.i("ONLINE_METHOD", "Loading from either server or cache.")
-
-        val apiRepository = ApiRepository(requireContext())
-
-        apiViewModel = ApiViewModel(apiRepository)
-        //Load the values streamed from the api into a mutable live data list in the "apiRepository".
-        apiViewModel.getCategory(searchCategory)
-
-        //Put the response from the apiRepository/API into the recycler view adapter
-        apiViewModel.apiCategoryResponse.observe(viewLifecycleOwner, { res ->
-            res.body()?.let { setUpHardwareList(it) }
-        })
-    }
-
-    /**
-     * Load all displayed components that are saved to the app's database
-     * and then put the retrieved list into the recycler list adapter for the user to select.
-     */
-    private fun initialiseOfflineLoading() {
-        Log.i("OFFLINE_METHOD", "Load client database.")
-        //Load FB_Hardware_Android Instance
-        fbHardwareDb =
-            context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
-
-        coroutineScope.launch {
-
-            //Retrieve a list of display component items.
-            searchCategory?.let {
-                categoryListLiveData =
-                    fbHardwareDb.retrieveCategory(it.toLowerCase(Locale.ROOT))
-            }
-            //Put the list into the recycler view adapter
-            categoryListLiveData?.observe(viewLifecycleOwner) { list ->
-                var gatheredList = list
-                gatheredList = gatheredList.sortedBy { it.name.capitalize(Locale.ROOT) }
-                setUpHardwareList(gatheredList)
-            }
-
         }
     }
 

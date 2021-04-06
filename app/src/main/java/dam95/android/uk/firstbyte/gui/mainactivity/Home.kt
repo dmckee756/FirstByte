@@ -16,6 +16,7 @@ import dam95.android.uk.firstbyte.gui.components.builds.SELECTED_PC
 import dam95.android.uk.firstbyte.gui.configuration.RECOMMENDED_BUILDS
 import dam95.android.uk.firstbyte.model.PCBuild
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 const val READ_ONLY_PC = "READ_ONLY_PC"
 
@@ -45,7 +46,7 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
     ): View {
         recyclerListBinding = RecyclerListBinding.inflate(inflater, container, false)
 
-        fbHardwareDB = FirstByteDBAccess(requireContext(), Dispatchers.Main)
+        fbHardwareDB = FirstByteDBAccess(requireContext(), Dispatchers.Default)
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val entryLevelPCID: Int = sharedPreferences.getInt(RECOMMENDED_BUILDS, 1)
@@ -53,17 +54,17 @@ class Home : Fragment(), RecommendedBuildRecyclerList.OnItemClickListener {
         val recommendedBuilds = mutableListOf<Pair<PCBuild, String>>()
         val tierDescriptions = resources.getStringArray(R.array.tierDescriptions)
 
-        //Use another index for inserting the tierDescriptions along with the PC's ID.
-        for ((index, pc_ID) in (entryLevelPCID..(entryLevelPCID + TO_ENTHUSIAST_PC_ID)).withIndex()) {
-            fbHardwareDB.retrievePC(pc_ID).value?.let { PC ->
-                recommendedBuilds.add(
-                    Pair(PC, tierDescriptions[index])
-                )
+        runBlocking {
+            //Use another index for inserting the tierDescriptions along with the PC's ID.
+            for ((index, pc_ID) in (entryLevelPCID..(entryLevelPCID + TO_ENTHUSIAST_PC_ID)).withIndex()) {
+                fbHardwareDB.retrievePC(pc_ID).value?.let { PC ->
+                    recommendedBuilds.add(
+                        Pair(PC, tierDescriptions[index])
+                    )
+                }
             }
         }
-
         setUpRecommendedBuildList(recommendedBuilds.toList())
-
         return recyclerListBinding.root
     }
 

@@ -73,6 +73,7 @@ class HardwareListRecyclerList(
             priceText.text = HumanReadableUtils.rrpPriceToCurrency(displayedComponent.rrpPrice)
         }
 
+
         /**
          * Send onClick event to the HardwareList fragment.
          */

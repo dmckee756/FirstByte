@@ -17,6 +17,14 @@ import org.junit.*
 import org.junit.runner.RunWith
 import java.util.*
 
+/**
+ * @author David Mckee
+ * @Version 1.0
+ * Tests the background functionality of dealing with PCBuilds in the app.
+ * Including Adding/Removing parts, checking price updates and dynamic PC Part slots update.
+ * Finally testing if a component is removed from a PC and it's price is updated before
+ * the component is removed from the database.
+ */
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class TestDatabasePCBuilds {
@@ -346,21 +354,25 @@ class TestDatabasePCBuilds {
         //Retrieve the accessible PCList which contains the new pc in slot 1
         newPC1 = inMemoryDatabase.retrievePCList().value!![0]!!
 
+        //Add computer case to the PC
         inMemoryDatabase.savePCPart(
             cooler_Master_MasterBox_MB511.name,
             cooler_Master_MasterBox_MB511.type,
             newPC1.pcID!!
         )
         delay(100)
+        //Retrieve the PC
         newPC1 = inMemoryDatabase.retrievePC(newPC1.pcID!!).value!!
 
+        //Get all the fan slots that the Case gave the PC.
         val fansPair = inMemoryDatabase.retrievePCComponents(
             newPC1.pcID!!,
             ComponentsEnum.FAN.toString().toLowerCase(Locale.ROOT),
             newPC1.fanList,
-            cooler_Master_MasterBox_MB511.case_fan_slots - 1
+            cooler_Master_MasterBox_MB511.case_fan_slots
         )
 
+        //Add number of fan slots to the PC that the case allows.
         val tempList = mutableListOf<String?>()
         for (i in cooler_Master_MasterBox_MB511.case_fan_slots - 1 downTo 0) {
             fansPair[fansPair.lastIndex - i].first?.let { tempList.add(it.name) }
@@ -369,29 +381,67 @@ class TestDatabasePCBuilds {
         newPC1.fanList = tempList
 
         Assert.assertEquals(cooler_Master_MasterBox_MB511.case_fan_slots, newPC1.fanList!!.size)
-
-        //Remove the relational database pc part
-
-        inMemoryDatabase.removeRelationalPCPart(
-            ComponentsEnum.FAN.toString().toLowerCase(Locale.ROOT),
-            newPC1.pcID!!,
-            0
-        )
-        delay(100)
-        newPC1 = inMemoryDatabase.retrievePC(newPC1.pcID!!).value!!
-        Assert.assertEquals(0, newPC1.fanList!!.size)
     }
 
     @Test
     fun testThat_ReadOnly_PCs_Cant_Be_Loaded_In_List() = runBlocking(Dispatchers.Main) {
 
-        var newPC1 = PCBuild()
+        val newPC1 = PCBuild()
         newPC1.pcName = "TEST_PC_1"
         newPC1.deletable = false
         inMemoryDatabase.createPC(newPC1)
 
         val loadedPCListSlotOne: PCBuild? = inMemoryDatabase.retrievePCList().value?.get(0)
         Assert.assertEquals(null, loadedPCListSlotOne)
+    }
+
+    @Test
+    fun testThat_component_is_removed_from_pc_before_its_deleted() = runBlocking(Dispatchers.Main) {
+        var newPC1 = PCBuild()
+        newPC1.pcName = "TEST_PC_1"
+        newPC1.deletable = true
+        inMemoryDatabase.createPC(newPC1)
+        delay(50)
+
+        //Retrieve the accessible PCList which contains the new pc in slot 1
+        newPC1 = inMemoryDatabase.retrievePCList().value!![0]!!
+
+        //Add graphics card to the PC
+        newPC1.pcID?.let {
+            inMemoryDatabase.savePCPart(
+                gpu_1660_Ti_specifications.name,
+                gpu_1660_Ti_specifications.type,
+                it
+            )
+        }
+        newPC1.pcPrice += gpu_1660_Ti_specifications.rrpPrice
+        inMemoryDatabase.updatePCPrice(newPC1.pcPrice, newPC1.pcID!!)
+        delay(50)
+        //Get the updated PC
+        newPC1 = inMemoryDatabase.retrievePC(newPC1.pcID!!).value!!
+        delay(50)
+        //Check if the PC's price is the gpu's Rrp Price
+        Assert.assertEquals(gpu_1660_Ti_specifications.rrpPrice, newPC1.pcPrice, 0.001)
+
+        //Check if component is in any writable PC Builds, if it is, then remove it in any writable PC Builds
+        if (inMemoryDatabase.checkIfComponentIsInAnyPC(gpu_1660_Ti_specifications.name, gpu_1660_Ti_specifications.type) > 0) {
+            inMemoryDatabase.removeComponentFromAllPCs(
+                gpu_1660_Ti_specifications.name,
+                gpu_1660_Ti_specifications.type,
+                gpu_1660_Ti_specifications.rrpPrice
+            )
+        }
+        delay(200)
+
+        //Remove the component from the database
+        inMemoryDatabase.removeHardware(gpu_1660_Ti_specifications.name)
+        delay(50)
+        //Retrieve the updated PC
+        newPC1 = inMemoryDatabase.retrievePC(newPC1.pcID!!).value!!
+        delay(50)
+        //Check the PC total Rrp Price is updated to 0.00 and that the gpu slot is empty
+        Assert.assertEquals(0.00, newPC1.pcPrice, 0.001)
+        Assert.assertEquals(null, newPC1.gpuName)
     }
 
 }

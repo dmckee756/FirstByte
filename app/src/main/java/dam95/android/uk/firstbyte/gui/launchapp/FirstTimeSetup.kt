@@ -93,8 +93,10 @@ class FirstTimeSetup : AppCompatActivity() {
 
                 joinAll()
                 //Once the database is created and all read only values saved, then allow the user to enter the app
-                firstTimeSetupBinding.enterAppBtn.visibility = View.VISIBLE
-                firstTimeSetupBinding.enterAppText.visibility = View.VISIBLE
+                coroutineScope.launch(Dispatchers.Main) {
+                    firstTimeSetupBinding.enterAppBtn.visibility = View.VISIBLE
+                    firstTimeSetupBinding.enterAppText.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -149,13 +151,5 @@ class FirstTimeSetup : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    /**
-     * Close database on this activity's exit
-     */
-    override fun onDestroy() {
-        fbHardwareDB.closeDatabase()
-        super.onDestroy()
     }
 }

@@ -78,7 +78,7 @@ class CompareHardware : Fragment(), CompareHardwareRecyclerList.OnItemClickListe
             setHasOptionsMenu(true)
             //Initialise the database connection
             fbHardwareDb =
-                context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
+                context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Default) }!!
 
             initialiseComponents(categoryType, comparedTableID)
             //Initialise the BarChart with the initial values

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">FirstByte</string>
-    <string name="appVersion">App Version: 0.7a</string>
+    <string name="appVersion">App Version: 1.0b</string>
     <string name="fbLogo">First Byte Logo</string>
+    <string name="loading">Loading…</string>
 
     <!-- First Time Setup -->
     <string name="welcomingText">Welcome to FirstByte!</string>

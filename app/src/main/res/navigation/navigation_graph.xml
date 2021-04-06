@@ -12,19 +12,29 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_home_fragmentID_to_searchCategory_fragmentID"
-            app:destination="@id/searchCategory_fragmentID" />
+            app:destination="@id/searchCategory_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right" />
         <action
             android:id="@+id/action_home_fragmentID_to_help_fragmentID"
-            app:destination="@id/help_fragmentID" />
+            app:destination="@id/help_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right" />
         <action
             android:id="@+id/action_home_fragmentID_to_settings_fragmentID"
-            app:destination="@id/settings_fragmentID" />
+            app:destination="@id/settings_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right" />
         <action
             android:id="@+id/action_home_fragmentID_to_searchSavedComponents_fragmentID"
-            app:destination="@id/searchSavedComponents_fragmentID" />
+            app:destination="@id/searchSavedComponents_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right" />
         <action
             android:id="@+id/action_home_fragmentID_to_personalBuild_fragmentID"
-            app:destination="@id/personalBuild_fragmentID" />
+            app:destination="@id/personalBuild_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="SELECTED_PC"
             android:defaultValue="@null"
@@ -44,7 +54,9 @@
         tools:layout="@layout/display_pclist">
         <action
             android:id="@+id/action_buildPC_fragmentID_to_personalBuild_fragmentID"
-            app:destination="@id/personalBuild_fragmentID">
+            app:destination="@id/personalBuild_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left">
             <argument
                 android:name="SELECTED_PC"
                 android:defaultValue="@null"
@@ -66,7 +78,9 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_compare_fragmentID_to_compareHardware_fragmentID"
-            app:destination="@id/compareHardware_fragmentID" />
+            app:destination="@id/compareHardware_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="COMPARE_LIST"
             app:argType="string" />
@@ -82,7 +96,9 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_searchCategory_fragmentID_to_hardwareList_fragmentID"
-            app:destination="@id/hardwareList_fragmentID">
+            app:destination="@id/hardwareList_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right">
             <argument
                 android:name="CATEGORY"
                 app:argType="string" />
@@ -100,7 +116,9 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_hardwareList_fragmentID_to_hardwareDetails_fragmentID"
-            app:destination="@id/hardwareDetails_fragmentID" />
+            app:destination="@id/hardwareDetails_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="NAME"
             app:argType="string" />
@@ -118,7 +136,9 @@
         android:label="@string/hardwareDetails">
         <action
             android:id="@+id/action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID"
-            app:destination="@id/webViewConnection_fragmentID" />
+            app:destination="@id/webViewConnection_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="URL_LINK"
             app:argType="string" />
@@ -130,10 +150,14 @@
         android:label="@string/personalBuild">
         <action
             android:id="@+id/action_personalBuild_to_hardwareDetails_fragmentID"
-            app:destination="@id/hardwareDetails_fragmentID" />
+            app:destination="@id/hardwareDetails_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <action
             android:id="@+id/action_personalBuild_fragmentID_to_hardwareList_fragmentID"
-            app:destination="@id/hardwareList_fragmentID" />
+            app:destination="@id/hardwareList_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="CATEGORY"
             app:argType="string" />
@@ -162,7 +186,9 @@
         tools:layout="@layout/fragment_help" >
         <action
             android:id="@+id/action_help_fragmentID_to_licenses_fragmentID"
-            app:destination="@id/licenses_fragmentID" />
+            app:destination="@id/licenses_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
     </fragment>
     <fragment
         android:id="@+id/compareHardware_fragmentID"
@@ -171,7 +197,9 @@
         tools:layout="@layout/fragment_compare_hardware">
         <action
             android:id="@+id/action_compareHardware_fragmentID_to_hardwareList_fragmentID"
-            app:destination="@id/hardwareList_fragmentID" />
+            app:destination="@id/hardwareList_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_right"
+            app:exitAnim="@anim/fragment_transition_exit_left" />
         <argument
             android:name="CATEGORY"
             app:argType="string" />
@@ -189,7 +217,9 @@
         tools:layout="@layout/recycler_list">
         <action
             android:id="@+id/action_searchSavedComponents_fragmentID_to_hardwareList_fragmentID"
-            app:destination="@id/hardwareList_fragmentID" />
+            app:destination="@id/hardwareList_fragmentID"
+            app:enterAnim="@anim/fragment_transition_enter_left"
+            app:exitAnim="@anim/fragment_transition_exit_right" />
         <argument
             android:name="CATEGORY"
             app:argType="string" />

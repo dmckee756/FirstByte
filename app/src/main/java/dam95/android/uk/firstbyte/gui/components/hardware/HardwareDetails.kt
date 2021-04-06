@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,7 +52,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     private var offlineRemoveHardwareOnDestroy = false
     private var componentName: String? = null
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     /**
      * Determines if the Component was loaded from the database or from the online API,
@@ -77,7 +76,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             setHasOptionsMenu(true)
             //Load FB_Hardware_Android Instance
             fbHardwareDb =
-                context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Main) }!!
+                context?.let { FirstByteDBAccess.dbInstance(it, Dispatchers.Default) }!!
 
             Log.i("SEARCH_CATEGORY", componentName)
             //Determine if offline load from FB_Hardware_Android Database or the online server.
@@ -141,7 +140,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
      * @param type Category of selected component that will be loaded.
      */
     private fun loadSavedHardware(name: String, type: String) {
-        coroutineScope.launch {
+        coroutineScope.launch(Dispatchers.Main) {
             //Retrieve the components details from the database
             component =
                 fbHardwareDb.retrieveHardware(name, type)
@@ -163,10 +162,13 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     private fun setUpButtons(component: Component) {
 
         //If the component cannot be delete or the is offline without cached hardware data, do not setup the buttons.
-        if ((component.name != "" || component.name != "null") && !isLoadingFromPC && component.deletable) {
+        if (((component.name != "" || component.name != "null") && !isLoadingFromPC && component.deletable)) {
             //setup up the adding and removing buttons...
             val addHardware = hardwareDetailsBinding.addHardwareBtn
             val removeHardware = hardwareDetailsBinding.removeHardwareBtn
+
+            addHardware.visibility = View.VISIBLE
+            removeHardware.visibility = View.VISIBLE
             //Initialise variable for database hardware removal, look at OnDestroy() for more information
             componentName = component.name
 
@@ -190,8 +192,6 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
             setUpRecyclerList(component)
             //... If the component can't be deleted, then get rid of the buttons.
         } else {
-            hardwareDetailsBinding.addHardwareBtn.visibility = View.GONE
-            hardwareDetailsBinding.removeHardwareBtn.visibility = View.GONE
             setUpRecyclerList(component)
         }
     }
@@ -243,7 +243,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         if (fbHardwareDb.checkIfComponentIsInComparedTable(component.name) > 0) {
             fbHardwareDb.removeComparedComponent(component.name)
         }
-        //Check if component is in any writable PC Builds, if it is, then remove it any writable PC Builds
+        //Check if component is in any writable PC Builds, if it is, then remove it in any writable PC Builds
         if (fbHardwareDb.checkIfComponentIsInAnyPC(component.name, component.type) > 0) {
             fbHardwareDb.removeComponentFromAllPCs(
                 component.name,
@@ -274,10 +274,10 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
         val detailsWithDescription = mutableListOf<Pair<String, String?>>()
         //For each description that was loaded, assign it to the specification it's describing.
         //Must be done in order. Any values that don't have a description will have their second pair value to null.
-        for (index in details.indices){
+        for (index in details.indices) {
             try {
                 detailsWithDescription.add(Pair(details[index], descriptions[index]))
-            }catch (exception: java.lang.IndexOutOfBoundsException){
+            } catch (exception: java.lang.IndexOutOfBoundsException) {
                 detailsWithDescription.add(Pair(details[index], null))
             }
         }
@@ -292,17 +292,26 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
      * the component's specifications that require a description.
      * If it can't find it, then return an empty list so that there are no descriptions.
      */
-    private fun findComponentDescriptions(component: Component): List<String>{
-        return when (component.type.toUpperCase(Locale.ROOT)){
-            ComponentsEnum.GPU.toString() -> resources.getStringArray(R.array.gpuDescriptions).toList()
-            ComponentsEnum.CPU.toString() -> resources.getStringArray(R.array.cpuDescriptions).toList()
-            ComponentsEnum.RAM.toString() -> resources.getStringArray(R.array.ramDescriptions).toList()
-            ComponentsEnum.PSU.toString() -> resources.getStringArray(R.array.psuDescriptions).toList()
-            ComponentsEnum.STORAGE.toString() -> resources.getStringArray(R.array.storageDescriptions).toList()
-            ComponentsEnum.MOTHERBOARD.toString() -> resources.getStringArray(R.array.motherboardDescriptions).toList()
-            ComponentsEnum.CASES.toString() -> resources.getStringArray(R.array.caseDescriptions).toList()
-            ComponentsEnum.HEATSINK.toString() -> resources.getStringArray(R.array.heatsinkDescriptions).toList()
-            ComponentsEnum.FAN.toString() -> resources.getStringArray(R.array.fanDescriptions).toList()
+    private fun findComponentDescriptions(component: Component): List<String> {
+        return when (component.type.toUpperCase(Locale.ROOT)) {
+            ComponentsEnum.GPU.toString() -> resources.getStringArray(R.array.gpuDescriptions)
+                .toList()
+            ComponentsEnum.CPU.toString() -> resources.getStringArray(R.array.cpuDescriptions)
+                .toList()
+            ComponentsEnum.RAM.toString() -> resources.getStringArray(R.array.ramDescriptions)
+                .toList()
+            ComponentsEnum.PSU.toString() -> resources.getStringArray(R.array.psuDescriptions)
+                .toList()
+            ComponentsEnum.STORAGE.toString() -> resources.getStringArray(R.array.storageDescriptions)
+                .toList()
+            ComponentsEnum.MOTHERBOARD.toString() -> resources.getStringArray(R.array.motherboardDescriptions)
+                .toList()
+            ComponentsEnum.CASES.toString() -> resources.getStringArray(R.array.caseDescriptions)
+                .toList()
+            ComponentsEnum.HEATSINK.toString() -> resources.getStringArray(R.array.heatsinkDescriptions)
+                .toList()
+            ComponentsEnum.FAN.toString() -> resources.getStringArray(R.array.fanDescriptions)
+                .toList()
             else -> emptyList()
         }
     }
@@ -348,7 +357,7 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     /**
      * Email the specifications of the component
      */
-    private fun emailComponent(){
+    private fun emailComponent() {
         val coroutineScope = CoroutineScope(Dispatchers.IO)
         coroutineScope.launch {
             //Launch an send email intent
@@ -385,6 +394,29 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
     }
 
     /**
+     * Open the component's Amazon Or Scan.co.uk web page using a web view fragment.
+     * @param clickedLink The selected Web URL
+     */
+    override fun onLinkClicked(clickedLink: String) {
+        val navController =
+            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
+        val linkBundle = Bundle()
+        //Amazon URL
+        if (clickedLink.indexOf("Amazon Price") != -1) {
+            linkBundle.putString(URL_LINK, component.amazonLink)
+            //Scan.co.uk URL
+        } else if (clickedLink.indexOf("Scan.co.uk Price") != -1) {
+            linkBundle.putString(URL_LINK, component.scanLink)
+        }
+        //Finds the action that allows navigation from this fragment to the web view,
+        //with a bundle of the URL.
+        navController?.navigate(
+            R.id.action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID,
+            linkBundle
+        )
+    }
+
+    /**
      * If the hardware details is resumed from an online search,
      * make this false so that the component doesn't get removed
      * when it loads the standard button setup for offline hardware.
@@ -410,28 +442,5 @@ class HardwareDetails : Fragment(), HardwareDetailsRecyclerList.OnItemListener {
                 }
             }
         }
-    }
-
-    /**
-     * Open the component's Amazon Or Scan.co.uk web page using a web view fragment.
-     * @param clickedLink The selected Web URL
-     */
-    override fun onLinkClicked(clickedLink: String) {
-        val navController =
-            activity?.let { Navigation.findNavController(it, R.id.nav_fragment) }
-        val linkBundle = Bundle()
-        //Amazon URL
-        if (clickedLink.indexOf("Amazon Price") != -1) {
-            linkBundle.putString(URL_LINK, component.amazonLink)
-        //Scan.co.uk URL
-        } else if (clickedLink.indexOf("Scan.co.uk Price") != -1) {
-            linkBundle.putString(URL_LINK, component.scanLink)
-        }
-        //Finds the action that allows navigation from this fragment to the web view,
-        //with a bundle of the URL.
-        navController?.navigate(
-            R.id.action_hardwareDetails_fragmentID_to_webViewConnection_fragmentID,
-            linkBundle
-        )
     }
 }

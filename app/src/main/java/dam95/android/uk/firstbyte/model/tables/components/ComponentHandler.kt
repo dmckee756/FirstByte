@@ -302,7 +302,10 @@ class ComponentHandler(
         cv.put(FirstByteSQLConstants.CompareStats.ID, typeID)
         //Put in component's name, to be used as a reference when loading the compared components details.
         cv.put(FirstByteSQLConstants.CompareStats.COMPONENT, savedComponent)
-        dbHandler.insert(FirstByteSQLConstants.CompareStats.TABLE, null, cv)
+        val result = dbHandler.insert(FirstByteSQLConstants.CompareStats.TABLE, null, cv)
+        if (result == (-1).toLong()){
+            Log.i("ERROR_SAVING_COMPARE", "Error saving component to it's compared table.")
+        }
     }
 
     /**

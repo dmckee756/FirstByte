@@ -51,7 +51,6 @@
 
                     <TextView
                         android:id="@+id/componentNameDisplay"
-                        android:textAppearance="@style/headlineTextFB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -59,6 +58,7 @@
                         android:padding="@dimen/halved_standard_margins"
                         android:text="@string/componentName"
                         android:textAlignment="center"
+                        android:textAppearance="@style/headlineTextFB"
                         android:textSize="22sp"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,6 +108,7 @@
         android:text="@string/addHardware"
         android:textAppearance="@style/headlineTextFB"
         android:textColor="@color/textColor"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/removeHardwareBtn"
         app:layout_constraintStart_toStartOf="parent" />
@@ -127,6 +128,7 @@
         android:text="@string/removeHardware"
         android:textAppearance="@style/headlineTextFB"
         android:textColor="@color/textColor"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/addHardwareBtn" />
