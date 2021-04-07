@@ -21,7 +21,7 @@ interface InterfaceAPI {
      * @param type The end of a url command informing the API what type of hardware we want returned.
      * @return A response list of display hardware objects
      */
-    @GET("category?category-select={type}")
+    @GET("category={type}")
     suspend fun getCategory(@Path("type") type: String?): Response<List<SearchedHardwareItem>>
 
     /**
@@ -29,7 +29,7 @@ interface InterfaceAPI {
      * @param name The name of the Graphics Card
      * @return A response of the Graphics Card object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getGpu(@Path("name") name: String?): Response<List<Gpu>>
 
     /**
@@ -37,7 +37,7 @@ interface InterfaceAPI {
      * @param name The name of the Processor
      * @return A response of the Processor object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getCpu(@Path("name") name: String?): Response<List<Cpu>>
 
     /**
@@ -45,7 +45,7 @@ interface InterfaceAPI {
      * @param name The name of the Ram
      * @return A response of the Ram object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getRam(@Path("name") name: String?): Response<List<Ram>>
 
     /**
@@ -53,7 +53,7 @@ interface InterfaceAPI {
      * @param name The name of the Power Supply
      * @return A response of thePower Supply object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getPsu(@Path("name") name: String?): Response<List<Psu>>
 
     /**
@@ -61,7 +61,7 @@ interface InterfaceAPI {
      * @param name The name of the Storage
      * @return A response of the Storage object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getStorage(@Path("name") name: String?): Response<List<Storage>>
 
     /**
@@ -69,7 +69,7 @@ interface InterfaceAPI {
      * @param name The name of the Motherboard
      * @return A response of the Motherboard object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getMotherboard(@Path("name") name: String?): Response<List<Motherboard>>
 
     /**
@@ -77,7 +77,7 @@ interface InterfaceAPI {
      * @param name The name of the Case
      * @return A response of the Case object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getCase(@Path("name") name: String?): Response<List<Case>>
 
     /**
@@ -85,7 +85,7 @@ interface InterfaceAPI {
      * @param name The name of the Heatsink
      * @return A response of the Heatsink object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getHeatsink(@Path("name") name: String?): Response<List<Heatsink>>
 
     /**
@@ -93,6 +93,6 @@ interface InterfaceAPI {
      * @param name The name of the Fan
      * @return A response of the Fan object and all it's details
      */
-    @GET("hardware=?component-name={name}")
+    @GET("hardware={name}")
     suspend fun getFan(@Path("name") name: String?): Response<List<Fan>>
 }
