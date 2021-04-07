@@ -81,8 +81,8 @@ data class Gpu(
     ): List<String>? {
         val details = mutableListOf(
             context.resources.getString(R.string.gpuDisplayCoreSpeed, core_speed_mhz),
-            context.resources.getString(R.string.gpuDisplayVirtualMemorySize, memory_size_gb),
-            context.resources.getString(R.string.gpuDisplayVirtualMemorySpeed, memory_speed_mhz),
+            context.resources.getString(R.string.gpuDisplayVRAMMemorySize, memory_size_gb),
+            context.resources.getString(R.string.gpuDisplayVRAMMemorySpeed, memory_speed_mhz),
             context.resources.getString(R.string.displayWattage, wattage),
             context.resources.getString(R.string.displayDimensions, dimensions)
         )

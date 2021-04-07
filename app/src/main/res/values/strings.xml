@@ -170,8 +170,8 @@
     <string name="licensesAndLibrariesGoHere">Here are the used Licenses and Libraries used in this App.</string>
     <!-- Gpu Display Text -->
     <string name="gpuDisplayCoreSpeed">Core Speed: %1$dMHz</string>
-    <string name="gpuDisplayVirtualMemorySize">Virtual Memory Size: %1$dGB</string>
-    <string name="gpuDisplayVirtualMemorySpeed">Virtual Memory Speed: %1$dMHz</string>
+    <string name="gpuDisplayVRAMMemorySize">VRAM Memory Size: %1$dGB</string>
+    <string name="gpuDisplayVRAMMemorySpeed">VRAM Memory Speed: %1$dMHz</string>
     <!-- Cpu Display Text -->
     <string name="cpuDisplayCoreSpeed">Average Core Speed: %1$.2fGHz</string>
     <string name="cpuDisplayCoreCount">Number of Cores: %1$d</string>
