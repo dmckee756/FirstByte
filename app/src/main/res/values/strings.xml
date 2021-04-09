@@ -147,6 +147,7 @@
     <string name="pcbuildHardwareAddOrImage">An image showing the add hardware symbol, or the components image.</string>
     <string name="editRecommendedPC">Save recommended PC and edit it</string>
     <string name="saveToEditPCTest">Save the PC to edit it.</string>
+    <string name="alertDeletePC">Are you sure you want to delete this PC Build?</string>
 
     <!-- HardwareDetails -->
     <string name="addHardware">Save %1$s</string>

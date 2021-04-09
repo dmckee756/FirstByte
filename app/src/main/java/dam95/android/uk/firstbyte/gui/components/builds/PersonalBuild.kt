@@ -433,7 +433,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.emailID -> emailPC()
-            R.id.deleteID -> deletePC()
+            R.id.deleteID -> areYouSureAlert()
             R.id.editRecommendedPCID -> editRecommendedPC(item)
         }
         return super.onOptionsItemSelected(item)
@@ -508,6 +508,30 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         }
     }
 
+    /**
+     * Alert box to give the user a final chance to determine if they want to delete their PC.
+     * Just in case they tried to click on the icon menu.
+     */
+    private fun areYouSureAlert() {
+
+        val alertBuilder =
+            AlertDialog.Builder(ContextThemeWrapper(activity, R.style.myAlertDialogTheme))
+
+        //Setup a dialog box that allows the user to back out of their choice to delete this PC.
+        alertBuilder.setTitle(activity?.resources?.getString(R.string.alertDeletePC))
+            .setCancelable(false)
+            .setPositiveButton(activity?.getString(R.string.yesButton)) { _, _ ->
+                //Delete PC
+                deletePC()
+            }
+            .setNegativeButton(activity?.resources?.getString(R.string.noButton)) { dialog, _ ->
+                // Don't delete PC
+                dialog.dismiss()
+            }
+        //Show the alert box
+        val alert = alertBuilder.create()
+        alert.show()
+    }
 
     /**
      * Handle menu delete PC item click, which removes the pc from the database and backs the user out
