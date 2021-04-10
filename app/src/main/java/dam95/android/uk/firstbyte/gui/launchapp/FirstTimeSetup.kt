@@ -104,8 +104,8 @@ class FirstTimeSetup : AppCompatActivity() {
     /**
      * Setup spinner that allows users to choose recommended build on the home screen.
      */
-    private fun initializeSpinner(recommendedTypes: List<String>, compareSpinner: Spinner) {
-        recommendedTypes.setUpRecommendBuildSpinner(compareSpinner)
+    private fun initializeSpinner(recommendedTypes: List<String>, recommendedSpinner: Spinner) {
+        recommendedTypes.setUpRecommendBuildSpinner(recommendedSpinner)
     }
 
     /**
