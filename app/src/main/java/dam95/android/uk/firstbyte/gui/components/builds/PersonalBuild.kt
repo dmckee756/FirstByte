@@ -447,7 +447,7 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
         val coroutineScope = CoroutineScope(Dispatchers.IO)
         coroutineScope.launch {
             //Launch an send email intent
-            val emailIntent = Intent(Intent.ACTION_SEND)
+            val emailIntent = Intent(Intent.ACTION_SENDTO)
             //Indicate this is a mail to intent
             emailIntent.data = Uri.parse("mailto:")
             //Assign the subject's name

@@ -99,12 +99,9 @@ class Help : PreferenceFragmentCompat() {
     private fun emailCreator(emailAddress: String, emailSubject: String) {
         val coroutineScope = CoroutineScope(Dispatchers.IO)
         coroutineScope.launch {
-            //Launch an send email intent
-            val emailIntent = Intent(Intent.ACTION_SEND)
-            //Indicate this is a mail to intent
-            emailIntent.data = Uri.parse("mailto:")
-            //Assign the correct email that this is addressed to.
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, emailAddress)
+            //Launch an send email intent with the correct email address.
+            val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", emailAddress, null))
+
             //Assign the subject's name.
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
 
