@@ -318,12 +318,12 @@ class PersonalBuildRecyclerList(
 
     /**
      * If the incompatible or part required buttons were clicked, then display a toast message to the user.
-     * @param displayedTest The text informing the user what the icon means (Part Incompatible, or Part Required)
+     * @param displayedText The text informing the user what the icon means (Part Incompatible, or Part Required)
      */
-    private fun makeAToast(displayedTest: String) {
+    private fun makeAToast(displayedText: String) {
         Toast.makeText(
             context,
-            displayedTest,
+            displayedText,
             Toast.LENGTH_SHORT
         ).show()
     }

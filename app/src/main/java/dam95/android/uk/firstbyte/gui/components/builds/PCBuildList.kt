@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
  * It allows the user to enter into their already created PC Builds for editing, or creating a new PC build if
  * there is a slot available. There can only be 10 Writable PC Builds on the App at once.
  */
-class FragmentPCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener {
+class PCBuildList : Fragment(), PcBuildRecyclerList.OnItemClickListener {
 
     private lateinit var recyclerListBinding: RecyclerListBinding
     private lateinit var pcBuildListAdapter: PcBuildRecyclerList

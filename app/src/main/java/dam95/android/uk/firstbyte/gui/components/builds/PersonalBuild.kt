@@ -28,7 +28,6 @@ import dam95.android.uk.firstbyte.model.util.ComponentsEnum
 import dam95.android.uk.firstbyte.model.util.HumanReadableUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 

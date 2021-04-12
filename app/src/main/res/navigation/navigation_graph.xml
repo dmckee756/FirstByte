@@ -49,7 +49,7 @@
 
     <fragment
         android:id="@+id/buildPC_fragmentID"
-        android:name="dam95.android.uk.firstbyte.gui.components.builds.FragmentPCBuildList"
+        android:name="dam95.android.uk.firstbyte.gui.components.builds.PCBuildList"
         android:label="@string/pcBuildList"
         tools:layout="@layout/display_pclist">
         <action
