@@ -58,13 +58,13 @@ class HardwareDetailsRecyclerList(
          */
         private fun correctIcon(detail: Pair<String, String?>) {
             return when (true) {
-                (detail.first.indexOf("Amazon Price") != -1) -> webLink(clickableButton)
-                (detail.first.indexOf("Scan.co.uk Price") != -1) -> webLink(clickableButton)
+                (detail.first.indexOf("Amazon Price") != -1) -> webLink()
+                (detail.first.indexOf("Scan.co.uk Price") != -1) -> webLink()
                 else -> {
                     if (detail.second != null) {
-                        allowDetailDisplay(clickableButton)
+                        allowDetailDisplay()
                     } else {
-                        bulletPoint(clickableButton)
+                        bulletPoint()
                     }
                 }
             }
@@ -74,7 +74,7 @@ class HardwareDetailsRecyclerList(
          * Assign the WebLink icons to the correct component details and set up the button click listener that takes
          * the user to the Web Client.
          */
-        private fun webLink(clickableButton: Button) {
+        private fun webLink() {
             clickableButton.setBackgroundResource(R.drawable.ic_baseline_shopping_basket_24)
             // 50 Width, 40 Height
             val pixelsToDp = context?.resources?.displayMetrics?.density
@@ -89,7 +89,7 @@ class HardwareDetailsRecyclerList(
         /**
          * Setup the blank bullet point and make sure that the button does nothing when clicked.
          */
-        private fun bulletPoint(clickableButton: Button) {
+        private fun bulletPoint() {
             clickableButton.setBackgroundResource(R.drawable.ic_blank_bulletpoint)
             clickableButton.isClickable = false
         }
@@ -98,7 +98,7 @@ class HardwareDetailsRecyclerList(
          * Set up the expandable view bullet points, where it will expand and collapse further details about
          * the component's specification.
          */
-        private fun allowDetailDisplay(clickableButton: Button) {
+        private fun allowDetailDisplay() {
             clickableButton.setOnClickListener {
                 if (specDescription.visibility == View.GONE) {
                     specDescription.visibility = View.VISIBLE

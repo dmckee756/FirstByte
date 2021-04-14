@@ -3,7 +3,6 @@ package dam95.android.uk.firstbyte.model.tables.pcbuilds
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -34,7 +33,7 @@ class PCBuildHandler(
     private val dbHandler: SQLiteDatabase
 ) {
 
-    private val pcBuildExtraExtraQueries: PCBuildExtraQueries = PCBuildExtraQueries(dbHandler)
+    private val pcBuildExtraQueries: PCBuildExtraQueries = PCBuildExtraQueries(dbHandler)
 
     /**
      * Create a new blank pc and add it tp the database. If there are already 10 Created Personal PC's (Writable PC's) then do not create the PC.
@@ -55,7 +54,7 @@ class PCBuildHandler(
         cursor.close()
 
         //Input values into the correct component table.
-        val result = pcBuildExtraExtraQueries.insertPCDetails(personalPC)
+        val result = pcBuildExtraQueries.insertPCDetails(personalPC)
         //If there was an error, exit out of this insertion.
         if (result == (-1).toLong()) {
             Log.e("FAILED INSERT", result.toString())
@@ -75,7 +74,7 @@ class PCBuildHandler(
             //n amount of fan slots
             personalPC.ramList?.let {
                 for (i in it.indices) personalPC.ramList!![i]?.let { it1 ->
-                    pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+                    pcBuildExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.RAM.toString().toLowerCase(Locale.ROOT),
                         mostRecentID
@@ -84,7 +83,7 @@ class PCBuildHandler(
             }
             personalPC.storageList?.let {
                 for (i in it.indices) personalPC.storageList!![i]?.let { it1 ->
-                    pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+                    pcBuildExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.STORAGE.toString().toLowerCase(Locale.ROOT),
                         mostRecentID
@@ -93,7 +92,7 @@ class PCBuildHandler(
             }
             personalPC.fanList?.let {
                 for (i in it.indices) personalPC.fanList!![i]?.let { it1 ->
-                    pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+                    pcBuildExtraQueries.insertPCBuildRelationTables(
                         it1,
                         ComponentsEnum.FAN.toString().toLowerCase(Locale.ROOT),
                         mostRecentID
@@ -132,11 +131,11 @@ class PCBuildHandler(
         when (type.toUpperCase(Locale.ROOT)) {
             //Insert component name it into many-to-many relational table.
             ComponentsEnum.RAM.toString() ->
-                pcBuildExtraExtraQueries.insertPCBuildRelationTables(name, type, pcID)
+                pcBuildExtraQueries.insertPCBuildRelationTables(name, type, pcID)
             ComponentsEnum.STORAGE.toString() ->
-                pcBuildExtraExtraQueries.insertPCBuildRelationTables(name, type, pcID)
+                pcBuildExtraQueries.insertPCBuildRelationTables(name, type, pcID)
             ComponentsEnum.FAN.toString() ->
-                pcBuildExtraExtraQueries.insertPCBuildRelationTables(name, type, pcID)
+                pcBuildExtraQueries.insertPCBuildRelationTables(name, type, pcID)
             else -> {
                 val cv = ContentValues()
                 //Insert component name into it's designated pc Part slot.
@@ -190,7 +189,7 @@ class PCBuildHandler(
                 null
             )
         val tempList: MutableList<String> =
-            pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
+            pcBuildExtraQueries.relationalPCLoop(cursor).toMutableList()
 
         //Deletes the table that the data was retrieved from
         dbHandler.delete("${type}_in_pc", "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
@@ -198,7 +197,7 @@ class PCBuildHandler(
         //Remove the desired component at it's relative position in this list.
         tempList.removeAt(relativePos)
         //Recreate the updated table.
-        for (i in 0 until tempList.size) pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+        for (i in 0 until tempList.size) pcBuildExtraQueries.insertPCBuildRelationTables(
             tempList[i],
             type,
             pcID
@@ -222,7 +221,7 @@ class PCBuildHandler(
                 null
             )
         val tempList: MutableList<String> =
-            pcBuildExtraExtraQueries.relationalPCLoop(cursor).toMutableList()
+            pcBuildExtraQueries.relationalPCLoop(cursor).toMutableList()
 
         //Deletes the table that the data was retrieved from
         dbHandler.delete("${type}_in_pc", "${FirstByteSQLConstants.PcBuild.PC_ID} = $pcID", null)
@@ -235,7 +234,7 @@ class PCBuildHandler(
             //If the temporary list holding fan data of pc still has fan slots in it, then re-add it to the fan_in_pc table
             //Creating an updated table.
             if (tempList.isNotEmpty()) {
-                for (i in 0 until tempList.size) pcBuildExtraExtraQueries.insertPCBuildRelationTables(
+                for (i in 0 until tempList.size) pcBuildExtraQueries.insertPCBuildRelationTables(
                     tempList[i],
                     type,
                     pcID
@@ -312,7 +311,7 @@ class PCBuildHandler(
         Log.i("GET_PC", pcID.toString())
         cursor.moveToFirst()
         //Assigns the loaded values into a newly created PCBuild Object
-        val loadPC = pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor)
+        val loadPC = pcBuildExtraQueries.getPCDetails(currentTableColumns, cursor)
         cursor.close()
         return loadPC
     }
@@ -342,7 +341,7 @@ class PCBuildHandler(
             // full the slots in for nulls to allow users to create a new pc build in the future.
             if (cursor.count > i) {
                 val mutableLiveData =
-                    pcBuildExtraExtraQueries.getPCDetails(currentTableColumns, cursor)
+                    pcBuildExtraQueries.getPCDetails(currentTableColumns, cursor)
                 pcDisplayList.add(mutableLiveData.value)
             } else {
                 pcDisplayList.add(null)
@@ -479,7 +478,7 @@ class PCBuildHandler(
         }
 
         //update pc prices
-        pcBuildExtraExtraQueries.removeComponentPriceFromPCs(
+        pcBuildExtraQueries.removeComponentPriceFromPCs(
             cursor,
             categoryType,
             rrpPrice,
