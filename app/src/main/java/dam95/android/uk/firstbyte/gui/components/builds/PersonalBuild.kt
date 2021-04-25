@@ -310,6 +310,17 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
     }
 
     /**
+     * When the heatsink is removed from the PC...
+     * Trim off fan slots that were added because of the heatsink fan slots from the database and inform the recycler list.
+     */
+    private fun removeHeatsinkFans(component: Heatsink) {
+        //remove fans from recycler list first and update the price...
+        personalBuildListAdapter.removeFans(component.fan_slots)
+        //then remove the "overflowed" fan slots
+        fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, component.fan_slots)
+    }
+
+    /**
      * Updates the total price of the PC when the PC Build is edited.
      * E.g. PC Part is added/removed.
      */
@@ -329,17 +340,6 @@ class PersonalBuild : Fragment(), PersonalBuildRecyclerList.OnItemListener {
      */
     override fun pcCompleted(isCompleted: Boolean) {
         personalPC.value!!.isPcCompleted = isCompleted
-    }
-
-    /**
-     * When the heatsink is removed from the PC...
-     * Trim off fan slots that were added because of the heatsink fan slots from the database and inform the recycler list.
-     */
-    private fun removeHeatsinkFans(component: Heatsink) {
-        //remove fans from recycler list first and update the price...
-        personalBuildListAdapter.removeFans(component.fan_slots)
-        //then remove the "overflowed" fan slots
-        fbHardwareDb.trimFanList("fan", personalPC.value!!.pcID!!, component.fan_slots)
     }
 
     /**
