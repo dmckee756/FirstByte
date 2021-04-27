@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import dam95.android.uk.firstbyte.R
 import dam95.android.uk.firstbyte.databinding.DisplayHardwareDetailsBinding
@@ -76,12 +77,14 @@ class HardwareDetailsRecyclerList(
          */
         private fun webLink() {
             clickableButton.setBackgroundResource(R.drawable.ic_baseline_shopping_basket_24)
-            // 50 Width, 40 Height
+            // 50 Width, 45 Height
             val pixelsToDp = context?.resources?.displayMetrics?.density
             val layoutParams = ConstraintLayout.LayoutParams(
-                (60 * pixelsToDp!!).toInt(),
-                (55 * pixelsToDp).toInt()
+                (50 * pixelsToDp!!).toInt(),
+                (45 * pixelsToDp).toInt()
             )
+            //Move the text a bit lower to match the basket's size
+            detailText.setPadding(0, (10 * pixelsToDp).toInt(), 0, 0)
             clickableButton.layoutParams = layoutParams
             clickableButton.setOnClickListener(this)
         }
