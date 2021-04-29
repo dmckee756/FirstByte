@@ -8,7 +8,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import dam95.android.uk.firstbyte.datasource.FirstByteDBAccess
 import dam95.android.uk.firstbyte.model.PCBuild
 import dam95.android.uk.firstbyte.model.components.Case
-import dam95.android.uk.firstbyte.model.components.Component
 import dam95.android.uk.firstbyte.model.components.Cpu
 import dam95.android.uk.firstbyte.model.components.Gpu
 import dam95.android.uk.firstbyte.model.util.ComponentsEnum
